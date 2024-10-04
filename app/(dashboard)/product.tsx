@@ -19,27 +19,23 @@ export function Product({ product }: { product: any }) {
   return (
     <>
       <TableRow>
-        <TableCell className="font-medium text-center">{product.uid}</TableCell>
-        <TableCell className="hidden sm:table-cell">
+        <TableCell className="font-medium text-center">{product.key}</TableCell>
+        <TableCell className="font-medium text-center">
+          {product.phoneNumber}
+        </TableCell>
+        <TableCell className="hidden sm:table-cell w-[500px] text-ellipsis overflow-hidden">
           {product.address?.title}
         </TableCell>
         <TableCell className="font-medium text-center">
           {product.cartItems.length}
         </TableCell>
-        <TableCell>
-          <Badge
-            variant="outline"
-            className="capitalize text-[rgb(255,0,0)] bg-[rgba(255,0,0,0.1)]"
-          >
-            {product?.status ?? 'Created'}
-          </Badge>
-        </TableCell>
+
         <TableCell className="hidden md:table-cell text-center">{`Rs ${product.totalPrice}`}</TableCell>
         <TableCell className="hidden md:table-cell ">
-          {product?.Created ??
-            new Date().toLocaleDateString() +
-              ',' +
-              new Date().toLocaleTimeString()}
+          {product.createdAt
+            ? new Date(product.createdAt).toDateString() + "   "+
+              new Date(product.createdAt).toLocaleTimeString()
+            : 0}
         </TableCell>
 
         <TableCell>

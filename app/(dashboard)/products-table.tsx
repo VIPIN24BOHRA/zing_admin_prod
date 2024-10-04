@@ -51,12 +51,11 @@ export function ProductsTable({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="text-center"> uid </TableHead>
+              <TableHead className="text-center"> order Id </TableHead>
+              <TableHead className="text-center"> Phone number</TableHead>
               <TableHead className="text-center">Address </TableHead>
               <TableHead>Total Items</TableHead>
-              <TableHead className="hidden md:table-cell text-center">
-                Status
-              </TableHead>
+
               <TableHead className="hidden md:table-cell text-center">
                 Total Price
               </TableHead>
@@ -68,8 +67,8 @@ export function ProductsTable({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {products.map((product,idx) => (
-              <Product key={product.uid+idx} product={product} />
+            {products.map((product, idx) => (
+              <Product key={product.uid + idx} product={product} />
             ))}
           </TableBody>
         </Table>
