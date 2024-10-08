@@ -51,6 +51,7 @@ export function ProductsTable({
         <Table>
           <TableHeader>
             <TableRow>
+            <TableHead className="text-center"> order no </TableHead>
               <TableHead className="text-center"> order Id </TableHead>
               <TableHead className="text-center"> Phone number</TableHead>
               <TableHead className="text-center">Address </TableHead>

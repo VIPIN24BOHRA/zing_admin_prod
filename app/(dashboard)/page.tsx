@@ -42,11 +42,12 @@ export default function ProductsPage({
           console.log(data);
           const Orders =
             Object.keys(data ?? {})
-              ?.map((key) => {
+              ?.map((key, idx) => {
                 if (data[key].createdAt)
                   return {
                     ...data[key],
                     key: key,
+                    orderNo: idx + 1,
                     totalPrice:
                       data[key].totalPrice -
                       (data[key]?.discount ?? 0) +
@@ -88,6 +89,7 @@ export default function ProductsPage({
             {
               ...newOrder,
               key,
+              orderNo: prevProducts.length + 1,
               totalPrice:
                 newOrder.totalPrice -
                 (newOrder?.discount ?? 0) +

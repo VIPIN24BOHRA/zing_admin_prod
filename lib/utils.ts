@@ -25,3 +25,27 @@ export const updateProductStatus = async (
     return false;
   }
 };
+
+export const copyToClipboard = async (content: string) => {
+  // Check if the browser supports the clipboard API
+  if (
+    typeof window !== 'undefined' &&
+    typeof navigator !== 'undefined' &&
+    navigator.clipboard
+  ) {
+    if (navigator.clipboard) {
+      try {
+        await navigator.clipboard.writeText(content);
+        return true;
+      } catch (err) {
+        console.log(err);
+        return false;
+      }
+    }
+    return false;
+  }
+  return false;
+};
+
+// Usage example
+copyToClipboard('Hello, this is the content to copy!');

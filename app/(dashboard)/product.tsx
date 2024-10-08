@@ -12,21 +12,25 @@ import { MoreHorizontal } from 'lucide-react';
 import { TableCell, TableRow } from '@/components/ui/table';
 import { deleteProduct } from './actions';
 import { useState } from 'react';
-import { updateProductStatus } from '@/lib/utils';
+import { copyToClipboard, updateProductStatus } from '@/lib/utils';
+import { Alert } from '@mui/material';
 
 export function Product({ product }: { product: any }) {
   const [showModal, setShowModal] = useState(false);
-
+  const [copied, setCopied] = useState(false);
   const [status, setStatus] = useState(product.status ?? '');
 
   return (
     <>
       <TableRow>
+        <TableCell className="font-medium text-center">
+          #{product.orderNo}
+        </TableCell>
         <TableCell className="font-medium text-center">{product.key}</TableCell>
         <TableCell className="font-medium text-center">
           {product.phoneNumber}
         </TableCell>
-        <TableCell className="hidden sm:table-cell w-[500px] text-ellipsis overflow-hidden">
+        <TableCell className="hidden sm:table-cell w-[200px] text-ellipsis overflow-hidden">
           {product.address?.title}
         </TableCell>
         <TableCell className="font-medium text-center">
@@ -35,19 +39,68 @@ export function Product({ product }: { product: any }) {
 
         <TableCell className="hidden md:table-cell text-center">{`Rs ${product.totalPrice}`}</TableCell>
         <TableCell className="hidden md:table-cell text-center">{`${product?.coupon ?? '-'}`}</TableCell>
-        <TableCell className="hidden md:table-cell text-center text-[rgba(3,189,71,1)] font-bold">{`${status ? status : '-'}`}</TableCell>
+        <TableCell
+          className="hidden md:table-cell text-center text-[rgba(3,189,71,1)] font-bold"
+          style={
+            status == 'Delivered'
+              ? { color: 'rgba(3,189,71,1)' }
+              : { color: 'rgba(255,124,2,1)' }
+          }
+        >{`${status ? status : '-'}`}</TableCell>
         <TableCell className="hidden md:table-cell ">
           {product.createdAt
-            ? new Date(product.createdAt).toDateString() +
-              '   ' +
-              new Date(product.createdAt).toLocaleTimeString()
+            ? new Date(product.createdAt).toDateString()?.substring(3)
+            : 0}
+          <br />
+
+          {product.createdAt
+            ? new Date(product.createdAt).toLocaleTimeString()
             : 0}
         </TableCell>
 
         <TableCell>
           <div className="flex flex-col items-center ">
             <button
-              className="border-none bg-[#ff0000bb] hover:bg-[#ff0000] text-white px-4 py-1 text-xs rounded-lg mb-2 "
+              className="relative w-[120px] border-[1px] border-[#000] hover:bg-black  text-black hover:text-white px-4 py-1 text-xs rounded-lg mb-2 "
+              onClick={async () => {
+                console.log(product);
+                // setShowModal(true);
+                const value = `Address:
+${product.address.addressType},
+${product.address.title}, 
+${product.address?.houseDetails},
+${product.address?.landmark ?? ""}
+
+Items: 
+${product?.cartItems
+  ?.map((cItem: any) => {
+    return `${cItem?.item?.title} - ${cItem?.quantity}`;
+  })
+  ?.join('\n')}
+
+Total Price: 
+${product.totalPrice}
+`;
+                const res = await copyToClipboard(value);
+                if (res) {
+                  setCopied(true);
+                  setTimeout(() => {
+                    setCopied(false);
+                  }, 2000);
+                }
+
+                console.log(res);
+              }}
+            >
+              Copy
+              {copied ? (
+                <span className="absolute -top-0 right-32 font-bold">
+                  <Alert>Copied</Alert>
+                </span>
+              ) : null}
+            </button>
+            <button
+              className="w-[120px] border-none bg-[#ff0000bb] hover:bg-[#ff0000] text-white px-4 py-1 text-xs rounded-lg mb-2 "
               onClick={() => {
                 console.log(product);
                 setShowModal(true);
@@ -56,7 +109,7 @@ export function Product({ product }: { product: any }) {
               Show
             </button>
             <button
-              className="border-none bg-[rgba(3,189,71,0.85)] hover:bg-[rgba(3,189,71,1)] text-white px-4 py-1 text-xs rounded-lg"
+              className=" w-[120px] border-none bg-[rgba(3,189,71,0.85)] hover:bg-[rgba(3,189,71,1)] text-white px-4 py-1 text-xs rounded-lg mb-2"
               onClick={async () => {
                 console.log('set status to delivered', product);
 
@@ -74,6 +127,27 @@ export function Product({ product }: { product: any }) {
               }}
             >
               Set Delivered
+            </button>
+
+            <button
+              className="w-[120px] border-none bg-[rgba(255,124,2,0.85)] hover:bg-[rgba(255,124,2,1)] text-white px-4 py-1 text-xs rounded-lg"
+              onClick={async () => {
+                console.log('set status to delivered', product);
+
+                const res = await updateProductStatus(
+                  product,
+                  'OUT FOR DELIVERY',
+                  product.key
+                );
+                if (res) {
+                  console.log('set state to delivered');
+                  setStatus('OUT FOR DELIVERY');
+                } else {
+                  console.log('do not change status');
+                }
+              }}
+            >
+              Out for delivery
             </button>
           </div>
         </TableCell>
