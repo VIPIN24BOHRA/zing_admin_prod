@@ -62,6 +62,9 @@ export function ProductsTable({
               <TableHead className="hidden md:table-cell text-center">
                 Coupon 
               </TableHead>
+              <TableHead className="hidden md:table-cell text-center">
+                Status 
+              </TableHead>
 
               <TableHead className="hidden md:table-cell text-center">
                 Created at
@@ -71,7 +74,7 @@ export function ProductsTable({
           </TableHeader>
           <TableBody>
             {products.map((product, idx) => (
-              <Product key={product.uid + idx} product={product} />
+              <Product key={product.key} product={product} />
             ))}
           </TableBody>
         </Table>

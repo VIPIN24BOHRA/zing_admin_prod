@@ -12,9 +12,12 @@ import { MoreHorizontal } from 'lucide-react';
 import { TableCell, TableRow } from '@/components/ui/table';
 import { deleteProduct } from './actions';
 import { useState } from 'react';
+import { updateProductStatus } from '@/lib/utils';
 
 export function Product({ product }: { product: any }) {
   const [showModal, setShowModal] = useState(false);
+
+  const [status, setStatus] = useState(product.status ?? '');
 
   return (
     <>
@@ -32,6 +35,7 @@ export function Product({ product }: { product: any }) {
 
         <TableCell className="hidden md:table-cell text-center">{`Rs ${product.totalPrice}`}</TableCell>
         <TableCell className="hidden md:table-cell text-center">{`${product?.coupon ?? '-'}`}</TableCell>
+        <TableCell className="hidden md:table-cell text-center text-[rgba(3,189,71,1)] font-bold">{`${status ? status : '-'}`}</TableCell>
         <TableCell className="hidden md:table-cell ">
           {product.createdAt
             ? new Date(product.createdAt).toDateString() +
@@ -41,25 +45,37 @@ export function Product({ product }: { product: any }) {
         </TableCell>
 
         <TableCell>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button aria-haspopup="true" size="icon" variant="ghost">
-                <MoreHorizontal className="h-4 w-4" />
-                <span className="sr-only">Toggle menu</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-              <DropdownMenuItem
-                onClick={() => {
-                  console.log(product);
-                  setShowModal(true);
-                }}
-              >
-                Show
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div className="flex flex-col items-center ">
+            <button
+              className="border-none bg-[#ff0000bb] hover:bg-[#ff0000] text-white px-4 py-1 text-xs rounded-lg mb-2 "
+              onClick={() => {
+                console.log(product);
+                setShowModal(true);
+              }}
+            >
+              Show
+            </button>
+            <button
+              className="border-none bg-[rgba(3,189,71,0.85)] hover:bg-[rgba(3,189,71,1)] text-white px-4 py-1 text-xs rounded-lg"
+              onClick={async () => {
+                console.log('set status to delivered', product);
+
+                const res = await updateProductStatus(
+                  product,
+                  'Delivered',
+                  product.key
+                );
+                if (res) {
+                  console.log('set state to delivered');
+                  setStatus('Delivered');
+                } else {
+                  console.log('do not change status');
+                }
+              }}
+            >
+              Set Delivered
+            </button>
+          </div>
         </TableCell>
       </TableRow>
       {showModal && (
