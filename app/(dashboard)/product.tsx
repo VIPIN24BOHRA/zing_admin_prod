@@ -31,9 +31,11 @@ export function Product({ product }: { product: any }) {
         </TableCell>
 
         <TableCell className="hidden md:table-cell text-center">{`Rs ${product.totalPrice}`}</TableCell>
+        <TableCell className="hidden md:table-cell text-center">{`${product?.coupon ?? '-'}`}</TableCell>
         <TableCell className="hidden md:table-cell ">
           {product.createdAt
-            ? new Date(product.createdAt).toDateString() + "   "+
+            ? new Date(product.createdAt).toDateString() +
+              '   ' +
               new Date(product.createdAt).toLocaleTimeString()
             : 0}
         </TableCell>
@@ -116,6 +118,10 @@ export function Product({ product }: { product: any }) {
                           <p>
                             <span>Total Price {'  -  '}</span>
                             {product.totalPrice}
+                          </p>
+                          <p>
+                            <span>Discount {'  -  '}</span>
+                            {product?.discount ?? 0}
                           </p>
                         </p>
                       </div>

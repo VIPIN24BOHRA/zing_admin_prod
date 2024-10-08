@@ -59,6 +59,9 @@ export function ProductsTable({
               <TableHead className="hidden md:table-cell text-center">
                 Total Price
               </TableHead>
+              <TableHead className="hidden md:table-cell text-center">
+                Coupon 
+              </TableHead>
 
               <TableHead className="hidden md:table-cell text-center">
                 Created at

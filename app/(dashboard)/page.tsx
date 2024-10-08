@@ -46,7 +46,13 @@ export default function ProductsPage({
                 if (data[key].createdAt)
                   return {
                     ...data[key],
-                    key: key
+                    key: key,
+                    totalPrice:
+                      data[key].totalPrice -
+                      (data[key]?.discount ?? 0) +
+                      (data[key].totalPrice < 99 && !data[key].discount
+                        ? 20
+                        : 0)
                   };
                 else null;
               })
@@ -77,9 +83,18 @@ export default function ProductsPage({
           console.log('New Order Added:', newOrder, key);
 
           console.log('these are products', product);
-          console.log([{ ...newOrder, key }, ...product]);
 
-          setProduct((prevProducts) => [{ ...newOrder, key }, ...prevProducts]);
+          setProduct((prevProducts) => [
+            {
+              ...newOrder,
+              key,
+              totalPrice:
+                newOrder.totalPrice -
+                (newOrder?.discount ?? 0) +
+                (newOrder.totalPrice < 99 && !newOrder.discount ? 20 : 0)
+            },
+            ...prevProducts
+          ]);
           setShowSnackBar(true);
 
           setTimeout(() => {
@@ -104,7 +119,9 @@ export default function ProductsPage({
           <div className="fixed w-full h-[100vh] bg-[#aaaa] top-0 z-[100] flex flex-row justify-center items-center">
             <div className="bg-white p-4 rounded-lg">
               <p className="mb-8">
-                <span className='font-bold'>You will get sound Notification for New Orders.</span>
+                <span className="font-bold">
+                  You will get sound Notification for New Orders.
+                </span>
                 <br />
                 <br />
                 <span>Don't close the tab to get the notification</span>
