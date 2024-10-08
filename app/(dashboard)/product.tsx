@@ -71,6 +71,8 @@ ${product.address.title},
 ${product.address?.houseDetails},
 ${product.address?.landmark ?? ""}
 
+phone number: ${product.phoneNumber}
+
 Items: 
 ${product?.cartItems
   ?.map((cItem: any) => {
