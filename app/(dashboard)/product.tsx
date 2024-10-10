@@ -89,7 +89,7 @@ ${product?.cartItems
   ?.join('\n')}
 
 Total Price: 
-${product.totalPrice}
+${totalPrice}
 `;
                 const res = await copyToClipboard(value);
                 if (res) {
