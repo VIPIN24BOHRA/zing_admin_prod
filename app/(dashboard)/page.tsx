@@ -47,13 +47,7 @@ export default function ProductsPage({
                   return {
                     ...data[key],
                     key: key,
-                    orderNo: idx + 1,
-                    totalPrice:
-                      data[key].totalPrice -
-                      (data[key]?.discount ?? 0) +
-                      (data[key].totalPrice < 99 && !data[key].discount
-                        ? 20
-                        : 0)
+                    orderNo: idx + 1
                   };
                 else null;
               })
@@ -89,11 +83,7 @@ export default function ProductsPage({
             {
               ...newOrder,
               key,
-              orderNo: prevProducts.length + 1,
-              totalPrice:
-                newOrder.totalPrice -
-                (newOrder?.discount ?? 0) +
-                (newOrder.totalPrice < 99 && !newOrder.discount ? 20 : 0)
+              orderNo: prevProducts.length + 1
             },
             ...prevProducts
           ]);

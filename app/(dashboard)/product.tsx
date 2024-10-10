@@ -20,6 +20,14 @@ export function Product({ product }: { product: any }) {
   const [copied, setCopied] = useState(false);
   const [status, setStatus] = useState(product.status ?? '');
 
+  const totalPrice =
+    product.totalPrice -
+    (product?.discount ?? 0) +
+    (product.totalPrice + product.discount < 99 ? 20 : 0);
+  console.log(
+    `product id -> ${product.productId}  totalPrice ---> ${totalPrice}`
+  );
+
   return (
     <>
       <TableRow>
@@ -37,7 +45,7 @@ export function Product({ product }: { product: any }) {
           {product.cartItems.length}
         </TableCell>
 
-        <TableCell className="hidden md:table-cell text-center">{`Rs ${product.totalPrice}`}</TableCell>
+        <TableCell className="hidden md:table-cell text-center">{`Rs ${totalPrice}`}</TableCell>
         <TableCell className="hidden md:table-cell text-center">{`${product?.coupon ?? '-'}`}</TableCell>
         <TableCell
           className="hidden md:table-cell text-center text-[rgba(3,189,71,1)] font-bold"
@@ -69,7 +77,7 @@ export function Product({ product }: { product: any }) {
 ${product.address.addressType},
 ${product.address.title}, 
 ${product.address?.houseDetails},
-${product.address?.landmark ?? ""}
+${product.address?.landmark ?? ''}
 
 phone number: ${product.phoneNumber}
 
@@ -209,7 +217,7 @@ ${product.totalPrice}
                         <p className="text-sm text-gray-500">
                           <p>
                             <span>Total Price {'  -  '}</span>
-                            {product.totalPrice}
+                            {totalPrice}
                           </p>
                           <p>
                             <span>Discount {'  -  '}</span>
