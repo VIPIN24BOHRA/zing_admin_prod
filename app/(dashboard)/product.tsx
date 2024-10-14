@@ -34,7 +34,11 @@ export function Product({ product }: { product: any }) {
         <TableCell className="font-medium text-center">
           #{product.orderNo}
         </TableCell>
-        <TableCell className="font-medium text-center">{product.key}</TableCell>
+        <TableCell className="font-medium text-center">
+          <p className="w-[100px] overflow-hidden text-ellipsis	">
+            {product.key}
+          </p>
+        </TableCell>
         <TableCell className="font-medium text-center">
           {product.phoneNumber}
         </TableCell>
@@ -67,13 +71,14 @@ export function Product({ product }: { product: any }) {
         </TableCell>
 
         <TableCell>
-          <div className="flex flex-col items-center ">
-            <button
-              className="relative w-[120px] border-[1px] border-[#000] hover:bg-black  text-black hover:text-white px-4 py-1 text-xs rounded-lg mb-2 "
-              onClick={async () => {
-                console.log(product);
-                // setShowModal(true);
-                const value = `Address:
+          <div className="flex">
+            <div className="flex flex-col items-center mr-2">
+              <button
+                className="relative w-[120px] border-[1px] border-[#000] hover:bg-black  text-black hover:text-white px-4 py-1 text-xs rounded-lg mb-2 "
+                onClick={async () => {
+                  console.log(product);
+                  // setShowModal(true);
+                  const value = `Address:
 ${product.address.addressType},
 ${product.address.title}, 
 ${product.address?.houseDetails},
@@ -91,74 +96,118 @@ ${product?.cartItems
 Total Price: 
 ${totalPrice}
 `;
-                const res = await copyToClipboard(value);
-                if (res) {
-                  setCopied(true);
-                  setTimeout(() => {
-                    setCopied(false);
-                  }, 2000);
-                }
+                  const res = await copyToClipboard(value);
+                  if (res) {
+                    setCopied(true);
+                    setTimeout(() => {
+                      setCopied(false);
+                    }, 2000);
+                  }
 
-                console.log(res);
-              }}
-            >
-              Copy
-              {copied ? (
-                <span className="absolute -top-0 right-32 font-bold">
-                  <Alert>Copied</Alert>
-                </span>
-              ) : null}
-            </button>
-            <button
-              className="w-[120px] border-none bg-[#ff0000bb] hover:bg-[#ff0000] text-white px-4 py-1 text-xs rounded-lg mb-2 "
-              onClick={() => {
-                console.log(product);
-                setShowModal(true);
-              }}
-            >
-              Show
-            </button>
-            <button
-              className=" w-[120px] border-none bg-[rgba(3,189,71,0.85)] hover:bg-[rgba(3,189,71,1)] text-white px-4 py-1 text-xs rounded-lg mb-2"
-              onClick={async () => {
-                console.log('set status to delivered', product);
+                  console.log(res);
+                }}
+              >
+                Copy
+                {copied ? (
+                  <span className="absolute -top-0 right-32 font-bold">
+                    <Alert>Copied</Alert>
+                  </span>
+                ) : null}
+              </button>
+              <button
+                className="w-[120px] border-none bg-[#ff000088] hover:bg-[#ff0000] text-white px-4 py-1 text-xs rounded-lg mb-2 "
+                onClick={() => {
+                  console.log(product);
+                  setShowModal(true);
+                }}
+              >
+                Show
+              </button>
+              <button
+                className=" w-[120px] border-none bg-[rgba(3,189,71,0.75)] hover:bg-[rgba(3,189,71,1)] text-white px-4 py-1 text-xs rounded-lg mb-2"
+                onClick={async () => {
+                  console.log('set status to delivered', product);
 
-                const res = await updateProductStatus(
-                  product,
-                  'Delivered',
-                  product.key
-                );
-                if (res) {
-                  console.log('set state to delivered');
-                  setStatus('Delivered');
-                } else {
-                  console.log('do not change status');
-                }
-              }}
-            >
-              Set Delivered
-            </button>
+                  const res = await updateProductStatus(
+                    product,
+                    'Delivered',
+                    product.key
+                  );
+                  if (res) {
+                    console.log('set state to delivered');
+                    setStatus('Delivered');
+                  } else {
+                    console.log('do not change status');
+                  }
+                }}
+              >
+                Set Delivered
+              </button>
+            </div>
+            <div className="flex flex-col items-center ">
+              <button
+                className="w-[120px] border-none bg-[rgba(255,124,2,0.65)] hover:bg-[rgba(255,124,2,1)] text-white px-4 py-1 text-xs rounded-lg mb-2"
+                onClick={async () => {
+                  console.log('set status to delivered', product);
 
-            <button
-              className="w-[120px] border-none bg-[rgba(255,124,2,0.85)] hover:bg-[rgba(255,124,2,1)] text-white px-4 py-1 text-xs rounded-lg"
-              onClick={async () => {
-                console.log('set status to delivered', product);
+                  const res = await updateProductStatus(
+                    product,
+                    'OUT FOR DELIVERY',
+                    product.key
+                  );
+                  if (res) {
+                    console.log('set state to delivered');
+                    setStatus('OUT FOR DELIVERY');
+                  } else {
+                    console.log('do not change status');
+                  }
+                }}
+              >
+                Out for delivery
+              </button>
 
-                const res = await updateProductStatus(
-                  product,
-                  'OUT FOR DELIVERY',
-                  product.key
-                );
-                if (res) {
-                  console.log('set state to delivered');
-                  setStatus('OUT FOR DELIVERY');
-                } else {
-                  console.log('do not change status');
-                }
-              }}
-            >
-              Out for delivery
-            </button>
+              <button
+                className="w-[120px] border-none bg-[rgba(255,0,0,0.55)] hover:bg-[rgba(255,0,0,1)] text-white px-4 py-1 text-xs rounded-lg mb-2"
+                onClick={async () => {
+                  console.log('set status to delivered', product);
+
+                  const res = await updateProductStatus(
+                    product,
+                    'CANCELLED',
+                    product.key
+                  );
+                  if (res) {
+                    console.log('set state to delivered');
+                    setStatus('CANCELLED');
+                  } else {
+                    console.log('do not change status');
+                  }
+                }}
+              >
+                Cancelled
+              </button>
+
+              <button
+                className="w-[120px] border-none bg-[rgba(0,0,255,0.55)] hover:bg-[rgba(0,0,255,1)] text-white px-4 py-1 text-xs rounded-lg mb-2"
+                onClick={async () => {
+                  console.log('set status to delivered', product);
+
+                  const res = await updateProductStatus(
+                    product,
+                    'ACCEPTED',
+                    product.key
+                  );
+                  if (res) {
+                    console.log('set state to delivered');
+                    setStatus('ACCEPTED');
+                  } else {
+                    console.log('do not change status');
+                  }
+                }}
+              >
+                Accept
+              </button>
+            </div>
           </div>
         </TableCell>
       </TableRow>
