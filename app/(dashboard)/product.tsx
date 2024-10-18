@@ -12,7 +12,7 @@ import { MoreHorizontal } from 'lucide-react';
 import { TableCell, TableRow } from '@/components/ui/table';
 import { deleteProduct } from './actions';
 import { useState } from 'react';
-import { copyToClipboard, updateProductStatus } from '@/lib/utils';
+import { copyToClipboard, sendMessage, updateProductStatus } from '@/lib/utils';
 import { Alert } from '@mui/material';
 
 export function Product({ product }: { product: any }) {
@@ -133,6 +133,15 @@ ${totalPrice}
                     'Delivered',
                     product.key
                   );
+
+                  await sendMessage(
+                    product.uid,
+                    process?.env?.NEXT_PUBLIC_WEB_API_KEY ?? '',
+                    'Order Delivered ✅',
+                    `${product.cartItems[0].item.title} has been delivered!!! 🍽️😋 Enjoy your food!`,
+                    { title: product.cartItems[0].item.title }
+                  );
+
                   if (res) {
                     console.log('set state to delivered');
                     setStatus('Delivered');
@@ -176,6 +185,14 @@ ${totalPrice}
                     'CANCELLED',
                     product.key
                   );
+                  await sendMessage(
+                    product.uid,
+                    process?.env?.NEXT_PUBLIC_WEB_API_KEY ?? '',
+                    'Order CANCELLED ❌',
+                    `We are so sorry 😔, ${product.cartItems[0].item.title} has been Cancelled!!! `,
+                    { title: product.cartItems[0].item.title }
+                  );
+
                   if (res) {
                     console.log('set state to delivered');
                     setStatus('CANCELLED');
@@ -196,6 +213,14 @@ ${totalPrice}
                     product,
                     'ACCEPTED',
                     product.key
+                  );
+
+                  await sendMessage(
+                    product.uid,
+                    process?.env?.NEXT_PUBLIC_WEB_API_KEY ?? '',
+                    'Order Accepted ☑️',
+                    `Your order for ${product.cartItems[0].item.title} has been accepted! ✅ We'll start preparing it right away! 🍳`,
+                    { title: product.cartItems[0].item.title }
                   );
                   if (res) {
                     console.log('set state to delivered');
