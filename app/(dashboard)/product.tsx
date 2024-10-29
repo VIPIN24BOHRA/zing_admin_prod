@@ -79,6 +79,7 @@ export function Product({ product }: { product: any }) {
                   console.log(product);
                   // setShowModal(true);
                   const value = `Address:
+${`https://www.google.com/maps?q=${product.address?.lat},${product.address?.lng}`}
 ${product.address.addressType},
 ${product.address.title}, 
 ${product.address?.houseDetails},
@@ -278,6 +279,15 @@ ${totalPrice}
                       <div className="mt-4">
                         <p className="font-bold">Address</p>
                         <p className="text-sm text-gray-500">
+                          <a
+                            href={`https://www.google.com/maps?q=${product.address?.lat},${product.address?.lng}`}
+                            target="_blank"
+                            className="text-[rgb(0,0,255)]"
+                          >
+                            https://www.google.com/maps?q={product.address?.lat}
+                            ,{product.address?.lng}
+                          </a>
+
                           <p>{product.address?.addressType}</p>
 
                           <p>{product.address?.title}</p>
