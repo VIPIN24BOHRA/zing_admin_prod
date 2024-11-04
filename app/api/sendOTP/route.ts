@@ -21,7 +21,7 @@ export async function POST(req: NextRequest) {
         error: 'no phoneNumber provided'
       });
     }
-    if (phoneNumber == '911234567890') {
+    if (phoneNumber == '+911234567890') {
       return NextResponse.json({ success: true });
     }
     const OTP = generateOTP(6);

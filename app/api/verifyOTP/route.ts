@@ -27,7 +27,7 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    if (phoneNumber == '911234567890' && OTP == '000000') {
+    if (phoneNumber == '+911234567890' && OTP == '000000') {
       const token = await createCustomToken(phoneNumber);
       return NextResponse.json({ success: true, user: { token } });
     }
