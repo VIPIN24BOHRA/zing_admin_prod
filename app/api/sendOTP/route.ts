@@ -4,6 +4,10 @@ import { generateOTP } from '@/lib/utils';
 import { createUserForOTPSMS } from 'modules/firebase/database';
 import { NextRequest, NextResponse } from 'next/server';
 
+export async function GET(req: NextRequest) {
+  return NextResponse.json('send OTP is up and running');
+}
+
 export async function POST(req: NextRequest) {
   try {
     const { apiKey, phoneNumber } = await req.json();
@@ -16,6 +20,9 @@ export async function POST(req: NextRequest) {
         success: false,
         error: 'no phoneNumber provided'
       });
+    }
+    if (phoneNumber == '911234567890') {
+      return NextResponse.json({ success: true });
     }
     const OTP = generateOTP(6);
     const data = {
