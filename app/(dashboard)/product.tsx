@@ -23,7 +23,11 @@ export function Product({ product }: { product: any }) {
   const totalPrice =
     product.totalPrice -
     (product?.discount ?? 0) +
-    (product.totalPrice + product.discount < 99 ? 20 : 0);
+    (product.deliveryFee
+      ? product.deliveryFee
+      : product.totalPrice < 99
+        ? 20
+        : 0);
   console.log(
     `product id -> ${product.productId}  totalPrice ---> ${totalPrice}`
   );
@@ -139,7 +143,7 @@ ${totalPrice}
                     product.uid,
                     process?.env?.NEXT_PUBLIC_WEB_API_KEY ?? '',
                     'Order Delivered ✅',
-                    `${product.cartItems[0].item.title} has been delivered!!! 🍽️😋 Enjoy your food!`,
+                    `Order has been delivered!!! 🍽️😋 Enjoy your food!`,
                     { title: product.cartItems[0].item.title }
                   );
 
@@ -164,6 +168,13 @@ ${totalPrice}
                     product,
                     'OUT FOR DELIVERY',
                     product.key
+                  );
+                  await sendMessage(
+                    product.uid,
+                    process?.env?.NEXT_PUBLIC_WEB_API_KEY ?? '',
+                    'Out for delivery ✅',
+                    'Order is out for delivery',
+                    { title: product.cartItems[0].item.title }
                   );
                   if (res) {
                     console.log('set state to delivered');
@@ -190,7 +201,7 @@ ${totalPrice}
                     product.uid,
                     process?.env?.NEXT_PUBLIC_WEB_API_KEY ?? '',
                     'Order CANCELLED ❌',
-                    `We are so sorry 😔, ${product.cartItems[0].item.title} has been Cancelled!!! `,
+                    `We are so sorry 😔, Order has been Cancelled!!! `,
                     { title: product.cartItems[0].item.title }
                   );
 
@@ -220,7 +231,7 @@ ${totalPrice}
                     product.uid,
                     process?.env?.NEXT_PUBLIC_WEB_API_KEY ?? '',
                     'Order Accepted ☑️',
-                    `Your order for ${product.cartItems[0].item.title} has been accepted! ✅ We'll start preparing it right away! 🍳`,
+                    `Your order has been accepted! ✅ We'll start preparing it right away! 🍳`,
                     { title: product.cartItems[0].item.title }
                   );
                   if (res) {
