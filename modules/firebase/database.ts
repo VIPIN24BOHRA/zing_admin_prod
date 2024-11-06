@@ -16,6 +16,19 @@ export const getUserFCMToken = async (uid: string) => {
   return {} as UserDetail;
 };
 
+export const getRatings = async (orderId: string) => {
+  const db = admin.database();
+  const ref = db.ref(sanitizePath(`/ratings/${orderId}`));
+  try {
+    const snap = await ref.once('value');
+    if (snap.exists()) {
+      return snap.val();
+    }
+  } catch (err) {
+    console.log('error while getUserDetails', err);
+  }
+  return {} as UserDetail;
+};
 
 export const createUserForOTPSMS = async (data: any) => {
   if (!data || !data.phoneNumber || !data.OTP) return;
@@ -47,7 +60,9 @@ export const setWaUserDetails = async (userDetails: any) => {
   console.log('this is user details', userDetails);
   if (!userDetails || !userDetails.phoneNumber) return;
   const db = admin.database();
-  const ref = db.ref(sanitizePath(`/otpVerification/${userDetails.phoneNumber}`));
+  const ref = db.ref(
+    sanitizePath(`/otpVerification/${userDetails.phoneNumber}`)
+  );
   try {
     await ref.set(userDetails);
   } catch (err) {

@@ -1,7 +1,8 @@
 import { type ClassValue, clsx } from 'clsx';
-import { getDatabase, ref, set } from 'firebase/database';
+import { getDatabase, ref, set, get } from 'firebase/database';
 import { twMerge } from 'tailwind-merge';
 import { app } from '@/lib/db';
+
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
@@ -15,6 +16,9 @@ export const updateProductStatus = async (
   const orderRef = ref(db, `orders/${key}`);
 
   const updatedProduct = { ...product, status };
+  if (status == 'Delivered') {
+    updatedProduct['deliveredAt'] = Date.now();
+  }
   delete updatedProduct.key;
 
   try {
@@ -24,6 +28,20 @@ export const updateProductStatus = async (
     console.log(`error while updateProductStatus ${err}`);
     return false;
   }
+};
+export const getRatings = async (orderId: string) => {
+  const db = getDatabase(app);
+  const ratingsRef = ref(db, `ratings/${orderId}`);
+
+  try {
+    const snap = await get(ratingsRef);
+    if (snap.exists()) {
+      return snap.val();
+    }
+  } catch (err) {
+    console.log('error while getUserDetails', err);
+  }
+  return {};
 };
 
 export const copyToClipboard = async (content: string) => {
@@ -85,7 +103,6 @@ export async function sendMessage(
     console.error('Error sending message:', error);
   }
 }
-
 
 export const generateOTP = (limit: number) => {
   const digits = '0123456789';

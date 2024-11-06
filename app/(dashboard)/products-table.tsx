@@ -51,8 +51,8 @@ export function ProductsTable({
         <Table>
           <TableHeader>
             <TableRow>
-            <TableHead className="text-center"> order no </TableHead>
-              <TableHead className="text-center"> order Id </TableHead>
+              <TableHead className="text-center"> order no </TableHead>
+
               <TableHead className="text-center"> Phone number</TableHead>
               <TableHead className="text-center">Address </TableHead>
               <TableHead>Total Items</TableHead>
@@ -61,14 +61,20 @@ export function ProductsTable({
                 Total Price
               </TableHead>
               <TableHead className="hidden md:table-cell text-center">
-                Coupon 
+                Coupon
               </TableHead>
               <TableHead className="hidden md:table-cell text-center">
-                Status 
+                Status
               </TableHead>
 
               <TableHead className="hidden md:table-cell text-center">
                 Created at
+              </TableHead>
+              <TableHead className="hidden md:table-cell text-center">
+                Delivered at
+              </TableHead>
+              <TableHead className="hidden md:table-cell text-center">
+                Rating
               </TableHead>
               <TableHead className="text-center">Actions</TableHead>
             </TableRow>
