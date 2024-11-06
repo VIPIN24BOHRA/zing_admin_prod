@@ -234,7 +234,7 @@ ${totalPrice}
                     product.uid,
                     process?.env?.NEXT_PUBLIC_WEB_API_KEY ?? '',
                     'Order Delivered ✅',
-                    `Order has been delivered!!! 🍽️😋 Enjoy your food!`,
+                    `🍽️😋 Enjoy your food!`,
                     { title: product.cartItems[0].item.title }
                   );
 
@@ -263,8 +263,8 @@ ${totalPrice}
                   await sendMessage(
                     product.uid,
                     process?.env?.NEXT_PUBLIC_WEB_API_KEY ?? '',
-                    'Out for delivery ✅',
-                    'Order is out for delivery',
+                    'Out for delivery',
+                    'Our delivery executive will reach your location in 5 minutes',
                     { title: product.cartItems[0].item.title }
                   );
                   if (res) {
@@ -292,7 +292,7 @@ ${totalPrice}
                     product.uid,
                     process?.env?.NEXT_PUBLIC_WEB_API_KEY ?? '',
                     'Order CANCELLED ❌',
-                    `We are so sorry 😔, Order has been Cancelled!!! `,
+                    `Item out of stock `,
                     { title: product.cartItems[0].item.title }
                   );
 
@@ -304,9 +304,37 @@ ${totalPrice}
                   }
                 }}
               >
-                Cancelled
+                out of stock
               </button>
 
+              <button
+                className="w-[120px] border-none bg-[rgba(255,0,0,0.55)] hover:bg-[rgba(255,0,0,1)] text-white px-4 py-1 text-xs rounded-lg mb-2"
+                onClick={async () => {
+                  console.log('set status to delivered', product);
+
+                  const res = await updateProductStatus(
+                    product,
+                    'CANCELLED',
+                    product.key
+                  );
+                  await sendMessage(
+                    product.uid,
+                    process?.env?.NEXT_PUBLIC_WEB_API_KEY ?? '',
+                    'Order CANCELLED ❌',
+                    `Location out of service area `,
+                    { title: product.cartItems[0].item.title }
+                  );
+
+                  if (res) {
+                    console.log('set state to delivered');
+                    setStatus('CANCELLED');
+                  } else {
+                    console.log('do not change status');
+                  }
+                }}
+              >
+                out of service
+              </button>
               <button
                 className="w-[120px] border-none bg-[rgba(0,0,255,0.55)] hover:bg-[rgba(0,0,255,1)] text-white px-4 py-1 text-xs rounded-lg mb-2"
                 onClick={async () => {
@@ -321,8 +349,8 @@ ${totalPrice}
                   await sendMessage(
                     product.uid,
                     process?.env?.NEXT_PUBLIC_WEB_API_KEY ?? '',
-                    'Order Accepted ☑️',
-                    `Your order has been accepted! ✅ We'll start preparing it right away! 🍳`,
+                    'Order Accepted',
+                    `Your order will be delivered in 10 minutes`,
                     { title: product.cartItems[0].item.title }
                   );
                   if (res) {
