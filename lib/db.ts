@@ -7,14 +7,14 @@ import { initializeApp } from 'firebase/app';
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: 'AIzaSyDowwt4XRktF9K_OUQ8-M_HWRIidNBDkfQ',
-  authDomain: 'zingclipskart.firebaseapp.com',
-  databaseURL: 'https://zingclipskart-default-rtdb.firebaseio.com',
-  projectId: 'zingclipskart',
-  storageBucket: 'zingclipskart.appspot.com',
-  messagingSenderId: '1072267385612',
-  appId: '1:1072267385612:web:ad0e76adbf56ad57fe4729',
-  measurementId: 'G-XS3369E5DN'
+  apiKey: "AIzaSyDINk7d_Qfy5i3O7iOMB1zHvncacX-4tZk",
+  authDomain: "zingprod-83388.firebaseapp.com",
+  databaseURL: "https://zingprod-83388-default-rtdb.firebaseio.com",
+  projectId: "zingprod-83388",
+  storageBucket: "zingprod-83388.firebasestorage.app",
+  messagingSenderId: "140928548403",
+  appId: "1:140928548403:web:55c93060c568fac32f6d46",
+  measurementId: "G-VH1XH6E1CR"
 };
 
 // Initialize Firebase
