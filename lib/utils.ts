@@ -16,17 +16,15 @@ export const updateProductStatus = async (
   const orderRef = ref(db, `orders/${key}`);
 
   const updatedProduct = { ...product, status };
-  if (status == 'Delivered') {
-    updatedProduct['deliveredAt'] = Date.now();
-  }
+
   delete updatedProduct.key;
 
   try {
     await set(orderRef, updatedProduct);
-    return  updatedProduct['deliveredAt'];
+    return true;
   } catch (err) {
     console.log(`error while updateProductStatus ${err}`);
-    return 0;
+    return false;
   }
 };
 export const getRatings = async (orderId: string) => {

@@ -229,6 +229,8 @@ ${totalPrice}
                 className=" w-[120px] border-none bg-[rgba(3,189,71,0.75)] hover:bg-[rgba(3,189,71,1)] text-white px-4 py-1 text-xs rounded-lg mb-2"
                 onClick={async () => {
                   console.log('set status to delivered', product);
+                  const deliveredTime = Date.now();
+                  product['deliveredAt'] = deliveredTime;
 
                   const res = await updateProductStatus(
                     product,
@@ -247,7 +249,7 @@ ${totalPrice}
                   if (res) {
                     console.log('set state to delivered');
                     setStatus('Delivered');
-                    setDeliveredAt(res);
+                    setDeliveredAt(deliveredTime);
                   } else {
                     console.log('do not change status');
                   }
