@@ -47,7 +47,7 @@ export function Product({ product }: { product: any }) {
         </TableCell>
 
         <TableCell className="font-medium text-center  p-1">
-          {product.phoneNumber}
+          {product.phoneNumber ? product.phoneNumber : product.uid}
         </TableCell>
         <TableCell className="hidden sm:table-cell w-[50px] text-ellipsis overflow-hidden p-1">
           {product.address?.title?.substring(0, 20)}
