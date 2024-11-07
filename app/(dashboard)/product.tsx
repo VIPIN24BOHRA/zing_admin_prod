@@ -186,7 +186,7 @@ ${product.address.title},
 ${product.address?.houseDetails},
 ${product.address?.landmark ?? ''}
 
-phone number: ${product.phoneNumber}
+phone number: ${product.phoneNumber ? product.phoneNumber : product.uid}
 
 Items: 
 ${product?.cartItems
