@@ -23,10 +23,10 @@ export const updateProductStatus = async (
 
   try {
     await set(orderRef, updatedProduct);
-    return true;
+    return  updatedProduct['deliveredAt'];
   } catch (err) {
     console.log(`error while updateProductStatus ${err}`);
-    return false;
+    return 0;
   }
 };
 export const getRatings = async (orderId: string) => {

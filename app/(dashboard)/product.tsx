@@ -77,12 +77,18 @@ export function Product({ product }: { product: any }) {
             : 0}
         </TableCell>
         <TableCell className="hidden md:table-cell  p-1 text-center">
-          {' '}
-          {deliveredAt
-            ? new Date(deliveredAt).toDateString()?.substring(3)
-            : ''}
           <br />
-          {deliveredAt ? new Date(deliveredAt).toLocaleTimeString() : '-'}
+          {deliveredAt
+            ? Math.floor(
+                ((deliveredAt - product.createdAt) % (1000 * 60 * 60)) /
+                  (1000 * 60)
+              ) +
+              'min ' +
+              Math.floor(
+                ((deliveredAt - product.createdAt) % (1000 * 60)) / 1000
+              ) +
+              'sec '
+            : '-'}
         </TableCell>
         <TableCell className="hidden md:table-cell  p-1">
           {deliveryRating ? (
@@ -241,6 +247,7 @@ ${totalPrice}
                   if (res) {
                     console.log('set state to delivered');
                     setStatus('Delivered');
+                    setDeliveredAt(res);
                   } else {
                     console.log('do not change status');
                   }
