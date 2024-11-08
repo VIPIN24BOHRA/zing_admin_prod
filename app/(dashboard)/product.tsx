@@ -179,7 +179,9 @@ export function Product({ product }: { product: any }) {
                 onClick={async () => {
                   console.log(product);
                   // setShowModal(true);
-                  const value = `Address:
+                  const value = `Order No :- ${product.orderNo}
+
+ Address:
 ${`https://www.google.com/maps?q=${product.address?.lat},${product.address?.lng}`}
 ${product.address.addressType},
 ${product.address.title}, 
@@ -400,6 +402,13 @@ ${totalPrice}
                       >
                         Order Details
                       </h3>
+
+                      <div className="mt-4">
+                        <p className="font-bold">Order no</p>
+                        <p className="text-sm text-gray-500">
+                          {product.orderNo}
+                        </p>
+                      </div>
                       <div className="mt-4">
                         <p className="font-bold">Items Orderd</p>
                         <p className="text-sm text-gray-500">
