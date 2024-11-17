@@ -2,7 +2,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 import { Button } from '@/components/ui/button';
-import { ProductsTable } from './products-table';
+
 import { useEffect, useState } from 'react';
 import {
   get,
@@ -17,6 +17,7 @@ import {
 } from 'firebase/database';
 import { app } from '@/lib/db';
 import SnackbarNotification from '@/components/snackbar/snackbar';
+import { ProductsTable } from '../products-table';
 
 export default function ProductsPage({
   searchParams
@@ -40,16 +41,23 @@ export default function ProductsPage({
         if (snapshot.exists()) {
           const data = snapshot.val();
 
+          let idx = 0;
+
           const Orders =
             Object.keys(data ?? {})
-              ?.map((key, idx) => {
-                if (data[key].createdAt)
+              ?.map((key) => {
+                if (
+                  data[key]?.cartItems?.length == 1 &&
+                  data[key].cartItems[0]?.item?.title == 'Rasmalai' &&
+                  data[key].createdAt
+                ) {
+                  idx++;
                   return {
                     ...data[key],
                     key: key,
-                    orderNo: idx + 1
+                    orderNo: idx
                   };
-                else null;
+                } else return null;
               })
               ?.filter((v) => v != null) ?? [];
           Orders.sort((a, b) => b.createdAt - a.createdAt);
@@ -81,7 +89,6 @@ export default function ProductsPage({
             newOrder.cartItems[0]?.item?.title == 'Rasmalai'
           ) {
             // do not read the data;
-          } else {
             setProduct((prevProducts) => [
               {
                 ...newOrder,
@@ -137,26 +144,7 @@ export default function ProductsPage({
 
         <TabsList>
           <TabsTrigger value="all">All</TabsTrigger>
-          {/* <TabsTrigger value="active">Active</TabsTrigger>
-          <TabsTrigger value="draft">Draft</TabsTrigger>
-          <TabsTrigger value="archived" className="hidden sm:flex">
-            Archived
-          </TabsTrigger> */}
         </TabsList>
-        {/* <div className="ml-auto flex items-center gap-2">
-          <Button size="sm" variant="outline" className="h-8 gap-1">
-            <File className="h-3.5 w-3.5" />
-            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-              Export
-            </span>
-          </Button>
-          <Button size="sm" className="h-8 gap-1">
-            <PlusCircle className="h-3.5 w-3.5" />
-            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-              Add Product
-            </span>
-          </Button>
-        </div> */}
       </div>
       <TabsContent value="all">
         <ProductsTable products={product} offset={0} totalProducts={0} />

@@ -13,20 +13,40 @@ export const updateProductStatus = async (
   key: string
 ) => {
   const db = getDatabase(app);
-  const orderRef = ref(db, `orders/${key}`);
-
-  const updatedProduct = { ...product, status };
-
-  delete updatedProduct.key;
+  const orderRef = ref(db, `orders/${key}/status`);
 
   try {
-    await set(orderRef, updatedProduct);
+    await set(orderRef, status);
     return true;
   } catch (err) {
     console.log(`error while updateProductStatus ${err}`);
     return false;
   }
 };
+
+export const updateWalletprice = async (
+  walletId: string,
+  cashPoint: number
+) => {
+  const db = getDatabase(app);
+  const walletRef = ref(db, `wallet/${walletId}/points`);
+
+  try {
+    const pointSnapshot = await get(walletRef);
+    if (pointSnapshot.exists()) {
+      if (pointSnapshot.val() >= 1000) return true;
+      else if (pointSnapshot.val() + cashPoint > 1000)
+        await set(walletRef, 1000);
+      else await set(walletRef, pointSnapshot.val() + cashPoint);
+    } else await set(walletRef, cashPoint);
+    console.log(`wallet price updated succesfully`);
+    return true;
+  } catch (err) {
+    console.log(`error while updateProductStatus ${err}`);
+    return false;
+  }
+};
+
 export const getRatings = async (orderId: string) => {
   const db = getDatabase(app);
   const ratingsRef = ref(db, `ratings/${orderId}`);

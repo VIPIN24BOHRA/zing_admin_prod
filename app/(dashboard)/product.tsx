@@ -16,7 +16,8 @@ import {
   copyToClipboard,
   getRatings,
   sendMessage,
-  updateProductStatus
+  updateProductStatus,
+  updateWalletprice
 } from '@/lib/utils';
 import { Alert, ratingClasses } from '@mui/material';
 import StarRatings from 'react-star-ratings';
@@ -239,6 +240,17 @@ ${totalPrice}
                     'Delivered',
                     product.key
                   );
+
+                  if (
+                    product.coupon == 'REFERALCODE' &&
+                    product.refferal &&
+                    product.pointsEarned
+                  ) {
+                    await updateWalletprice(
+                      product.refferal,
+                      product.pointsEarned
+                    );
+                  }
 
                   await sendMessage(
                     product.uid,
