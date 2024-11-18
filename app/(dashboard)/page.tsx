@@ -40,25 +40,28 @@ export default function ProductsPage({
         if (snapshot.exists()) {
           const data = snapshot.val();
 
+          let idx = 0;
+
           const Orders =
             Object.keys(data ?? {})
-              ?.map((key, idx) => {
+              ?.map((key) => {
                 if (
                   data[key]?.cartItems?.length == 1 &&
                   data[key].cartItems[0]?.item?.title == 'Rasmalai'
                 )
                   return null;
-                else if (data[key].createdAt)
+                else if (data[key].createdAt) {
+                  idx++;
                   return {
                     ...data[key],
                     key: key,
-                    orderNo: idx + 1
+                    orderNo: idx
                   };
-                else null;
+                } else null;
               })
               ?.filter((v) => v != null) ?? [];
           Orders.sort((a, b) => b.createdAt - a.createdAt);
-
+          console.log(Orders, Orders.length);
           setProduct(Orders);
         }
       })
