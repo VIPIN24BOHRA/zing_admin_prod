@@ -1,5 +1,13 @@
 import { type ClassValue, clsx } from 'clsx';
-import { getDatabase, ref, set, get } from 'firebase/database';
+import {
+  getDatabase,
+  ref,
+  set,
+  get,
+  orderByChild,
+  query,
+  equalTo
+} from 'firebase/database';
 import { twMerge } from 'tailwind-merge';
 import { app } from '@/lib/db';
 
@@ -44,6 +52,25 @@ export const updateWalletprice = async (
   } catch (err) {
     console.log(`error while updateProductStatus ${err}`);
     return false;
+  }
+};
+
+export const getTotalOrders = async (uid: string) => {
+  const db = getDatabase(app);
+  const orderRef = ref(db, `orders/`);
+  console.log('total orders is runnig ', uid);
+  try {
+    const ordersSnapShot = await get(
+      query(orderRef, orderByChild('uid'), equalTo(uid))
+    );
+
+    if (ordersSnapShot.exists()) {
+      return ordersSnapShot.val();
+    }
+    return [];
+  } catch (err) {
+    console.log(err);
+    return [];
   }
 };
 

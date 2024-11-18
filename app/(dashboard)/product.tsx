@@ -15,12 +15,15 @@ import { useState } from 'react';
 import {
   copyToClipboard,
   getRatings,
+  getTotalOrders,
   sendMessage,
   updateProductStatus,
   updateWalletprice
 } from '@/lib/utils';
 import { Alert, ratingClasses } from '@mui/material';
 import StarRatings from 'react-star-ratings';
+import { OrderDetailsModal } from '@/components/orderDetailsModal';
+import { AllOrderDetailsModal } from '@/components/allOrdersModal';
 
 export function Product({ product }: { product: any }) {
   const [showModal, setShowModal] = useState(false);
@@ -29,6 +32,10 @@ export function Product({ product }: { product: any }) {
   const [deliveredAt, setDeliveredAt] = useState(product.deliveredAt ?? 0);
   const [deliveryRating, setDeliveryRating] = useState(0);
   const [tasteRating, setTasteRating] = useState(0);
+
+  const [allOrders, setAllOrders] = useState<any>(null);
+
+  const [showAllOrders, setShowAllOrders] = useState(false);
 
   const totalPrice =
     product.totalPrice -
@@ -42,7 +49,30 @@ export function Product({ product }: { product: any }) {
 
   return (
     <>
-      <TableRow>
+      <TableRow
+        onClick={async () => {
+          console.log('row is clicked');
+          const data = await getTotalOrders(product.uid);
+
+          const allOrders =
+            Object.keys(data ?? {})
+              ?.map((key, idx) => {
+                if (data[key].createdAt)
+                  return {
+                    ...data[key],
+                    key: key,
+                    orderNo: idx + 1
+                  };
+                else null;
+              })
+              ?.filter((v) => v != null) ?? [];
+
+          allOrders.sort((a, b) => b.createdAt - a.createdAt);
+
+          setAllOrders(allOrders);
+          setShowAllOrders(true);
+        }}
+      >
         <TableCell className="font-medium text-center p-1">
           #{product.orderNo}
         </TableCell>
@@ -126,7 +156,9 @@ export function Product({ product }: { product: any }) {
           {deliveryRating == 0 && tasteRating == 0 ? (
             <div
               className="group/refresh relative cursor-pointer"
-              onClick={async () => {
+              onClick={async (event) => {
+                event.stopPropagation();
+
                 console.log(product.key);
                 let rating = await getRatings(product.key);
 
@@ -177,7 +209,8 @@ export function Product({ product }: { product: any }) {
             <div className="flex flex-col items-center mr-2">
               <button
                 className="relative w-[120px] border-[1px] border-[#000] hover:bg-black  text-black hover:text-white px-4 py-1 text-xs rounded-lg mb-2 "
-                onClick={async () => {
+                onClick={async (event) => {
+                  event.stopPropagation();
                   console.log(product);
                   // setShowModal(true);
                   const value = `Order No :- ${product.orderNo}
@@ -221,7 +254,8 @@ ${totalPrice}
               </button>
               <button
                 className="w-[120px] border-none bg-[#ff000088] hover:bg-[#ff0000] text-white px-4 py-1 text-xs rounded-lg mb-2 "
-                onClick={() => {
+                onClick={(event) => {
+                  event.stopPropagation();
                   console.log(product);
                   setShowModal(true);
                 }}
@@ -230,7 +264,8 @@ ${totalPrice}
               </button>
               <button
                 className=" w-[120px] border-none bg-[rgba(3,189,71,0.75)] hover:bg-[rgba(3,189,71,1)] text-white px-4 py-1 text-xs rounded-lg mb-2"
-                onClick={async () => {
+                onClick={async (event) => {
+                  event.stopPropagation();
                   console.log('set status to delivered', product);
                   const deliveredTime = Date.now();
                   product['deliveredAt'] = deliveredTime;
@@ -275,7 +310,8 @@ ${totalPrice}
             <div className="flex flex-col items-center ">
               <button
                 className="w-[120px] border-none bg-[rgba(255,124,2,0.65)] hover:bg-[rgba(255,124,2,1)] text-white px-4 py-1 text-xs rounded-lg mb-2"
-                onClick={async () => {
+                onClick={async (event) => {
+                  event.stopPropagation();
                   console.log('set status to delivered', product);
 
                   const res = await updateProductStatus(
@@ -303,7 +339,8 @@ ${totalPrice}
 
               <button
                 className="w-[120px] border-none bg-[rgba(255,0,0,0.55)] hover:bg-[rgba(255,0,0,1)] text-white px-4 py-1 text-xs rounded-lg mb-2"
-                onClick={async () => {
+                onClick={async (event) => {
+                  event.stopPropagation();
                   console.log('set status to delivered', product);
 
                   const res = await updateProductStatus(
@@ -332,7 +369,8 @@ ${totalPrice}
 
               <button
                 className="w-[120px] border-none bg-[rgba(255,0,0,0.55)] hover:bg-[rgba(255,0,0,1)] text-white px-4 py-1 text-xs rounded-lg mb-2"
-                onClick={async () => {
+                onClick={async (event) => {
+                  event.stopPropagation();
                   console.log('set status to delivered', product);
 
                   const res = await updateProductStatus(
@@ -360,7 +398,8 @@ ${totalPrice}
               </button>
               <button
                 className="w-[120px] border-none bg-[rgba(0,0,255,0.55)] hover:bg-[rgba(0,0,255,1)] text-white px-4 py-1 text-xs rounded-lg mb-2"
-                onClick={async () => {
+                onClick={async (event) => {
+                  event.stopPropagation();
                   console.log('set status to delivered', product);
 
                   const res = await updateProductStatus(
@@ -391,102 +430,17 @@ ${totalPrice}
         </TableCell>
       </TableRow>
       {showModal && (
-        <div
-          className="fixed z-10"
-          aria-labelledby="modal-title"
-          role="dialog"
-          aria-modal="true"
-        >
-          <div
-            className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
-            aria-hidden="true"
-          ></div>
-
-          <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
-            <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-              <div className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg">
-                <div className="bg-white px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
-                  <div className="sm:flex sm:items-start">
-                    <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-                      <h3
-                        className="text-base font-semibold leading-6 text-gray-900"
-                        id="modal-title"
-                      >
-                        Order Details
-                      </h3>
-
-                      <div className="mt-4">
-                        <p className="font-bold">Order no</p>
-                        <p className="text-sm text-gray-500">
-                          {product.orderNo}
-                        </p>
-                      </div>
-                      <div className="mt-4">
-                        <p className="font-bold">Items Orderd</p>
-                        <p className="text-sm text-gray-500">
-                          {product.cartItems.map((cItem: any) => {
-                            return (
-                              <p>
-                                {cItem?.item?.title}
-                                {' - '}
-                                <span>{cItem?.quantity}</span>
-                              </p>
-                            );
-                          })}
-                        </p>
-                      </div>
-
-                      <div className="mt-4">
-                        <p className="font-bold">Address</p>
-                        <p className="text-sm text-gray-500">
-                          <a
-                            href={`https://www.google.com/maps?q=${product.address?.lat},${product.address?.lng}`}
-                            target="_blank"
-                            className="text-[rgb(0,0,255)]"
-                          >
-                            https://www.google.com/maps?q={product.address?.lat}
-                            ,{product.address?.lng}
-                          </a>
-
-                          <p>{product.address?.addressType}</p>
-
-                          <p>{product.address?.title}</p>
-                          <p>{product.address?.houseDetails}</p>
-                          <p>{product.address?.landmark}</p>
-                        </p>
-                      </div>
-
-                      <div className="mt-4">
-                        <p className="font-bold">Price details</p>
-                        <p className="text-sm text-gray-500">
-                          <p>
-                            <span>Total Price {'  -  '}</span>
-                            {totalPrice}
-                          </p>
-                          <p>
-                            <span>Discount {'  -  '}</span>
-                            {product?.discount ?? 0}
-                          </p>
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
-                  <button
-                    type="button"
-                    className="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
-                    onClick={() => {
-                      setShowModal(false);
-                    }}
-                  >
-                    Close
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <OrderDetailsModal
+          product={product}
+          totalPrice={totalPrice}
+          setShowModal={setShowModal}
+        />
+      )}
+      {showAllOrders && (
+        <AllOrderDetailsModal
+          allOrders={allOrders}
+          setShowModal={setShowAllOrders}
+        />
       )}
     </>
   );

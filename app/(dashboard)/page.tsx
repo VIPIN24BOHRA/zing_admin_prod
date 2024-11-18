@@ -43,7 +43,12 @@ export default function ProductsPage({
           const Orders =
             Object.keys(data ?? {})
               ?.map((key, idx) => {
-                if (data[key].createdAt)
+                if (
+                  data[key]?.cartItems?.length == 1 &&
+                  data[key].cartItems[0]?.item?.title == 'Rasmalai'
+                )
+                  return null;
+                else if (data[key].createdAt)
                   return {
                     ...data[key],
                     key: key,
