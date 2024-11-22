@@ -16,9 +16,9 @@ import {
   copyToClipboard,
   getRatings,
   getTotalOrders,
-  sendMessage,
   updateProductStatus,
-  updateWalletprice
+  updateStatusCancelled,
+  updateStatusDelivered
 } from '@/lib/utils';
 import { Alert, ratingClasses } from '@mui/material';
 import StarRatings from 'react-star-ratings';
@@ -270,29 +270,7 @@ ${totalPrice}
                   const deliveredTime = Date.now();
                   product['deliveredAt'] = deliveredTime;
 
-                  const res = await updateProductStatus(
-                    product,
-                    'Delivered',
-                    product.key
-                  );
-
-                  if (product.refferal && product.pointsEarned) {
-                    await updateWalletprice(
-                      product.refferal,
-                      product.pointsEarned
-                    );
-
-                    // send msg for successful cashpoint earned.
-                  }
-
-                  await sendMessage(
-                    product.uid,
-                    process?.env?.NEXT_PUBLIC_WEB_API_KEY ?? '',
-                    'Order Delivered ✅',
-                    `🍽️😋 Enjoy your food!`,
-                    { title: product.cartItems[0].item.title }
-                  );
-
+                  const res = await updateStatusDelivered(product, product.key);
                   if (res) {
                     console.log('set state to delivered');
                     setStatus('Delivered');
@@ -317,15 +295,9 @@ ${totalPrice}
                     'OUT FOR DELIVERY',
                     product.key
                   );
-                  await sendMessage(
-                    product.uid,
-                    process?.env?.NEXT_PUBLIC_WEB_API_KEY ?? '',
-                    'Out for delivery',
-                    'Our delivery executive will reach your location in 5 minutes',
-                    { title: product.cartItems[0].item.title }
-                  );
+
                   if (res) {
-                    console.log('set state to delivered');
+                    console.log('set state to out for delivery');
                     setStatus('OUT FOR DELIVERY');
                   } else {
                     console.log('do not change status');
@@ -341,21 +313,14 @@ ${totalPrice}
                   event.stopPropagation();
                   console.log('set status to delivered', product);
 
-                  const res = await updateProductStatus(
+                  const res = await updateStatusCancelled(
                     product,
-                    'CANCELLED',
-                    product.key
-                  );
-                  await sendMessage(
-                    product.uid,
-                    process?.env?.NEXT_PUBLIC_WEB_API_KEY ?? '',
-                    'Order CANCELLED ❌',
-                    `Item out of stock `,
-                    { title: product.cartItems[0].item.title }
+                    product.key,
+                    'Out of Stock'
                   );
 
                   if (res) {
-                    console.log('set state to delivered');
+                    console.log('set state to cancelled');
                     setStatus('CANCELLED');
                   } else {
                     console.log('do not change status');
@@ -371,21 +336,14 @@ ${totalPrice}
                   event.stopPropagation();
                   console.log('set status to delivered', product);
 
-                  const res = await updateProductStatus(
+                  const res = await updateStatusCancelled(
                     product,
-                    'CANCELLED',
-                    product.key
-                  );
-                  await sendMessage(
-                    product.uid,
-                    process?.env?.NEXT_PUBLIC_WEB_API_KEY ?? '',
-                    'Order CANCELLED ❌',
-                    `Location out of service area `,
-                    { title: product.cartItems[0].item.title }
+                    product.key,
+                    'Location out of service area'
                   );
 
                   if (res) {
-                    console.log('set state to delivered');
+                    console.log('set state to cancelled');
                     setStatus('CANCELLED');
                   } else {
                     console.log('do not change status');
@@ -407,18 +365,9 @@ ${totalPrice}
                   );
 
                   // if it is first order of user send refer and earn msg.
-                  
 
-
-                  await sendMessage(
-                    product.uid,
-                    process?.env?.NEXT_PUBLIC_WEB_API_KEY ?? '',
-                    'Order Accepted',
-                    `Your order will be delivered in 10 minutes`,
-                    { title: product.cartItems[0].item.title }
-                  );
                   if (res) {
-                    console.log('set state to delivered');
+                    console.log('set state to accepted');
                     setStatus('ACCEPTED');
                   } else {
                     console.log('do not change status');

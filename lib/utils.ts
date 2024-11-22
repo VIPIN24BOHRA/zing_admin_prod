@@ -22,25 +22,46 @@ export const updateProductStatus = async (
 ) => {
   const db = getDatabase(app);
 
-  if (status == 'Delivered') {
-    const orderRef = ref(db, `orders/${key}`);
-    delete product['key'];
-    try {
-      await set(orderRef, { ...product, status });
-      return true;
-    } catch (err) {
-      console.log(`error while updateProductStatus ${err}`);
-      return false;
-    }
-  } else {
-    const orderRef = ref(db, `orders/${key}/status`);
-    try {
-      await set(orderRef, status);
-      return true;
-    } catch (err) {
-      console.log(`error while updateProductStatus ${err}`);
-      return false;
-    }
+  const orderRef = ref(db, `orders/${key}/status`);
+  try {
+    await set(orderRef, status);
+    return true;
+  } catch (err) {
+    console.log(`error while updateProductStatus ${err}`);
+    return false;
+  }
+};
+
+export const updateStatusDelivered = async (product: any, key: string) => {
+  const db = getDatabase(app);
+
+  const orderRef = ref(db, `orders/${key}`);
+  delete product['key'];
+  try {
+    await set(orderRef, { ...product, status: 'Delivered' });
+    return true;
+  } catch (err) {
+    console.log(`error while updateProductStatus ${err}`);
+    return false;
+  }
+};
+
+export const updateStatusCancelled = async (
+  product: any,
+  key: string,
+  reason: string
+) => {
+  const db = getDatabase(app);
+
+  const orderRef = ref(db, `orders/${key}`);
+  delete product['key'];
+
+  try {
+    await set(orderRef, { ...product, status: 'CANCELLED', reason });
+    return true;
+  } catch (err) {
+    console.log(`error while updateProductStatus ${err}`);
+    return false;
   }
 };
 
