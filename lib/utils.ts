@@ -21,14 +21,26 @@ export const updateProductStatus = async (
   key: string
 ) => {
   const db = getDatabase(app);
-  const orderRef = ref(db, `orders/${key}/status`);
 
-  try {
-    await set(orderRef, status);
-    return true;
-  } catch (err) {
-    console.log(`error while updateProductStatus ${err}`);
-    return false;
+  if (status == 'Delivered') {
+    const orderRef = ref(db, `orders/${key}`);
+    delete product['key'];
+    try {
+      await set(orderRef, { ...product, status });
+      return true;
+    } catch (err) {
+      console.log(`error while updateProductStatus ${err}`);
+      return false;
+    }
+  } else {
+    const orderRef = ref(db, `orders/${key}/status`);
+    try {
+      await set(orderRef, status);
+      return true;
+    } catch (err) {
+      console.log(`error while updateProductStatus ${err}`);
+      return false;
+    }
   }
 };
 

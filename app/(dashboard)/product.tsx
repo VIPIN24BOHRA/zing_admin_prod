@@ -276,15 +276,13 @@ ${totalPrice}
                     product.key
                   );
 
-                  if (
-                    product.coupon == 'REFERALCODE' &&
-                    product.refferal &&
-                    product.pointsEarned
-                  ) {
+                  if (product.refferal && product.pointsEarned) {
                     await updateWalletprice(
                       product.refferal,
                       product.pointsEarned
                     );
+
+                    // send msg for successful cashpoint earned.
                   }
 
                   await sendMessage(
@@ -407,6 +405,10 @@ ${totalPrice}
                     'ACCEPTED',
                     product.key
                   );
+
+                  // if it is first order of user send refer and earn msg.
+                  
+
 
                   await sendMessage(
                     product.uid,
