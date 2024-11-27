@@ -69,3 +69,17 @@ export const setWaUserDetails = async (userDetails: any) => {
     console.log('error while setUserDetails', err);
   }
 };
+
+export const addNewPaymentDeatils = async (payment: any) => {
+  if (!payment.merchantTransactionId) return;
+  const db = admin.database();
+  const ref = db.ref(
+    sanitizePath(`/paymentHistory/${payment.merchantTransactionId}`)
+  );
+
+  try {
+    await ref.set(payment);
+  } catch (err) {
+    console.log('error while setUserDetails', err);
+  }
+};
