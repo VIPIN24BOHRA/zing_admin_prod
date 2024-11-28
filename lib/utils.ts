@@ -15,11 +15,9 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export const updateProductStatus = async (
-  product: any,
-  status: string,
-  key: string
-) => {
+export const updateProductStatus = async (status: string, key: string) => {
+  if (!key) return;
+
   const db = getDatabase(app);
 
   const orderRef = ref(db, `orders/${key}/status`);
@@ -34,6 +32,8 @@ export const updateProductStatus = async (
 
 export const updateStatusDelivered = async (product: any, key: string) => {
   const db = getDatabase(app);
+
+  if (!key) return;
 
   const orderRef = ref(db, `orders/${key}`);
   delete product['key'];
@@ -51,6 +51,7 @@ export const updateStatusCancelled = async (
   key: string,
   reason: string
 ) => {
+  if (!key) return;
   const db = getDatabase(app);
 
   const orderRef = ref(db, `orders/${key}`);
@@ -69,6 +70,7 @@ export const updateWalletprice = async (
   walletId: string,
   cashPoint: number
 ) => {
+  if (!walletId) return;
   const db = getDatabase(app);
   const walletRef = ref(db, `wallet/${walletId}/points`);
 

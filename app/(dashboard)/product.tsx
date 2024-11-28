@@ -291,7 +291,6 @@ ${totalPrice}
                   console.log('set status to delivered', product);
 
                   const res = await updateProductStatus(
-                    product,
                     'OUT FOR DELIVERY',
                     product.key
                   );
@@ -359,7 +358,6 @@ ${totalPrice}
                   console.log('set status to delivered', product);
 
                   const res = await updateProductStatus(
-                    product,
                     'ACCEPTED',
                     product.key
                   );
