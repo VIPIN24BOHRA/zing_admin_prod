@@ -64,6 +64,9 @@ export function ProductsTable({
                 Coupon
               </TableHead>
               <TableHead className="hidden md:table-cell text-center">
+                payment method
+              </TableHead>
+              <TableHead className="hidden md:table-cell text-center">
                 Status
               </TableHead>
 

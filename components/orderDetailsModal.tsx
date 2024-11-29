@@ -36,6 +36,16 @@ export const OrderDetailsModal = ({
                     <p className="font-bold">Order no</p>
                     <p className="text-sm text-gray-500">{product.orderNo}</p>
                   </div>
+
+                  <div className="mt-4">
+                    <p className="text-sm text-gray-500 font-bold">
+                      {(product?.transactionDetails?.merchantTransactionId &&
+                      product?.transactionDetails?.success
+                        ? 'paid'
+                        : 'cash').toLocaleUpperCase()}
+                    </p>
+                  </div>
+
                   <div className="mt-4">
                     <p className="font-bold">Items Orderd</p>
                     <div className="text-sm text-gray-500">
