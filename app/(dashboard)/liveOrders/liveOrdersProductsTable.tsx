@@ -15,13 +15,13 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
-import { Product } from './product';
+import { LiverOrderProduct } from './liveOrdersProducts';
 
 import { useRouter } from 'next/navigation';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-export function ProductsTable({
+export function LiveOrdersProductsTable({
   products,
   offset,
   totalProducts
@@ -46,6 +46,40 @@ export function ProductsTable({
       <CardHeader>
         <CardTitle>Orders</CardTitle>
         <CardDescription>Manage your Orders and view Sales.</CardDescription>
+
+        <CardFooter>
+          <form className="flex items-center w-full justify-between">
+            <div className="text-xs text-muted-foreground">
+              Showing{' '}
+              <strong>
+                {Math.min(offset - productsPerPage, totalProducts) + 1}-{offset}
+              </strong>{' '}
+              of <strong>{totalProducts}</strong> products
+            </div>
+            <div className="flex">
+              <Button
+                formAction={prevPage}
+                variant="ghost"
+                size="sm"
+                type="submit"
+                disabled={offset === productsPerPage}
+              >
+                <ChevronLeft className="mr-2 h-4 w-4" />
+                Prev
+              </Button>
+              <Button
+                formAction={nextPage}
+                variant="ghost"
+                size="sm"
+                type="submit"
+                disabled={offset + productsPerPage > totalProducts}
+              >
+                Next
+                <ChevronRight className="ml-2 h-4 w-4" />
+              </Button>
+            </div>
+          </form>
+        </CardFooter>
       </CardHeader>
       <CardContent>
         <Table>
@@ -84,44 +118,11 @@ export function ProductsTable({
           </TableHeader>
           <TableBody>
             {products.map((product, idx) => (
-              <Product key={product.key} product={product} />
+              <LiverOrderProduct key={product.key} product={product} />
             ))}
           </TableBody>
         </Table>
       </CardContent>
-      <CardFooter>
-        <form className="flex items-center w-full justify-between">
-          {/* <div className="text-xs text-muted-foreground">
-            Showing{' '}
-            <strong>
-              {Math.min(offset - productsPerPage, totalProducts) + 1}-{offset}
-            </strong>{' '}
-            of <strong>{totalProducts}</strong> products
-          </div> */}
-          <div className="flex">
-            {/* <Button
-              formAction={prevPage}
-              variant="ghost"
-              size="sm"
-              type="submit"
-              disabled={offset === productsPerPage}
-            >
-              <ChevronLeft className="mr-2 h-4 w-4" />
-              Prev
-            </Button>
-            <Button
-              formAction={nextPage}
-              variant="ghost"
-              size="sm"
-              type="submit"
-              disabled={offset + productsPerPage > totalProducts}
-            >
-              Next
-              <ChevronRight className="ml-2 h-4 w-4" />
-            </Button> */}
-          </div>
-        </form>
-      </CardFooter>
     </Card>
   );
 }

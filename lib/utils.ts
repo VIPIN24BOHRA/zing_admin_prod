@@ -30,6 +30,80 @@ export const updateProductStatus = async (status: string, key: string) => {
   }
 };
 
+export const downloadCSV = (csvData: any, fileName = 'orders.csv') => {
+  const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+
+  // Create a temporary anchor element
+  const link = document.createElement('a');
+  link.href = url;
+  link.setAttribute('download', fileName);
+  document.body.appendChild(link);
+
+  // Trigger download
+  link.click();
+
+  // Clean up
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+};
+
+export const convertToCSV = (data: any) => {
+  if (!data || data.length === 0) return '';
+
+  // parse data here.
+  const parsedData = data
+    .map((order: any) => {
+      return order.cartItems.map((item: any, idx: number) => {
+        if (idx == 0)
+          return {
+            createdAt: new Date(order.createdAt).toLocaleDateString(),
+            coupon: order?.coupon ?? '',
+            deliveredAt: order.deliveredAt
+              ? new Date(order.deliveredAt).toLocaleDateString()
+              : '',
+            deliveryFee: order.deliveryFee,
+            orderNo: order.orderNo,
+            status: order.status,
+            quantity: order.cartItems.length,
+            phoneNumber: order.uid,
+            totalPrice: order.totalPrice,
+            discount: order.discount,
+            cart: `${item.item.title} :- ${item.quantity}`
+          };
+        else
+          return {
+            createdAt: '',
+            coupon: '',
+            deliveredAt: '',
+            deliveryFee: '',
+            orderNo: '',
+            status: '',
+            quantity: '',
+            phoneNumber: '',
+            totalPrice: '',
+            discount: '',
+            cart: `${item.item.title} :- ${item.quantity}`
+          };
+      });
+    })
+    .flat();
+
+  const headers = Object.keys(parsedData[0]).join(',');
+
+  // Extract rows
+  const rows = parsedData
+    .map((row: any) =>
+      Object.values(row)
+        .map((value) => `"${value}"`) // Escape values
+        .join(',')
+    )
+    .join('\n');
+
+  // Combine headers and rows
+  return `${headers}\n${rows}`;
+};
+
 export const updateStatusDelivered = async (product: any, key: string) => {
   const db = getDatabase(app);
 

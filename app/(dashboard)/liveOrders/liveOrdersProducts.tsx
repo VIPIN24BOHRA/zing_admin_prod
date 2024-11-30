@@ -1,16 +1,4 @@
-import Image from 'next/image';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger
-} from '@/components/ui/dropdown-menu';
-import { MoreHorizontal } from 'lucide-react';
 import { TableCell, TableRow } from '@/components/ui/table';
-import { deleteProduct } from './actions';
 import { useState } from 'react';
 import {
   copyToClipboard,
@@ -25,7 +13,7 @@ import StarRatings from 'react-star-ratings';
 import { OrderDetailsModal } from '@/components/orderDetailsModal';
 import { AllOrderDetailsModal } from '@/components/allOrdersModal';
 
-export function Product({ product }: { product: any }) {
+export function LiverOrderProduct({ product }: { product: any }) {
   const [showModal, setShowModal] = useState(false);
   const [copied, setCopied] = useState(false);
   const [status, setStatus] = useState(product.status ?? '');

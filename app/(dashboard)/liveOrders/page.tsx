@@ -2,7 +2,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 import { Button } from '@/components/ui/button';
-
+import { LiveOrdersProductsTable } from './liveOrdersProductsTable';
 import { useEffect, useState } from 'react';
 import {
   get,
@@ -17,7 +17,7 @@ import {
 } from 'firebase/database';
 import { app } from '@/lib/db';
 import SnackbarNotification from '@/components/snackbar/snackbar';
-import { ProductsTable } from '../products-table';
+// import { PlusCircle, File } from 'lucide-react';
 
 export default function ProductsPage({
   searchParams
@@ -48,20 +48,21 @@ export default function ProductsPage({
               ?.map((key) => {
                 if (
                   data[key]?.cartItems?.length == 1 &&
-                  data[key].cartItems[0]?.item?.title == 'Rasmalai' &&
-                  data[key].createdAt
-                ) {
+                  data[key].cartItems[0]?.item?.title == 'Rasmalai'
+                )
+                  return null;
+                else if (data[key].createdAt) {
                   idx++;
                   return {
                     ...data[key],
                     key: key,
                     orderNo: idx
                   };
-                } else return null;
+                } else null;
               })
               ?.filter((v) => v != null) ?? [];
           Orders.sort((a, b) => b.createdAt - a.createdAt);
-
+          console.log(Orders, Orders.length);
           setProduct(Orders);
         }
       })
@@ -89,6 +90,7 @@ export default function ProductsPage({
             newOrder.cartItems[0]?.item?.title == 'Rasmalai'
           ) {
             // do not read the data;
+          } else {
             setProduct((prevProducts) => [
               {
                 ...newOrder,
@@ -142,12 +144,27 @@ export default function ProductsPage({
 
         <SnackbarNotification show={showSnackbar} />
 
-        <TabsList>
-          <TabsTrigger value="all">All</TabsTrigger>
-        </TabsList>
+        {/* <div className="ml-auto flex items-center gap-2">
+          <Button size="sm" variant="outline" className="h-8 gap-1">
+            <File className="h-3.5 w-3.5" />
+            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+              Export
+            </span>
+          </Button>
+          <Button size="sm" className="h-8 gap-1">
+            <PlusCircle className="h-3.5 w-3.5" />
+            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+              Add Product
+            </span>
+          </Button>
+        </div> */}
       </div>
       <TabsContent value="all">
-        <ProductsTable products={product} offset={0} totalProducts={0} />
+        <LiveOrdersProductsTable
+          products={product}
+          offset={0}
+          totalProducts={0}
+        />
       </TabsContent>
     </Tabs>
   );
