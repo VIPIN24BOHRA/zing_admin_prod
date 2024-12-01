@@ -1,19 +1,9 @@
 import { TableCell, TableRow } from '@/components/ui/table';
-
 import { useState } from 'react';
-import { getRatings, getTotalOrders } from '@/lib/utils';
-
-import StarRatings from 'react-star-ratings';
 import { OrderDetailsModal } from '@/components/orderDetailsModal';
-import { AllOrderDetailsModal } from '@/components/allOrdersModal';
 
 export function Product({ product }: { product: any }) {
   const [showModal, setShowModal] = useState(false);
-  const [copied, setCopied] = useState(false);
-  const [status, setStatus] = useState(product.status ?? '');
-  const [deliveredAt, setDeliveredAt] = useState(product.deliveredAt ?? 0);
-  const [deliveryRating, setDeliveryRating] = useState(0);
-  const [tasteRating, setTasteRating] = useState(0);
 
   const totalPrice =
     product.totalPrice -
@@ -62,11 +52,11 @@ export function Product({ product }: { product: any }) {
         <TableCell
           className="hidden md:table-cell text-center text-[rgba(3,189,71,1)] font-bold p-1 text-[12px]"
           style={
-            status == 'Delivered'
+            product.status == 'Delivered'
               ? { color: 'rgba(3,189,71,1)' }
               : { color: 'rgba(255,124,2,1)' }
           }
-        >{`${status ? status : '-'}`}</TableCell>
+        >{`${product.status ? product.status : '-'}`}</TableCell>
         <TableCell className="hidden md:table-cell text-[12px] p-1">
           {product.createdAt
             ? new Date(product.createdAt).toDateString()?.substring(3)
@@ -79,19 +69,21 @@ export function Product({ product }: { product: any }) {
         </TableCell>
         <TableCell className="hidden md:table-cell text-[12px] p-1 text-center">
           <br />
-          {deliveredAt
-            ? (Math.floor((deliveredAt - product.createdAt) / (1000 * 60 * 60))
+          {product.deliveredAt
+            ? (Math.floor(
+                (product.deliveredAt - product.createdAt) / (1000 * 60 * 60)
+              )
                 ? Math.floor(
-                    (deliveredAt - product.createdAt) / (1000 * 60 * 60)
+                    (product.deliveredAt - product.createdAt) / (1000 * 60 * 60)
                   ) + 'h '
                 : '') +
               Math.floor(
-                ((deliveredAt - product.createdAt) % (1000 * 60 * 60)) /
+                ((product.deliveredAt - product.createdAt) % (1000 * 60 * 60)) /
                   (1000 * 60)
               ) +
               'min ' +
               Math.floor(
-                ((deliveredAt - product.createdAt) % (1000 * 60)) / 1000
+                ((product.deliveredAt - product.createdAt) % (1000 * 60)) / 1000
               ) +
               'sec '
             : '-'}

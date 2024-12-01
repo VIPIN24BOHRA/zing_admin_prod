@@ -42,7 +42,8 @@ export const OrderDetailsModal = ({
                       {(product?.transactionDetails?.merchantTransactionId &&
                       product?.transactionDetails?.success
                         ? 'paid'
-                        : 'cash').toLocaleUpperCase()}
+                        : 'cash'
+                      ).toLocaleUpperCase()}
                     </p>
                   </div>
 
