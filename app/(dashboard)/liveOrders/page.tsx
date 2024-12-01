@@ -27,8 +27,18 @@ export default function ProductsPage({
   const [product, setProduct] = useState<any[]>([]);
   const [showSnackbar, setShowSnackBar] = useState(false);
   const [showPopUp, setShowPopUp] = useState(true);
+  const [isOnline, setOnline] = useState(true);
   const search = searchParams.q ?? '';
   const offset = searchParams.offset ?? 0;
+
+  useEffect(() => {
+    // onoffline version
+    window.onoffline = (event) => {
+      console.log('The network connection has been lost.');
+      console.log(event);
+      setOnline(false);
+    };
+  });
 
   useEffect(() => {
     const db = getDatabase(app);
@@ -120,6 +130,30 @@ export default function ProductsPage({
   return (
     <Tabs defaultValue="all">
       <div className="flex items-center">
+
+
+      {!isOnline ? (
+          <div className="fixed w-full h-[100vh] bg-[#aaaa] top-0 z-[100] flex flex-row justify-center items-center">
+            <div className="bg-white p-4 rounded-lg">
+              <p className="mb-8">
+                <span className="font-bold">
+                  You are offline please connect to network and refersh the page
+                </span>
+                <br />
+                <br />
+                <span>Connect and referesh</span>
+              </p>
+              <Button
+                onClick={() => {
+                  window.location.reload();
+                }}
+              >
+                Refresh
+              </Button>
+            </div>
+          </div>
+        ) : null}
+
         {showPopUp ? (
           <div className="fixed w-full h-[100vh] bg-[#aaaa] top-0 z-[100] flex flex-row justify-center items-center">
             <div className="bg-white p-4 rounded-lg">
@@ -143,28 +177,9 @@ export default function ProductsPage({
         ) : null}
 
         <SnackbarNotification show={showSnackbar} />
-
-        {/* <div className="ml-auto flex items-center gap-2">
-          <Button size="sm" variant="outline" className="h-8 gap-1">
-            <File className="h-3.5 w-3.5" />
-            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-              Export
-            </span>
-          </Button>
-          <Button size="sm" className="h-8 gap-1">
-            <PlusCircle className="h-3.5 w-3.5" />
-            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-              Add Product
-            </span>
-          </Button>
-        </div> */}
       </div>
       <TabsContent value="all">
-        <LiveOrdersProductsTable
-          products={product}
-          offset={0}
-          totalProducts={0}
-        />
+        <LiveOrdersProductsTable products={product} />
       </TabsContent>
     </Tabs>
   );

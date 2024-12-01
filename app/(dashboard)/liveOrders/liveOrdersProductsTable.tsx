@@ -11,75 +11,23 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle
 } from '@/components/ui/card';
 import { LiverOrderProduct } from './liveOrdersProducts';
 
-import { useRouter } from 'next/navigation';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-
-export function LiveOrdersProductsTable({
-  products,
-  offset,
-  totalProducts
-}: {
-  products: any[];
-  offset: number;
-  totalProducts: number;
-}) {
-  let router = useRouter();
-  let productsPerPage = 100;
-
-  function prevPage() {
-    router.back();
-  }
-
-  function nextPage() {
-    router.push(`/?offset=${offset}`, { scroll: false });
-  }
-
+export function LiveOrdersProductsTable({ products }: { products: any[] }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Orders</CardTitle>
+        <CardTitle className="flex flex-row items-center">
+          Live orders{' '}
+          <span className="ml-4 relative flex items-center justify-center h-4 w-4">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-gray-400 opacity-75"></span>
+            <span className="relative inline-flex rounded-full h-3 w-3 bg-black"></span>
+          </span>
+        </CardTitle>
         <CardDescription>Manage your Orders and view Sales.</CardDescription>
-
-        <CardFooter>
-          <form className="flex items-center w-full justify-between">
-            <div className="text-xs text-muted-foreground">
-              Showing{' '}
-              <strong>
-                {Math.min(offset - productsPerPage, totalProducts) + 1}-{offset}
-              </strong>{' '}
-              of <strong>{totalProducts}</strong> products
-            </div>
-            <div className="flex">
-              <Button
-                formAction={prevPage}
-                variant="ghost"
-                size="sm"
-                type="submit"
-                disabled={offset === productsPerPage}
-              >
-                <ChevronLeft className="mr-2 h-4 w-4" />
-                Prev
-              </Button>
-              <Button
-                formAction={nextPage}
-                variant="ghost"
-                size="sm"
-                type="submit"
-                disabled={offset + productsPerPage > totalProducts}
-              >
-                Next
-                <ChevronRight className="ml-2 h-4 w-4" />
-              </Button>
-            </div>
-          </form>
-        </CardFooter>
       </CardHeader>
       <CardContent>
         <Table>
@@ -110,10 +58,6 @@ export function LiveOrdersProductsTable({
               <TableHead className="hidden md:table-cell text-center">
                 Delivered at
               </TableHead>
-              <TableHead className="hidden md:table-cell text-center">
-                Rating
-              </TableHead>
-              <TableHead className="text-center">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>

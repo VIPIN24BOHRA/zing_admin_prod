@@ -57,7 +57,8 @@ export const convertToCSV = (data: any) => {
       return order.cartItems.map((item: any, idx: number) => {
         if (idx == 0)
           return {
-            createdAt: new Date(order.createdAt).toLocaleDateString(),
+            createdDate: new Date(order.createdAt).toLocaleDateString(),
+            createdTime: new Date(order.createdAt).toLocaleTimeString(),
             coupon: order?.coupon ?? '',
             deliveredAt: order.deliveredAt
               ? new Date(order.deliveredAt).toLocaleDateString()
@@ -65,25 +66,28 @@ export const convertToCSV = (data: any) => {
             deliveryFee: order.deliveryFee,
             orderNo: order.orderNo,
             status: order.status,
-            quantity: order.cartItems.length,
+            totalQuantity: order.cartItems.length,
             phoneNumber: order.uid,
             totalPrice: order.totalPrice,
             discount: order.discount,
-            cart: `${item.item.title} :- ${item.quantity}`
+            cart: item.item.title,
+            quantity: item.quantity
           };
         else
           return {
             createdAt: '',
+            createdTime: '',
             coupon: '',
             deliveredAt: '',
             deliveryFee: '',
             orderNo: '',
             status: '',
-            quantity: '',
+            totalQuantity: '',
             phoneNumber: '',
             totalPrice: '',
             discount: '',
-            cart: `${item.item.title} :- ${item.quantity}`
+            cart: item.item.title,
+            quantity: item.quantity
           };
       });
     })

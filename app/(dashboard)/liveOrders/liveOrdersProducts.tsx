@@ -39,54 +39,45 @@ export function LiverOrderProduct({ product }: { product: any }) {
     <>
       <TableRow
         onClick={async () => {
-          console.log('row is clicked');
-          const data = await getTotalOrders(product.uid);
-
-          const allOrders =
-            Object.keys(data ?? {})
-              ?.map((key, idx) => {
-                if (data[key].createdAt)
-                  return {
-                    ...data[key],
-                    key: key,
-                    orderNo: idx + 1
-                  };
-                else null;
-              })
-              ?.filter((v) => v != null) ?? [];
-
-          allOrders.sort((a, b) => b.createdAt - a.createdAt);
-
-          setAllOrders(allOrders);
-          setShowAllOrders(true);
+          setShowModal(true);
         }}
       >
-        <TableCell className="font-medium text-center p-1">
+        <TableCell className="font-medium text-center text-[13px] p-1">
           #{product.orderNo}
         </TableCell>
 
-        <TableCell className="font-medium text-center  p-1">
+        <TableCell className="font-medium text-center text-[13px] p-1">
           {product.phoneNumber ? product.phoneNumber : product.uid}
         </TableCell>
-        <TableCell className="hidden sm:table-cell w-[50px] text-ellipsis overflow-hidden p-1">
-          {product.address?.title?.substring(0, 20)}
+        <TableCell className="hidden sm:table-cell text-[12px] p-1">
+          <p className="w-[180px] text-ellipsis overflow-hidden ">
+            {product.address?.title}
+          </p>
         </TableCell>
         <TableCell className="font-medium text-center p-1">
-          {product.cartItems.length}
+          {product.cartItems.map((c: any, idx: number) => (
+            <p
+              key={c?.item?.title + idx}
+              className="flex flex-row text-[13px] justify-between font-bold"
+            >
+              <span> {c?.item?.title} :- </span>
+              <span>{c?.quantity}</span>
+            </p>
+          ))}
         </TableCell>
 
         <TableCell className="hidden md:table-cell text-center p-1">{`Rs ${totalPrice}`}</TableCell>
-        <TableCell className="hidden md:table-cell text-center p-1">{`${product?.coupon ?? '-'}`}</TableCell>
-        <TableCell className="hidden md:table-cell text-center p-1 font-bold">{`${(product?.transactionDetails?.merchantTransactionId && product?.transactionDetails?.success ? 'paid' : 'cash').toLocaleUpperCase()}`}</TableCell>
+        <TableCell className="hidden md:table-cell text-center text-[12px] p-1">{`${product?.coupon ?? '-'}`}</TableCell>
+        <TableCell className="hidden md:table-cell text-center text-[12px] p-1 font-bold">{`${(product?.transactionDetails?.merchantTransactionId && product?.transactionDetails?.success ? 'paid' : 'cash').toLocaleUpperCase()}`}</TableCell>
         <TableCell
-          className="hidden md:table-cell text-center text-[rgba(3,189,71,1)] font-bold p-1"
+          className="hidden md:table-cell text-center text-[rgba(3,189,71,1)] font-bold p-1 text-[12px]"
           style={
             status == 'Delivered'
               ? { color: 'rgba(3,189,71,1)' }
               : { color: 'rgba(255,124,2,1)' }
           }
         >{`${status ? status : '-'}`}</TableCell>
-        <TableCell className="hidden md:table-cell  p-1">
+        <TableCell className="hidden md:table-cell text-[12px] p-1">
           {product.createdAt
             ? new Date(product.createdAt).toDateString()?.substring(3)
             : 0}
@@ -96,10 +87,15 @@ export function LiverOrderProduct({ product }: { product: any }) {
             ? new Date(product.createdAt).toLocaleTimeString()
             : 0}
         </TableCell>
-        <TableCell className="hidden md:table-cell  p-1 text-center">
+        <TableCell className="hidden md:table-cell text-[12px] p-1 text-center">
           <br />
           {deliveredAt
-            ? Math.floor(
+            ? (Math.floor((deliveredAt - product.createdAt) / (1000 * 60 * 60))
+                ? Math.floor(
+                    (deliveredAt - product.createdAt) / (1000 * 60 * 60)
+                  ) + 'h '
+                : '') +
+              Math.floor(
                 ((deliveredAt - product.createdAt) % (1000 * 60 * 60)) /
                   (1000 * 60)
               ) +
@@ -110,7 +106,7 @@ export function LiverOrderProduct({ product }: { product: any }) {
               'sec '
             : '-'}
         </TableCell>
-        <TableCell className="hidden md:table-cell  p-1">
+        {/* <TableCell className="hidden md:table-cell  p-1">
           {deliveryRating ? (
             <p className="mb-2 flex flex-col items-center">
               <span className="text-xs font-semibold">Delivery</span>
@@ -191,195 +187,13 @@ export function LiverOrderProduct({ product }: { product: any }) {
               </span>
             </div>
           ) : null}
-        </TableCell>
-
-        <TableCell>
-          <div className="flex p-1">
-            <div className="flex flex-col items-center mr-2">
-              <button
-                className="relative w-[120px] border-[1px] border-[#000] hover:bg-black  text-black hover:text-white px-4 py-1 text-xs rounded-lg mb-2 "
-                onClick={async (event) => {
-                  event.stopPropagation();
-                  console.log(product);
-                  // setShowModal(true);
-                  const value = `Order No :- ${product.orderNo}
-
- Address:
-${`https://www.google.com/maps?q=${product.address?.lat},${product.address?.lng}`}
-${product.address.addressType},
-${product.address.title}, 
-${product.address?.houseDetails},
-${product.address?.landmark ?? ''}
-
-phone number: ${product.phoneNumber ? product.phoneNumber : product.uid}
-
-Items: 
-${product?.cartItems
-  ?.map((cItem: any) => {
-    return `${cItem?.item?.title} - ${cItem?.quantity}`;
-  })
-  ?.join('\n')}
-
-Total Price: 
-${totalPrice}
-
-${(product?.transactionDetails?.merchantTransactionId && product?.transactionDetails?.success ? 'paid' : 'cash').toLocaleUpperCase()}
-`;
-                  const res = await copyToClipboard(value);
-                  if (res) {
-                    setCopied(true);
-                    setTimeout(() => {
-                      setCopied(false);
-                    }, 2000);
-                  }
-
-                  console.log(res);
-                }}
-              >
-                Copy
-                {copied ? (
-                  <span className="absolute -top-0 right-32 font-bold">
-                    <Alert>Copied</Alert>
-                  </span>
-                ) : null}
-              </button>
-              <button
-                className="w-[120px] border-none bg-[#ff000088] hover:bg-[#ff0000] text-white px-4 py-1 text-xs rounded-lg mb-2 "
-                onClick={(event) => {
-                  event.stopPropagation();
-                  console.log(product);
-                  setShowModal(true);
-                }}
-              >
-                Show
-              </button>
-              <button
-                className=" w-[120px] border-none bg-[rgba(3,189,71,0.75)] hover:bg-[rgba(3,189,71,1)] text-white px-4 py-1 text-xs rounded-lg mb-2"
-                onClick={async (event) => {
-                  event.stopPropagation();
-                  console.log('set status to delivered', product);
-                  const deliveredTime = Date.now();
-                  product['deliveredAt'] = deliveredTime;
-
-                  const res = await updateStatusDelivered(product, product.key);
-                  if (res) {
-                    console.log('set state to delivered');
-                    setStatus('Delivered');
-                    setDeliveredAt(deliveredTime);
-                  } else {
-                    console.log('do not change status');
-                  }
-                }}
-              >
-                Set Delivered
-              </button>
-            </div>
-            <div className="flex flex-col items-center ">
-              <button
-                className="w-[120px] border-none bg-[rgba(255,124,2,0.65)] hover:bg-[rgba(255,124,2,1)] text-white px-4 py-1 text-xs rounded-lg mb-2"
-                onClick={async (event) => {
-                  event.stopPropagation();
-                  console.log('set status to delivered', product);
-
-                  const res = await updateProductStatus(
-                    'OUT FOR DELIVERY',
-                    product.key
-                  );
-
-                  if (res) {
-                    console.log('set state to out for delivery');
-                    setStatus('OUT FOR DELIVERY');
-                  } else {
-                    console.log('do not change status');
-                  }
-                }}
-              >
-                Out for delivery
-              </button>
-
-              <button
-                className="w-[120px] border-none bg-[rgba(255,0,0,0.55)] hover:bg-[rgba(255,0,0,1)] text-white px-4 py-1 text-xs rounded-lg mb-2"
-                onClick={async (event) => {
-                  event.stopPropagation();
-                  console.log('set status to delivered', product);
-
-                  const res = await updateStatusCancelled(
-                    product,
-                    product.key,
-                    'Out of Stock'
-                  );
-
-                  if (res) {
-                    console.log('set state to cancelled');
-                    setStatus('CANCELLED');
-                  } else {
-                    console.log('do not change status');
-                  }
-                }}
-              >
-                out of stock
-              </button>
-
-              <button
-                className="w-[120px] border-none bg-[rgba(255,0,0,0.55)] hover:bg-[rgba(255,0,0,1)] text-white px-4 py-1 text-xs rounded-lg mb-2"
-                onClick={async (event) => {
-                  event.stopPropagation();
-                  console.log('set status to delivered', product);
-
-                  const res = await updateStatusCancelled(
-                    product,
-                    product.key,
-                    'Location out of service area'
-                  );
-
-                  if (res) {
-                    console.log('set state to cancelled');
-                    setStatus('CANCELLED');
-                  } else {
-                    console.log('do not change status');
-                  }
-                }}
-              >
-                out of service
-              </button>
-              <button
-                className="w-[120px] border-none bg-[rgba(0,0,255,0.55)] hover:bg-[rgba(0,0,255,1)] text-white px-4 py-1 text-xs rounded-lg mb-2"
-                onClick={async (event) => {
-                  event.stopPropagation();
-                  console.log('set status to delivered', product);
-
-                  const res = await updateProductStatus(
-                    'ACCEPTED',
-                    product.key
-                  );
-
-                  // if it is first order of user send refer and earn msg.
-
-                  if (res) {
-                    console.log('set state to accepted');
-                    setStatus('ACCEPTED');
-                  } else {
-                    console.log('do not change status');
-                  }
-                }}
-              >
-                Accept
-              </button>
-            </div>
-          </div>
-        </TableCell>
+        </TableCell> */}
       </TableRow>
       {showModal && (
         <OrderDetailsModal
           product={product}
           totalPrice={totalPrice}
           setShowModal={setShowModal}
-        />
-      )}
-      {showAllOrders && (
-        <AllOrderDetailsModal
-          allOrders={allOrders}
-          setShowModal={setShowAllOrders}
         />
       )}
     </>
