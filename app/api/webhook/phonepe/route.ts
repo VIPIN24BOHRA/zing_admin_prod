@@ -17,29 +17,18 @@ export async function POST(req: NextRequest) {
       console.log(payment);
       if (payment) {
         const paymentDetails = JSON.parse(payment);
-        if (
-          paymentDetails.success &&
-          paymentDetails.code == 'PAYMENT_SUCCESS'
-        ) {
-          if (
-            paymentDetails?.data?.state == 'COMPLETED' &&
-            paymentDetails?.data?.responseCode == 'SUCCESS'
-          ) {
-            const paymentModel = {
-              merchantTransactionId:
-                paymentDetails?.data?.merchantTransactionId,
-              state: paymentDetails?.data?.state,
-              transactionId: paymentDetails?.data?.transactionId,
-              amount: paymentDetails?.data?.amount,
-              type: paymentDetails?.data?.paymentInstrument?.type,
-              merchantId: paymentDetails?.data?.merchantId,
-              code: paymentDetails?.code,
-              message: paymentDetails?.message
-            };
+        const paymentModel = {
+          merchantTransactionId: paymentDetails?.data?.merchantTransactionId,
+          state: paymentDetails?.data?.state,
+          transactionId: paymentDetails?.data?.transactionId,
+          amount: paymentDetails?.data?.amount,
+          type: paymentDetails?.data?.paymentInstrument?.type,
+          merchantId: paymentDetails?.data?.merchantId,
+          code: paymentDetails?.code,
+          message: paymentDetails?.message
+        };
 
-            await addNewPaymentDeatils(paymentModel);
-          }
-        }
+        await addNewPaymentDeatils(paymentModel);
       }
     }
     return NextResponse.json({
