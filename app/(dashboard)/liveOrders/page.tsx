@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import {
   get,
   getDatabase,
+  limitToLast,
   onChildAdded,
   onValue,
   orderByChild,
@@ -28,52 +29,87 @@ export default function ProductsPage({
   const [showSnackbar, setShowSnackBar] = useState(false);
   const [showPopUp, setShowPopUp] = useState(true);
   const [isOnline, setOnline] = useState(true);
+
   const search = searchParams.q ?? '';
   const offset = searchParams.offset ?? 0;
 
   useEffect(() => {
     // onoffline version
+
     window.onoffline = (event) => {
       console.log('The network connection has been lost.');
       console.log(event);
       setOnline(false);
     };
-  });
+
+    let eventSource: any;
+    const initSSE = () => {
+      eventSource = new EventSource('https://api.getzing.app/sse');
+      eventSource.onmessage = (event: any) => {
+        console.log('Received data:', event.data);
+        const [key, status, deliveredAt] = event.data.split('###');
+        console.log(key, status, deliveredAt);
+        if (key && status) {
+          setProduct((prevProducts) =>
+            prevProducts.map((order) =>
+              order.key === key ? { ...order, status, deliveredAt } : order
+            )
+          );
+        }
+      };
+
+      eventSource.onerror = (error: any) => {
+        console.error('SSE error:', error);
+        eventSource.close();
+        setTimeout(() => initSSE(), 3000);
+      };
+    };
+
+    initSSE();
+    return () => {
+      eventSource.close();
+    };
+  }, []);
 
   useEffect(() => {
     const db = getDatabase(app);
     const starCountRef = ref(db, 'orders/');
 
     let lastKnownTimestamp = Date.now();
+    let todayStartingDayTs = new Date().setHours(0, 0, 0, 0);
+    console.log(todayStartingDayTs);
 
-    get(starCountRef)
+    get(query(starCountRef, limitToLast(25)))
       .then((snapshot) => {
         if (snapshot.exists()) {
           const data = snapshot.val();
 
-          let idx = 0;
-
           const Orders =
             Object.keys(data ?? {})
               ?.map((key) => {
-                if (
-                  data[key]?.cartItems?.length == 1 &&
-                  data[key].cartItems[0]?.item?.title == 'Rasmalai'
-                )
-                  return null;
-                else if (data[key].createdAt) {
-                  idx++;
+                if (data[key].createdAt) {
                   return {
                     ...data[key],
-                    key: key,
-                    orderNo: idx
+                    key: key
                   };
                 } else null;
               })
               ?.filter((v) => v != null) ?? [];
           Orders.sort((a, b) => b.createdAt - a.createdAt);
-          console.log(Orders, Orders.length);
+          // now find the first order having order no.
+
+          let orderNo = 0;
+          for (let i = Orders.length - 1; i >= 0; i--) {
+            if (Orders[i].orderNo) orderNo = Orders[i].orderNo;
+            else {
+              orderNo++;
+              Orders[i].orderNo = orderNo;
+            }
+          }
+          console.log(orderNo);
           setProduct(Orders);
+        } else {
+          console.log('no value exists');
         }
       })
       .catch((err) => {
@@ -105,7 +141,7 @@ export default function ProductsPage({
               {
                 ...newOrder,
                 key,
-                orderNo: prevProducts.length + 1
+                orderNo: prevProducts[0].orderNo + 1
               },
               ...prevProducts
             ]);
@@ -130,9 +166,7 @@ export default function ProductsPage({
   return (
     <Tabs defaultValue="all">
       <div className="flex items-center">
-
-
-      {!isOnline ? (
+        {!isOnline ? (
           <div className="fixed w-full h-[100vh] bg-[#aaaa] top-0 z-[100] flex flex-row justify-center items-center">
             <div className="bg-white p-4 rounded-lg">
               <p className="mb-8">

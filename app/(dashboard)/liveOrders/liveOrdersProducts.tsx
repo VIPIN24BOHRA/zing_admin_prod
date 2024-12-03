@@ -1,5 +1,5 @@
 import { TableCell, TableRow } from '@/components/ui/table';
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { OrderDetailsModal } from '@/components/orderDetailsModal';
 import { LiveOrderModel } from '@/components/liveOrderModel';
@@ -18,7 +18,15 @@ export function LiverOrderProduct({ product }: { product: any }) {
       : product.totalPrice < 99
         ? 20
         : 0);
-  console.log(`product id -> ${product.key}  totalPrice ---> ${totalPrice}`);
+
+  useEffect(() => {
+    if (status != product.status) {
+      setStatus(product.status);
+      if (product.deliveredAt) {
+        setDeliveredAt(product.deliveredAt);
+      }
+    }
+  }, [product.status]);
 
   return (
     <>
