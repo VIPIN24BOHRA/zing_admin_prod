@@ -6,6 +6,8 @@ import {
 } from '@/lib/utils';
 import { Alert } from '@mui/material';
 import { useState } from 'react';
+import { get, getDatabase, limitToLast, query, ref } from 'firebase/database';
+import { app } from '@/lib/db';
 
 const copyDetails = async (product: any, totalPrice: any) => {
   const value = `Order No :- ${product.orderNo}
@@ -29,6 +31,29 @@ const copyDetails = async (product: any, totalPrice: any) => {
   return copyToClipboard(value);
 };
 
+const showPaymentStatus = async (transactionId: String) => {
+  console.log(transactionId);
+
+  const db = getDatabase(app);
+  const transactionRef = ref(db, `paymentHistory/${transactionId}`);
+
+  try {
+    const snapshot = await get(transactionRef);
+
+    if (snapshot.exists()) {
+      const data = snapshot.val();
+      console.log(data);
+      return data.code;
+    } else {
+      console.log('no value exists');
+      return 'PAYMENT_ERROR';
+    }
+  } catch (err) {
+    console.log(err);
+    return 'error';
+  }
+};
+
 export const LiveOrderModel = ({
   product,
   totalPrice,
@@ -45,6 +70,7 @@ export const LiveOrderModel = ({
   setDeliveredAt: any;
 }) => {
   const [copied, setCopied] = useState(false);
+  const [paymentStatus, setPaymentStatus] = useState('');
 
   return (
     <div
@@ -147,7 +173,10 @@ export const LiveOrderModel = ({
                   const deliveredTime = Date.now();
                   product['deliveredAt'] = deliveredTime;
 
-                  const res = await updateStatusDelivered({...product}, product.key);
+                  const res = await updateStatusDelivered(
+                    { ...product },
+                    product.key
+                  );
                   if (res) {
                     setStatus('Delivered');
                     setDeliveredAt(deliveredTime);
@@ -181,7 +210,7 @@ export const LiveOrderModel = ({
                   console.log('set status to out of stock', product);
 
                   const res = await updateStatusCancelled(
-                    {...product},
+                    { ...product },
                     product.key,
                     'Out of Stock'
                   );
@@ -199,7 +228,7 @@ export const LiveOrderModel = ({
                   console.log('set status to out of service', product);
 
                   const res = await updateStatusCancelled(
-                    {...product},
+                    { ...product },
                     product.key,
                     'Location out of service area'
                   );
@@ -249,6 +278,25 @@ export const LiveOrderModel = ({
                   </span>
                 ) : null}
               </button>
+
+              {product?.transactionDetails?.merchantTransactionId ? (
+                <div>
+                  <button
+                    className="relative w-[120px] mx-2 border-[1px] border-[#000] hover:bg-black  text-black hover:text-white px-4 py-1 text-xs rounded-lg mb-2 "
+                    onClick={async (event) => {
+                      event.stopPropagation();
+                      const status: any = await showPaymentStatus(
+                        product?.transactionDetails?.merchantTransactionId
+                      );
+                      console.log(status);
+                      setPaymentStatus(status);
+                    }}
+                  >
+                    payment status
+                  </button>
+                  <span>{paymentStatus}</span>
+                </div>
+              ) : null}
             </div>
 
             <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
