@@ -5,7 +5,9 @@ import { createUserForOTPSMS } from 'modules/firebase/database';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
-  return NextResponse.json('send OTP is up and running');
+  return NextResponse.json(
+    `send OTP is up and running ${process.env.PROJECT_ID}`
+  );
 }
 
 export async function POST(req: NextRequest) {
