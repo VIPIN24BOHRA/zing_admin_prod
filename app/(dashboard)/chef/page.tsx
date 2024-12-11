@@ -2,7 +2,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 import { Button } from '@/components/ui/button';
-import { LiveOrdersProductsTable } from './liveOrdersProductsTable';
+
 import { useEffect, useState } from 'react';
 import {
   get,
@@ -20,6 +20,7 @@ import { app } from '@/lib/db';
 import SnackbarNotification from '@/components/snackbar/snackbar';
 import { useAuth } from 'providers/authProvider/authContext';
 import { useRouter } from 'next/navigation';
+import { LiveOrdersProductsTable } from '../liveOrders/liveOrdersProductsTable';
 // import { PlusCircle, File } from 'lucide-react';
 
 export default function ProductsPage({
@@ -232,7 +233,7 @@ export default function ProductsPage({
         <SnackbarNotification show={showSnackbar} />
       </div>
       <TabsContent value="all">
-        <LiveOrdersProductsTable products={product} userType="admin" />
+        <LiveOrdersProductsTable products={product} userType="chef" />
       </TabsContent>
     </Tabs>
   );

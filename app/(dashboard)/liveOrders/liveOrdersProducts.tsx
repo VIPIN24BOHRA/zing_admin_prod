@@ -4,7 +4,13 @@ import { useCallback, useEffect, useState } from 'react';
 import { OrderDetailsModal } from '@/components/orderDetailsModal';
 import { LiveOrderModel } from '@/components/liveOrderModel';
 
-export function LiverOrderProduct({ product }: { product: any }) {
+export function LiverOrderProduct({
+  product,
+  userType
+}: {
+  product: any;
+  userType: string;
+}) {
   const [showModal, setShowModal] = useState(false);
 
   const [status, setStatus] = useState(product.status ?? '');
@@ -100,15 +106,34 @@ export function LiverOrderProduct({ product }: { product: any }) {
             : '-'}
         </TableCell>
       </TableRow>
-      {showModal && (
-        <LiveOrderModel
-          product={product}
-          totalPrice={totalPrice}
-          setShowModal={setShowModal}
-          setDeliveredAt={setDeliveredAt}
-          setStatus={setStatus}
-        />
-      )}
+      {showModal &&
+        (userType == 'chef' ? (
+          <LiveOrderModel
+            product={product}
+            totalPrice={totalPrice}
+            setShowModal={setShowModal}
+            setDeliveredAt={null}
+            setStatus={setStatus}
+            showAccept={true}
+            showCancel={false}
+            showCopy={false}
+            showDelivered={false}
+            showOutForDelivery={false}
+          />
+        ) : (
+          <LiveOrderModel
+            product={product}
+            totalPrice={totalPrice}
+            setShowModal={setShowModal}
+            setDeliveredAt={setDeliveredAt}
+            setStatus={setStatus}
+            showAccept={true}
+            showCancel={true}
+            showCopy={true}
+            showDelivered={true}
+            showOutForDelivery={true}
+          />
+        ))}
     </>
   );
 }

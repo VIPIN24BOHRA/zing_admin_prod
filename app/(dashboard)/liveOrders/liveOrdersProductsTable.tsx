@@ -16,7 +16,13 @@ import {
 } from '@/components/ui/card';
 import { LiverOrderProduct } from './liveOrdersProducts';
 
-export function LiveOrdersProductsTable({ products }: { products: any[] }) {
+export function LiveOrdersProductsTable({
+  products,
+  userType
+}: {
+  products: any[];
+  userType: string;
+}) {
   return (
     <Card>
       <CardHeader>
@@ -62,7 +68,11 @@ export function LiveOrdersProductsTable({ products }: { products: any[] }) {
           </TableHeader>
           <TableBody>
             {products.map((product, idx) => (
-              <LiverOrderProduct key={product.key} product={product} />
+              <LiverOrderProduct
+                key={product.key}
+                product={product}
+                userType={userType}
+              />
             ))}
           </TableBody>
         </Table>

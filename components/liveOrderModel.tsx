@@ -58,16 +58,24 @@ export const LiveOrderModel = ({
   product,
   totalPrice,
   setShowModal,
-
   setStatus,
-  setDeliveredAt
+  setDeliveredAt,
+  showAccept,
+  showCancel,
+  showCopy,
+  showOutForDelivery,
+  showDelivered
 }: {
   product: any;
   totalPrice: number;
   setShowModal: any;
-
   setStatus: any;
   setDeliveredAt: any;
+  showCopy: boolean;
+  showAccept: boolean;
+  showOutForDelivery: boolean;
+  showCancel: boolean;
+  showDelivered: boolean;
 }) => {
   const [copied, setCopied] = useState(false);
   const [paymentStatus, setPaymentStatus] = useState('');
@@ -165,119 +173,150 @@ export const LiveOrderModel = ({
             </div>
 
             <div className="ml-8  flex p-1 flex-wrap ">
-              <button
-                className=" w-[120px] mx-2 border-none bg-[rgba(3,189,71,0.75)] hover:bg-[rgba(3,189,71,1)] text-white px-4 py-1 text-xs rounded-lg mb-2"
-                onClick={async (event) => {
-                  event.stopPropagation();
-                  console.log('set status to delivered', product);
-                  const deliveredTime = Date.now();
-                  product['deliveredAt'] = deliveredTime;
+              {showDelivered && (
+                <button
+                  className=" w-[120px] mx-2 border-none bg-[rgba(3,189,71,0.75)] hover:bg-[rgba(3,189,71,1)] text-white px-4 py-1 text-xs rounded-lg mb-2"
+                  onClick={async (event) => {
+                    event.stopPropagation();
+                    console.log('set status to delivered', product);
+                    const deliveredTime = Date.now();
+                    product['deliveredAt'] = deliveredTime;
 
-                  const res = await updateStatusDelivered(
-                    { ...product },
-                    product.key
-                  );
-                  if (res) {
-                    setStatus('Delivered');
-                    setDeliveredAt(deliveredTime);
-                  }
-                }}
-              >
-                Set Delivered
-              </button>
+                    const res = await updateStatusDelivered(
+                      { ...product },
+                      product.key
+                    );
+                    if (res) {
+                      setStatus('Delivered');
+                      setDeliveredAt(deliveredTime);
+                    }
+                  }}
+                >
+                  Set Delivered
+                </button>
+              )}
 
-              <button
-                className="w-[120px] mx-2 border-none bg-[rgba(255,124,2,0.65)] hover:bg-[rgba(255,124,2,1)] text-white px-4 py-1 text-xs rounded-lg mb-2"
-                onClick={async (event) => {
-                  event.stopPropagation();
-                  console.log('set status to out for delivery', product);
+              {showOutForDelivery && (
+                <button
+                  className="w-[120px] mx-2 border-none bg-[rgba(255,124,2,0.65)] hover:bg-[rgba(255,124,2,1)] text-white px-4 py-1 text-xs rounded-lg mb-2"
+                  onClick={async (event) => {
+                    event.stopPropagation();
+                    console.log('set status to out for delivery', product);
 
-                  const res = await updateProductStatus(
-                    'OUT FOR DELIVERY',
-                    product.key
-                  );
+                    const res = await updateProductStatus(
+                      'OUT FOR DELIVERY',
+                      product.key
+                    );
 
-                  if (res) setStatus('OUT FOR DELIVERY');
-                }}
-              >
-                Out for delivery
-              </button>
+                    if (res) setStatus('OUT FOR DELIVERY');
+                  }}
+                >
+                  Out for delivery
+                </button>
+              )}
 
-              <button
-                className="w-[120px] mx-2 border-none bg-[rgba(255,0,0,0.55)] hover:bg-[rgba(255,0,0,1)] text-white px-4 py-1 text-xs rounded-lg mb-2"
-                onClick={async (event) => {
-                  event.stopPropagation();
-                  console.log('set status to out of stock', product);
+              {showCancel && (
+                <button
+                  className="w-[120px] mx-2 border-none bg-[rgba(255,0,0,0.55)] hover:bg-[rgba(255,0,0,1)] text-white px-4 py-1 text-xs rounded-lg mb-2"
+                  onClick={async (event) => {
+                    event.stopPropagation();
+                    console.log('set status to out of stock', product);
 
-                  const res = await updateStatusCancelled(
-                    { ...product },
-                    product.key,
-                    'Out of Stock'
-                  );
+                    const res = await updateStatusCancelled(
+                      { ...product },
+                      product.key,
+                      'Out of Stock'
+                    );
 
-                  if (res) setStatus('CANCELLED');
-                }}
-              >
-                out of stock
-              </button>
+                    if (res) setStatus('CANCELLED');
+                  }}
+                >
+                  out of stock
+                </button>
+              )}
+              {showCancel && (
+                <button
+                  className="w-[120px] mx-2 border-none bg-[rgba(255,0,0,0.55)] hover:bg-[rgba(255,0,0,1)] text-white px-4 py-1 text-xs rounded-lg mb-2"
+                  onClick={async (event) => {
+                    event.stopPropagation();
+                    console.log('set status to out of service', product);
 
-              <button
-                className="w-[120px] mx-2 border-none bg-[rgba(255,0,0,0.55)] hover:bg-[rgba(255,0,0,1)] text-white px-4 py-1 text-xs rounded-lg mb-2"
-                onClick={async (event) => {
-                  event.stopPropagation();
-                  console.log('set status to out of service', product);
+                    const res = await updateStatusCancelled(
+                      { ...product },
+                      product.key,
+                      'Location out of service area'
+                    );
 
-                  const res = await updateStatusCancelled(
-                    { ...product },
-                    product.key,
-                    'Location out of service area'
-                  );
+                    if (res) setStatus('CANCELLED');
+                  }}
+                >
+                  out of service
+                </button>
+              )}
 
-                  if (res) setStatus('CANCELLED');
-                }}
-              >
-                out of service
-              </button>
-              <button
-                className="w-[120px] mx-2 border-none bg-[rgba(0,0,255,0.55)] hover:bg-[rgba(0,0,255,1)] text-white px-4 py-1 text-xs rounded-lg mb-2"
-                onClick={async (event) => {
-                  event.stopPropagation();
-                  console.log('set status to accepted', product);
+              {showCancel && (
+                <button
+                  className="w-[120px] mx-2 border-none bg-[rgba(255,0,0,0.55)] hover:bg-[rgba(255,0,0,1)] text-white px-4 py-1 text-xs rounded-lg mb-2"
+                  onClick={async (event) => {
+                    event.stopPropagation();
+                    console.log('set status to out of service', product);
 
-                  const res = await updateProductStatus(
-                    'ACCEPTED',
-                    product.key
-                  );
+                    const res = await updateStatusCancelled(
+                      { ...product },
+                      product.key,
+                      'Order has been cancelled'
+                    );
 
-                  if (res) setStatus('ACCEPTED');
-                }}
-              >
-                Accept
-              </button>
+                    if (res) setStatus('CANCELLED');
+                  }}
+                >
+                  Cancel
+                </button>
+              )}
+              {showAccept && (
+                <button
+                  className="w-[120px] mx-2 border-none bg-[rgba(0,0,255,0.55)] hover:bg-[rgba(0,0,255,1)] text-white px-4 py-1 text-xs rounded-lg mb-2"
+                  onClick={async (event) => {
+                    event.stopPropagation();
+                    console.log('set status to accepted', product);
 
-              <button
-                className="relative w-[120px] mx-2 border-[1px] border-[#000] hover:bg-black  text-black hover:text-white px-4 py-1 text-xs rounded-lg mb-2 "
-                onClick={async (event) => {
-                  event.stopPropagation();
-                  const res = await copyDetails(product, totalPrice);
+                    const res = await updateProductStatus(
+                      'ACCEPTED',
+                      product.key
+                    );
 
-                  if (res) {
-                    setCopied(true);
-                    setTimeout(() => {
-                      setCopied(false);
-                    }, 2000);
-                  }
+                    if (res) setStatus('ACCEPTED');
+                  }}
+                >
+                  Accept
+                </button>
+              )}
 
-                  console.log(res);
-                }}
-              >
-                Copy
-                {copied ? (
-                  <span className="absolute -top-0 right-32 font-bold">
-                    <Alert>Copied</Alert>
-                  </span>
-                ) : null}
-              </button>
+              {showCopy && (
+                <button
+                  className="relative w-[120px] mx-2 border-[1px] border-[#000] hover:bg-black  text-black hover:text-white px-4 py-1 text-xs rounded-lg mb-2 "
+                  onClick={async (event) => {
+                    event.stopPropagation();
+                    const res = await copyDetails(product, totalPrice);
+
+                    if (res) {
+                      setCopied(true);
+                      setTimeout(() => {
+                        setCopied(false);
+                      }, 2000);
+                    }
+
+                    console.log(res);
+                  }}
+                >
+                  Copy
+                  {copied ? (
+                    <span className="absolute -top-0 right-32 font-bold">
+                      <Alert>Copied</Alert>
+                    </span>
+                  ) : null}
+                </button>
+              )}
 
               {product?.transactionDetails?.merchantTransactionId ? (
                 <div>

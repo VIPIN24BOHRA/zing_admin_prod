@@ -7,6 +7,7 @@ import {
 } from '@radix-ui/react-tooltip';
 import { NavItem } from 'app/(dashboard)/nav-item';
 import {
+  ChefHat,
   HandPlatter,
   Home,
   LineChart,
@@ -61,6 +62,9 @@ export default function DesktopNav() {
         </NavItem>
         <NavItem href="/menu" label="Menu items">
           <HandPlatter className="h-5 w-5" />
+        </NavItem>
+        <NavItem href="/chef" label="Chef orders">
+          <ChefHat className="h-5 w-5" />
         </NavItem>
         {showLogout && (
           <NavItem href="#" label="Log out">
