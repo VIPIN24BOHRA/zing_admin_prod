@@ -55,40 +55,38 @@ export const convertToCSV = (data: any) => {
   const parsedData = data
     .map((order: any) => {
       return order.cartItems.map((item: any, idx: number) => {
-        if (idx == 0)
-          return {
-            createdDate: new Date(order.createdAt).toLocaleDateString(),
-            createdTime: new Date(order.createdAt).toLocaleTimeString(),
-            coupon: order?.coupon ?? '',
-            deliveredAt: order.deliveredAt
-              ? new Date(order.deliveredAt).toLocaleDateString()
-              : '',
-            deliveryFee: order.deliveryFee,
-            orderNo: order.orderNo,
-            status: order.status,
-            totalQuantity: order.cartItems.length,
-            phoneNumber: order.uid,
-            totalPrice: order.totalPrice,
-            discount: order.discount,
-            cart: item.item.title,
-            quantity: item.quantity
-          };
-        else
-          return {
-            createdAt: '',
-            createdTime: '',
-            coupon: '',
-            deliveredAt: '',
-            deliveryFee: '',
-            orderNo: '',
-            status: '',
-            totalQuantity: '',
-            phoneNumber: '',
-            totalPrice: '',
-            discount: '',
-            cart: item.item.title,
-            quantity: item.quantity
-          };
+        return {
+          createdDate: new Date(order.createdAt).toLocaleDateString(),
+          createdTime: new Date(order.createdAt).toLocaleTimeString(),
+          coupon: order?.coupon ?? '',
+          deliveredIn: order.deliveredAt
+            ? (Math.floor(
+                (order.deliveredAt - order.createdAt) / (1000 * 60 * 60)
+              )
+                ? Math.floor(
+                    (order.deliveredAt - order.createdAt) / (1000 * 60 * 60)
+                  ) + 'h '
+                : '') +
+              Math.floor(
+                ((order.deliveredAt - order.createdAt) % (1000 * 60 * 60)) /
+                  (1000 * 60)
+              ) +
+              'min ' +
+              Math.floor(
+                ((order.deliveredAt - order.createdAt) % (1000 * 60)) / 1000
+              ) +
+              'sec '
+            : '',
+          deliveryFee: order.deliveryFee,
+          orderNo: order.orderNo,
+          status: order.status,
+          totalQuantity: order.cartItems.length,
+          phoneNumber: order.uid,
+          totalPrice: order.totalPrice,
+          discount: order.discount,
+          cart: item.item.title,
+          quantity: item.quantity
+        };
       });
     })
     .flat();

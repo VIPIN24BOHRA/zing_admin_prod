@@ -18,6 +18,8 @@ import {
 } from 'firebase/database';
 import { app } from '@/lib/db';
 import SnackbarNotification from '@/components/snackbar/snackbar';
+import { useAuth } from 'providers/authProvider/authContext';
+import { useRouter } from 'next/navigation';
 // import { PlusCircle, File } from 'lucide-react';
 
 export default function ProductsPage({
@@ -25,6 +27,8 @@ export default function ProductsPage({
 }: {
   searchParams: { q: string; offset: string };
 }) {
+  const { user, loading } = useAuth();
+  const router = useRouter();
   const [product, setProduct] = useState<any[]>([]);
   const [showSnackbar, setShowSnackBar] = useState(false);
   const [showPopUp, setShowPopUp] = useState(true);
@@ -32,6 +36,12 @@ export default function ProductsPage({
 
   const search = searchParams.q ?? '';
   const offset = searchParams.offset ?? 0;
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/login'); // Redirect to login page
+    }
+  }, [user, loading, router]);
 
   useEffect(() => {
     // onoffline version
@@ -122,7 +132,7 @@ export default function ProductsPage({
       startAt(lastKnownTimestamp)
     );
 
-    onChildAdded(
+    const unsubscribe = onChildAdded(
       newChildAddedQuery,
 
       (snapshot) => {
@@ -161,7 +171,16 @@ export default function ProductsPage({
         console.error('Error listening for new orders:', error);
       }
     );
+
+    return () => {
+      console.log('unsubscribing onchild added');
+      unsubscribe();
+    };
   }, []);
+
+  if (loading || !user) {
+    return <p>Loading...</p>; // Or a spinner/loading component
+  }
 
   return (
     <Tabs defaultValue="all">

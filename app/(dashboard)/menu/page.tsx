@@ -14,11 +14,22 @@ import {
 import { app } from '@/lib/db';
 import { PlusCircle, File, Timer } from 'lucide-react';
 import { convertToCSV, downloadCSV } from '@/lib/utils';
+import { useAuth } from 'providers/authProvider/authContext';
+import { useRouter } from 'next/navigation';
 
 const productsPerPage = 50;
 
 export default function MenuPage() {
+  const { user, loading } = useAuth();
+  const router = useRouter();
+
   const [product, setProduct] = useState<any[]>([]);
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/login'); // Redirect to login page
+    }
+  }, [user, loading, router]);
 
   useEffect(() => {
     const db = getDatabase(app);
@@ -81,6 +92,10 @@ export default function MenuPage() {
         console.log(err);
       });
   };
+
+  if (loading || !user) {
+    return <p>Loading...</p>; // Or a spinner/loading component
+  }
 
   return (
     <Tabs defaultValue="Menu">

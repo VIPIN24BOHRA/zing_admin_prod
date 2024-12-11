@@ -7,6 +7,8 @@ import { get, getDatabase, limitToLast, query, ref } from 'firebase/database';
 import { app } from '@/lib/db';
 import { PlusCircle, File } from 'lucide-react';
 import { convertToCSV, downloadCSV } from '@/lib/utils';
+import { useAuth } from 'providers/authProvider/authContext';
+import { useRouter } from 'next/navigation';
 
 const productsPerPage = 50;
 
@@ -18,6 +20,15 @@ export default function OrderHistoryPage({
   const [product, setProduct] = useState<any[]>([]);
   const [offset, setOffset] = useState(0);
   const [currentProducts, setCurrentProducts] = useState<any[]>([]);
+
+  const { user, loading } = useAuth();
+  const router = useRouter();
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/login'); // Redirect to login page
+    }
+  }, [user, loading, router]);
+
   const nextPage = () => {
     const currentOffset = offset;
     setOffset(currentOffset + 1);
@@ -43,7 +54,7 @@ export default function OrderHistoryPage({
     const db = getDatabase(app);
     const starCountRef = ref(db, 'orders/');
 
-    get(query(starCountRef, limitToLast(500)))
+    get(query(starCountRef))
       .then((snapshot) => {
         if (snapshot.exists()) {
           const data = snapshot.val();
@@ -72,6 +83,10 @@ export default function OrderHistoryPage({
         console.log(err);
       });
   }, []);
+
+  if (loading || !user) {
+    return <p>Loading...</p>; // Or a spinner/loading component
+  }
 
   return (
     <Tabs defaultValue="order history">

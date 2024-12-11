@@ -2,8 +2,7 @@ import './globals.css';
 
 export const metadata = {
   title: 'Zing Dashboard',
-  description:
-    'An admin dashboard for Zing App.'
+  description: 'An admin dashboard for Zing App.'
 };
 
 export default function RootLayout({
