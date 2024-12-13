@@ -25,7 +25,8 @@ export async function POST(req: NextRequest) {
           type: paymentDetails?.data?.paymentInstrument?.type,
           merchantId: paymentDetails?.data?.merchantId,
           code: paymentDetails?.code,
-          message: paymentDetails?.message
+          message: paymentDetails?.message,
+          createdAt: Date.now()
         };
 
         await addNewPaymentDeatils(paymentModel);
