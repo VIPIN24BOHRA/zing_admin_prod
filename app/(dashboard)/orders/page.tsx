@@ -27,6 +27,10 @@ export default function OrderHistoryPage({
     if (!loading && !user) {
       router.push('/login'); // Redirect to login page
     }
+    if (!loading && user && user.email == 'kitchen@getzing.app') {
+      console.log(user.email);
+      router.push('/');
+    }
   }, [user, loading, router]);
 
   const nextPage = () => {

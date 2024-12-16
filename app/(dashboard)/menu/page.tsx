@@ -29,6 +29,10 @@ export default function MenuPage() {
     if (!loading && !user) {
       router.push('/login'); // Redirect to login page
     }
+    if (!loading && user && user.email == 'kitchen@getzing.app') {
+      console.log(user.email);
+      router.push('/');
+    }
   }, [user, loading, router]);
 
   useEffect(() => {
