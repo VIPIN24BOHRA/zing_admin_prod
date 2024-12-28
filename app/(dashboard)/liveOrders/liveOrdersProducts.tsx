@@ -109,6 +109,7 @@ export function LiverOrderProduct({
       {showModal &&
         (userType == 'chef' ? (
           <LiveOrderModel
+            userType={userType}
             product={product}
             totalPrice={totalPrice}
             setShowModal={setShowModal}
@@ -122,6 +123,7 @@ export function LiverOrderProduct({
           />
         ) : (
           <LiveOrderModel
+            userType={userType}
             product={product}
             totalPrice={totalPrice}
             setShowModal={setShowModal}

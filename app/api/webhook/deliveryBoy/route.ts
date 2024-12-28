@@ -18,6 +18,7 @@ export async function POST(req: NextRequest) {
     });
   } catch (e) {
     // eslint-disable-next-line no-console
+
     console.error(e);
     return NextResponse.json({ success: false, error: e });
   }

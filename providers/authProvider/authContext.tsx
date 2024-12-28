@@ -39,6 +39,17 @@ const logout = async () => {
   }
 };
 
+const authenticateRider = () => {
+  console.log('authenticate rider');
+  fetch('/api/authenticateRider', {
+    method: 'POST',
+    credentials: 'include' // Important to send/receive cookies
+  })
+    .then((res) => res.json())
+    .then((data) => console.log(data))
+    .catch((err) => console.error(err));
+};
+
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 const auth = getAuth(app);
@@ -83,9 +94,12 @@ export const AuthProvider = ({ children }: any) => {
       if (user) {
         const token = await user.getIdToken();
         const res = await verifyUser(token);
+
         console.log(res);
-        if (res) setUser(user);
-        else {
+        if (res) {
+          setUser(user);
+          authenticateRider();
+        } else {
           setNotAllowed(true);
         }
       } else {

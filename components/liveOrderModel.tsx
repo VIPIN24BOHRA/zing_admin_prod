@@ -8,6 +8,7 @@ import { Alert } from '@mui/material';
 import { useState } from 'react';
 import { get, getDatabase, limitToLast, query, ref } from 'firebase/database';
 import { app } from '@/lib/db';
+import { createRiderOrder } from '@/lib/riderHelper';
 
 const copyDetails = async (product: any, totalPrice: any) => {
   const value = `Order No :- ${product.orderNo}
@@ -55,6 +56,7 @@ const showPaymentStatus = async (transactionId: String) => {
 };
 
 export const LiveOrderModel = ({
+  userType,
   product,
   totalPrice,
   setShowModal,
@@ -66,6 +68,7 @@ export const LiveOrderModel = ({
   showOutForDelivery,
   showDelivered
 }: {
+  userType: String;
   product: any;
   totalPrice: number;
   setShowModal: any;
@@ -284,6 +287,7 @@ export const LiveOrderModel = ({
                       'ACCEPTED',
                       product.key
                     );
+                    // if (userType == 'chef') await createRiderOrder(product);
 
                     if (res) setStatus('ACCEPTED');
                   }}
