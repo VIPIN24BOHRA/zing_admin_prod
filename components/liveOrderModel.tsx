@@ -287,7 +287,7 @@ export const LiveOrderModel = ({
                       'ACCEPTED',
                       product.key
                     );
-                    // if (userType == 'chef') await createRiderOrder(product);
+                    if (userType == 'chef') await createRiderOrder(product);
 
                     if (res) setStatus('ACCEPTED');
                   }}
