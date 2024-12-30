@@ -39,6 +39,12 @@ export async function POST(req: NextRequest) {
         },
         landmark: order.address.landmark
       },
+      items: order.cartItems.map((items: any) => ({
+        quantity: items.quantity,
+        name: items.item.title,
+        amount: items.item.price
+      })),
+
       delivery_boy_number: '',
       delivery_instructions: '',
       outlet_id: '5356eb5f-82d7-447e-a4b0-58b4e245af08',
