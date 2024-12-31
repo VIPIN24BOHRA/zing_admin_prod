@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
       total: order.totalPrice + order.deliveryFee - order.discount,
       sub_total: order.totalPrice + order.deliveryFee - order.discount,
       prep_time: 4,
-      payment_type: order.transactionDetails ? 'PAID' : 'CASH'
+      payment_type: order.transactionDetails ? 'PAID' : 'COD'
     };
 
     const res = await createOrderApi(
