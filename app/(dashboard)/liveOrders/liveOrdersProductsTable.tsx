@@ -57,6 +57,9 @@ export function LiveOrdersProductsTable({
               <TableHead className="hidden md:table-cell text-center">
                 Status
               </TableHead>
+              <TableHead className="hidden md:table-cell text-center">
+                deliveryBoy
+              </TableHead>
 
               <TableHead className="hidden md:table-cell text-center">
                 Created at

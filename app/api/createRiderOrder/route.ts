@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
     const order = await req.json();
 
     const parsedOrder = {
-      id: order.key,
+      id: order.orderNo,
       customer: {
         name: order.uid,
         number: order.uid
@@ -46,7 +46,7 @@ export async function POST(req: NextRequest) {
       })),
 
       delivery_boy_number: '',
-      delivery_instructions: '',
+      delivery_instructions: order.key,
       outlet_id: '5356eb5f-82d7-447e-a4b0-58b4e245af08',
       external_outlet_id: '',
       total: order.totalPrice + order.deliveryFee - order.discount,
