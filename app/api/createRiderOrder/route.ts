@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
     const order = await req.json();
 
     const parsedOrder = {
-      id: order.orderNo,
+      id: order.orderNo ? String(order.orderNo) : '',
       customer: {
         name: order.uid,
         number: order.uid

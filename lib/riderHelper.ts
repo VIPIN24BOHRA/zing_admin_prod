@@ -35,7 +35,7 @@ export async function createOrderApi(
     console.log('data:', response.data);
     return response.data;
   } catch (error) {
-    console.error('Error generating token:');
+    console.log(`error for create order : ${error}`);
     return '';
   }
 }
