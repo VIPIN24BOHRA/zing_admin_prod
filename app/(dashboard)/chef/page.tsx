@@ -111,7 +111,8 @@ export default function ProductsPage({
 
           let orderNo = 0;
           for (let i = Orders.length - 1; i >= 0; i--) {
-            if (Orders[i].orderNo) orderNo = Orders[i].orderNo;
+            if (Orders[i].orderNo && Orders[i].orderNo < 10000)
+              orderNo = Orders[i].orderNo;
             else {
               orderNo++;
               Orders[i].orderNo = orderNo;
