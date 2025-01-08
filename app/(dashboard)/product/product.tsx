@@ -1,6 +1,5 @@
 import { TableCell, TableRow } from '@/components/ui/table';
 import { useState } from 'react';
-import { OrderDetailsModal } from '@/components/orderDetailsModal';
 import ProductModal from '../../../components/productModal';
 import { Trash } from 'lucide-react';
 
@@ -10,9 +9,12 @@ export function Product({ product, idx }: { product: any; idx: number }) {
     useState(false);
   return (
     <>
-      <TableRow onClick={() =>{
-        console.log(idx) ;
-         setIsProductModalOpen(true)}}>
+      <TableRow
+        onClick={() => {
+          console.log(idx);
+          setIsProductModalOpen(true);
+        }}
+      >
         <TableCell
           className="font-medium text-[13px] p-1 h-max w-max color-red text-center align-middle leading-[normal]"
           onClick={(e) => {
@@ -61,14 +63,18 @@ export function Product({ product, idx }: { product: any; idx: number }) {
           {product.quantity ? product.quantity : 'out of stock'}
         </TableCell>
         <TableCell className="font-medium text-center p-1">
-          {product.categories.map((c: any, idx: number) => (
-            <p
-              key={c}
-              className="flex flex-row text-[13px] justify-between font-bold"
-            >
-              <span> {c} </span>
-            </p>
-          ))}
+          {Array.isArray(product.categories) ? (
+            product.categories.map((c: any, idx: number) => (
+              <p
+                key={idx}
+                className="flex flex-row text-[13px] justify-between font-bold"
+              >
+                <span>{c}</span>
+              </p>
+            ))
+          ) : (
+            <p className="text-[13px]">No Categories</p>
+          )}
         </TableCell>
       </TableRow>
       <ProductModal

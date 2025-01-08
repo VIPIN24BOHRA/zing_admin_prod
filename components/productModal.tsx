@@ -26,7 +26,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
     isVeg: product?.isVeg || false,
     servingType: product?.servingType || '-',
     quantity: product?.quantity || '',
-    categories: product?.categories || '',
+    categories: product?.categories || [''],
     imageUrl: product?.imageUrl || '',
     largeImageUrl: product?.imageUrl || '',
     productId: product?.productId || ''
@@ -38,9 +38,28 @@ const ProductModal: React.FC<ProductModalProps> = ({
     >
   ) => {
     const { name, value, type, checked } = e.target as HTMLInputElement;
-    setFormData({
-      ...formData,
-      [name]: type === 'checkbox' ? checked : value
+
+    setFormData((prevData) => {
+      if (name === 'categories') {
+        // Split values into an array or handle as needed (comma-separated example here)
+        const updatedCategories = value
+          .split(',')
+          .map((category) => category.trim());
+        return {
+          ...prevData,
+          categories: updatedCategories
+        };
+      }
+
+      return {
+        ...prevData,
+        [name]:
+          type === 'checkbox'
+            ? checked
+            : ['originalPrice', 'price', 'quantity', 'productId'].includes(name)
+              ? Math.max(0, Number(value))
+              : value
+      };
     });
   };
 
@@ -106,7 +125,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
           price: 0,
           servingType: '',
           quantity: '',
-          categories: '',
+          categories: [''],
           imageUrl: '',
           largeImageUrl: '',
           productId: '',
@@ -184,10 +203,10 @@ const ProductModal: React.FC<ProductModalProps> = ({
                     Product Id
                   </label>
                   <input
-                    type="text"
+                    type="number"
                     name="productId"
                     placeholder={
-                      product ? product.productId.toString() : 'Serving Type'
+                      product ? product.productId.toString() : 'Product Id'
                     }
                     value={formData.productId}
                     onChange={handleChange}
@@ -321,7 +340,11 @@ const ProductModal: React.FC<ProductModalProps> = ({
                   <input
                     type="text"
                     name="categories"
-                    placeholder={product ? product.categories : 'Categories'}
+                    placeholder={
+                      product && product.categories.length > 0
+                        ? product.categories.join(', ')
+                        : 'Categories'
+                    }
                     value={formData.categories}
                     onChange={handleChange}
                     className="w-2/3 rounded-md border px-3 py-2"

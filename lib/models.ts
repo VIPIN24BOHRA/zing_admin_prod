@@ -7,7 +7,7 @@ export interface ProductModel {
   isVeg: boolean;
   servingType: string;
   quantity: string;
-  categories: string;
+  categories: string[];
   imageUrl: string;
   largeImageUrl:string; 
   productId: number ;

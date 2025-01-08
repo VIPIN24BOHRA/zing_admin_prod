@@ -37,7 +37,7 @@ export default function MenuPage() {
 
   useEffect(() => {
     const db = getDatabase(app);
-    const starCountRef = ref(db, 'products/');
+    const starCountRef = ref(db, 'testProduct/');
 
     get(query(starCountRef))
       .then((snapshot) => {
@@ -52,7 +52,7 @@ export default function MenuPage() {
   }, []);
 
   if (loading || !user) {
-    return <p>Loading...</p>; // Or a spinner/loading component
+    return <p>Loading...</p>;
   }
 
   return (
