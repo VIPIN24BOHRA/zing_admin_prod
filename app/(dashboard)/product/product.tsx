@@ -3,14 +3,12 @@ import { useState } from 'react';
 import { OrderDetailsModal } from '@/components/orderDetailsModal';
 import ProductModal from '../../../components/productModal';
 import {  Trash } from 'lucide-react';
-import { useRouter } from 'next/router';
 
 
 export function Product({ product, idx }: { product: any; idx: number }) {
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);
   const [isDeleteProductModalOpen, setDeleteIsProductModalOpen] =
     useState(false);
-    const router =useRouter() ;
   return (
     <>
       <TableRow onClick={() => setIsProductModalOpen(true)}>

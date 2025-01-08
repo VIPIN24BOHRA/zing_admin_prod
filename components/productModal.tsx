@@ -1,28 +1,34 @@
+'use-client';
 import { ProductModel } from '@/lib/models';
+import { addNewProduct, updateProduct } from 'modules/firebase/database';
 import React, { useState } from 'react';
 
 interface ProductModalProps {
   isOpen: boolean;
   onClose: () => void;
   product?: ProductModel;
+  totalProducts: number;
 }
 
 const ProductModal: React.FC<ProductModalProps> = ({
   isOpen,
   onClose,
-  product
+  product,
+  totalProducts
 }) => {
   const [formData, setFormData] = useState({
     title: product?.title || '',
     description: product?.description || '',
-    originalPrice: product?.originalPrice || '',
-    price: product?.price || '',
+    originalPrice: product?.originalPrice || 0,
+    price: product?.price || 0,
     hide: product?.hide || false,
     isVeg: product?.isVeg || false,
     servingType: product?.servingType || '',
     quantity: product?.quantity || '',
     categories: product?.categories || '',
-    imageUrl: product?.imageUrl || ''
+    imageUrl: product?.imageUrl || '',
+    largeImageUrl: product?.imageUrl || '',
+    productId: product?.productId || ''
   });
 
   const handleChange = (
@@ -37,9 +43,9 @@ const ProductModal: React.FC<ProductModalProps> = ({
     });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
+  
     const requiredFields = [
       'title',
       'description',
@@ -47,18 +53,58 @@ const ProductModal: React.FC<ProductModalProps> = ({
       'price',
       'servingType',
       'quantity',
-      'categories'
+      'categories',
     ];
+  
     for (const field of requiredFields) {
       if (!formData[field as keyof typeof formData]) {
         alert(`Please fill out the ${field} field.`);
         return;
       }
     }
-
-    console.log('Form Data:', formData);
-    onClose();
+  
+    const payload = {
+      product: {
+        title: formData.title,
+        description: formData.description,
+        originalPrice: Number(formData.originalPrice),
+        price: Number(formData.price),
+        hide: formData.hide,
+        isVeg: formData.isVeg,
+        servingType: formData.servingType,
+        quantity: Number(formData.quantity),
+        categories: formData.categories,
+        imageUrl: formData.imageUrl,
+        largeImageUrl: formData.largeImageUrl,
+        productId: Number(formData.productId),
+      },
+      id: totalProducts,
+    };
+  
+    console.log('Payload:', payload);
+  
+    try {
+      const response = await fetch('/api/product', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+  
+      const data = await response.json();
+  
+      if (response.ok) {
+        console.log('Product added successfully:', data);
+      } else {
+        console.error('Error adding product:', data.message || data.error);
+      }
+    } catch (error) {
+      console.error('Fetch error:', error instanceof Error ? error.message : error);
+    }
   };
+  
+  
 
   if (!isOpen) return null;
 
@@ -109,40 +155,57 @@ const ProductModal: React.FC<ProductModalProps> = ({
                     value={formData.description}
                     onChange={handleChange}
                     className="w-2/3 rounded-md border px-3 py-2"
-                    rows={4}
+                    rows={3}
                   />
                 </div>
-
                 <div className="flex items-center space-x-4">
-                  <label className="block w-1/3 text-sm font-medium text-gray-700">
-                    Original Price
+                  <label className="block w-3/4 text-sm font-medium text-gray-700">
+                    Product Id
                   </label>
                   <input
                     type="text"
-                    name="originalPrice"
+                    name="productId"
                     placeholder={
-                      product ? product.originalPrice : 'Original Price'
+                      product ? product.productId.toString() : 'Serving Type'
                     }
-                    value={formData.originalPrice}
+                    value={formData.productId}
                     onChange={handleChange}
-                    className="w-2/3 rounded-md border px-3 py-2"
+                    className="w-3/4 rounded-md border px-3 py-2"
                   />
                 </div>
-
                 <div className="flex items-center space-x-4">
-                  <label className="block w-1/3 text-sm font-medium text-gray-700">
-                    Price
-                  </label>
-                  <input
-                    type="text"
-                    name="price"
-                    placeholder={product ? product.price : 'Price'}
-                    value={formData.price}
-                    onChange={handleChange}
-                    className="w-2/3 rounded-md border px-3 py-2"
-                  />
-                </div>
+                  <div className="flex items-center space-x-4">
+                    <label className="block w-2/5 text-sm font-medium text-gray-700">
+                      Original Price
+                    </label>
+                    <input
+                      type="number"
+                      name="originalPrice"
+                      placeholder={
+                        product
+                          ? product.originalPrice.toString()
+                          : 'Original Price'
+                      }
+                      value={formData.originalPrice}
+                      onChange={handleChange}
+                      className="w-2/3 rounded-md border px-3 py-2"
+                    />
+                  </div>
 
+                  <div className="flex items-center space-x-4">
+                    <label className="block w-1/3 text-sm font-medium text-gray-700">
+                      Price
+                    </label>
+                    <input
+                      type="number"
+                      name="price"
+                      placeholder={product ? product.price.toString() : 'Price'}
+                      value={formData.price}
+                      onChange={handleChange}
+                      className="w-2/3 rounded-md border px-3 py-2"
+                    />
+                  </div>
+                </div>
                 <div className="flex items-center space-x-4">
                   <label className="block w-1/3 text-sm font-medium text-gray-700">
                     Image URL
@@ -152,6 +215,22 @@ const ProductModal: React.FC<ProductModalProps> = ({
                     name="imageUrl"
                     placeholder={product ? product.imageUrl : 'Image URL'}
                     value={formData.imageUrl}
+                    onChange={handleChange}
+                    className="w-2/3 rounded-md border px-3 py-2"
+                  />
+                </div>
+
+                <div className="flex items-center space-x-4">
+                  <label className="block w-1/3 text-sm font-medium text-gray-700">
+                    Large Image URL
+                  </label>
+                  <input
+                    type="text"
+                    name="largeImageUrl"
+                    placeholder={
+                      product ? product.largeImageUrl : 'Large Image URL'
+                    }
+                    value={formData.largeImageUrl}
                     onChange={handleChange}
                     className="w-2/3 rounded-md border px-3 py-2"
                   />
@@ -183,35 +262,37 @@ const ProductModal: React.FC<ProductModalProps> = ({
                     />
                   </div>
                 </div>
-
                 <div className="flex items-center space-x-4">
-                  <label className="block w-1/3 text-sm font-medium text-gray-700">
-                    Serving Type
-                  </label>
-                  <input
-                    type="text"
-                    name="servingType"
-                    placeholder={product ? product.servingType : 'Serving Type'}
-                    value={formData.servingType}
-                    onChange={handleChange}
-                    className="w-2/3 rounded-md border px-3 py-2"
-                  />
-                </div>
+                  <div className="flex items-center space-x-4">
+                    <label className="block w-3/4 text-sm font-medium text-gray-700">
+                      Serving Type
+                    </label>
+                    <input
+                      type="text"
+                      name="servingType"
+                      placeholder={
+                        product ? product.servingType : 'Serving Type'
+                      }
+                      value={formData.servingType}
+                      onChange={handleChange}
+                      className="w-3/4 rounded-md border px-3 py-2"
+                    />
+                  </div>
 
-                <div className="flex items-center space-x-4">
-                  <label className="block w-1/3 text-sm font-medium text-gray-700">
-                    Quantity
-                  </label>
-                  <input
-                    type="number"
-                    name="quantity"
-                    placeholder={product ? product.quantity : 'Quantity'}
-                    value={formData.quantity}
-                    onChange={handleChange}
-                    className="w-2/3 rounded-md border px-3 py-2"
-                  />
+                  <div className="flex items-center space-x-4">
+                    <label className="block w-1/4 text-sm font-medium text-gray-700">
+                      Quantity
+                    </label>
+                    <input
+                      type="number"
+                      name="quantity"
+                      placeholder={product ? product.quantity : 'Quantity'}
+                      value={formData.quantity}
+                      onChange={handleChange}
+                      className="w-2/4 rounded-md border px-3 py-2"
+                    />
+                  </div>
                 </div>
-
                 <div className="flex items-center space-x-4">
                   <label className="block w-1/3 text-sm font-medium text-gray-700">
                     Categories
@@ -237,6 +318,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
                 <button
                   type="submit"
                   className="rounded-md bg-black px-4 py-2 text-white"
+                  onClick={handleSubmit}
                 >
                   {product ? 'Update Item' : 'Add Item'}
                 </button>

@@ -92,6 +92,7 @@ export function ProductsTable({
           <ProductModal
             isOpen={isModalOpen}
             onClose={() => setIsModalOpen(false)}
+            totalProducts={totalProducts}
           ></ProductModal>
         </Table>
       </CardContent>
