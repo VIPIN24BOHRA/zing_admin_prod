@@ -1,6 +1,6 @@
 import { fetchUserFromToken } from '@/lib/authHelper';
 import { ProductModel } from '@/lib/models';
-import { addNewProduct, updateProduct } from 'modules/firebase/database';
+import { addNewProduct } from 'modules/firebase/database';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {

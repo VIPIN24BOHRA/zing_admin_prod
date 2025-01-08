@@ -2,8 +2,7 @@ import { TableCell, TableRow } from '@/components/ui/table';
 import { useState } from 'react';
 import { OrderDetailsModal } from '@/components/orderDetailsModal';
 import ProductModal from '../../../components/productModal';
-import {  Trash } from 'lucide-react';
-
+import { Trash } from 'lucide-react';
 
 export function Product({ product, idx }: { product: any; idx: number }) {
   const [isProductModalOpen, setIsProductModalOpen] = useState(false);

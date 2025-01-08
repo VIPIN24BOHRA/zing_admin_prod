@@ -43,16 +43,6 @@ export const addNewProduct = async (data: ProductModel,id:number) => {
   }
 };
 
-export const updateProduct = async (id: number, data: ProductModel) => {
-  const db = admin.database();
-  const ref = db.ref(sanitizePath(`/testProduct/${id}`));
-
-  try {
-    await ref.update(data);
-  } catch (err) {
-    console.log('error while updating Product', err);
-  }
-};
 
 export const createUserForOTPSMS = async (data: any) => {
   if (!data || !data.phoneNumber || !data.OTP) return;

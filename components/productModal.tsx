@@ -1,13 +1,12 @@
 'use-client';
 import { ProductModel } from '@/lib/models';
-import { addNewProduct, updateProduct } from 'modules/firebase/database';
 import React, { useState } from 'react';
 
 interface ProductModalProps {
   isOpen: boolean;
   onClose: () => void;
   product?: ProductModel;
-  totalProducts: number;
+  totalProducts?: number;
 }
 
 const ProductModal: React.FC<ProductModalProps> = ({
@@ -45,7 +44,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-  
+
     const requiredFields = [
       'title',
       'description',
@@ -53,16 +52,16 @@ const ProductModal: React.FC<ProductModalProps> = ({
       'price',
       'servingType',
       'quantity',
-      'categories',
+      'categories'
     ];
-  
+
     for (const field of requiredFields) {
       if (!formData[field as keyof typeof formData]) {
         alert(`Please fill out the ${field} field.`);
         return;
       }
     }
-  
+
     const payload = {
       product: {
         title: formData.title,
@@ -76,35 +75,55 @@ const ProductModal: React.FC<ProductModalProps> = ({
         categories: formData.categories,
         imageUrl: formData.imageUrl,
         largeImageUrl: formData.largeImageUrl,
-        productId: Number(formData.productId),
+        productId: Number(formData.productId)
       },
-      id: totalProducts,
+      id: totalProducts!+1
     };
-  
+
     console.log('Payload:', payload);
-  
+
     try {
       const response = await fetch('/api/product', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify(payload)
       });
-  
+
       const data = await response.json();
-  
+
       if (response.ok) {
         console.log('Product added successfully:', data);
+
+        // Clear the form data
+        setFormData({
+          title: '',
+          description: '',
+          originalPrice: 0,
+          price: 0,
+          servingType: '',
+          quantity: '',
+          categories: '',
+          imageUrl: '',
+          largeImageUrl: '',
+          productId: '',
+          hide: false,
+          isVeg: false
+        });
+
+        // Close the modal
       } else {
         console.error('Error adding product:', data.message || data.error);
       }
+      onClose();
     } catch (error) {
-      console.error('Fetch error:', error instanceof Error ? error.message : error);
+      console.error(
+        'Fetch error:',
+        error instanceof Error ? error.message : error
+      );
     }
   };
-  
-  
 
   if (!isOpen) return null;
 
