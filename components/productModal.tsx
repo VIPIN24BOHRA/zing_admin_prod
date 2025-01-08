@@ -7,13 +7,15 @@ interface ProductModalProps {
   onClose: () => void;
   product?: ProductModel;
   totalProducts?: number;
+  id?: number;
 }
 
 const ProductModal: React.FC<ProductModalProps> = ({
   isOpen,
   onClose,
   product,
-  totalProducts
+  totalProducts,
+  id
 }) => {
   const [formData, setFormData] = useState({
     title: product?.title || '',
@@ -22,7 +24,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
     price: product?.price || 0,
     hide: product?.hide || false,
     isVeg: product?.isVeg || false,
-    servingType: product?.servingType || '',
+    servingType: product?.servingType || '-',
     quantity: product?.quantity || '',
     categories: product?.categories || '',
     imageUrl: product?.imageUrl || '',
@@ -77,7 +79,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
         largeImageUrl: formData.largeImageUrl,
         productId: Number(formData.productId)
       },
-      id: totalProducts!+1
+      id: totalProducts ? totalProducts + 1 : id
     };
 
     console.log('Payload:', payload);

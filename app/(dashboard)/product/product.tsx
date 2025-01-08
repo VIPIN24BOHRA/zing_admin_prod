@@ -10,7 +10,9 @@ export function Product({ product, idx }: { product: any; idx: number }) {
     useState(false);
   return (
     <>
-      <TableRow onClick={() => setIsProductModalOpen(true)}>
+      <TableRow onClick={() =>{
+        console.log(idx) ;
+         setIsProductModalOpen(true)}}>
         <TableCell
           className="font-medium text-[13px] p-1 h-max w-max color-red text-center align-middle leading-[normal]"
           onClick={(e) => {
@@ -73,6 +75,7 @@ export function Product({ product, idx }: { product: any; idx: number }) {
         isOpen={isProductModalOpen}
         onClose={() => setIsProductModalOpen(false)}
         product={product}
+        id={idx}
       />
     </>
   );

@@ -51,20 +51,12 @@ export default function MenuPage() {
       });
   }, []);
 
-
-
   if (loading || !user) {
     return <p>Loading...</p>; // Or a spinner/loading component
   }
 
   return (
     <Tabs defaultValue="Menu">
-      <div className="flex items-center">
-        <div className="ml-auto flex items-center gap-2">
-          
-         
-        </div>
-      </div>
       <TabsContent value="Menu">
         <ProductsTable products={product} totalProducts={product.length} />
       </TabsContent>
