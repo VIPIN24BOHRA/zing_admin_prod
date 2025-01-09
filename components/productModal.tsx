@@ -99,7 +99,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
         largeImageUrl: formData.largeImageUrl,
         productId: Number(formData.productId)
       },
-      id: totalProducts ? totalProducts + 1 : id
+      id: totalProducts ? totalProducts : id
     };
 
     console.log('Payload:', payload);

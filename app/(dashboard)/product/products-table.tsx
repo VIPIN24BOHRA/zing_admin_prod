@@ -24,7 +24,6 @@ import ProductModal from '../../../components/productModal';
 
 export function ProductsTable({
   products,
-
   totalProducts,
   setIsModalOpen
 }: {
@@ -32,7 +31,6 @@ export function ProductsTable({
   totalProducts: number;
   setIsModalOpen: (id: null | number, isOpen: boolean) => void;
 }) {
-  console.log(totalProducts);
   return (
     <Card>
       <CardHeader>
@@ -85,7 +83,6 @@ export function ProductsTable({
           </TableHeader>
           <TableBody>
             {products.map((product, idx) => {
-              console.log(product);
               return (
                 <Product
                   key={product.productId}
