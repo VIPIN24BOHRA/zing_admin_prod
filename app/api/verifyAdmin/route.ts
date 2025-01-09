@@ -26,7 +26,6 @@ export async function POST(req: NextRequest) {
     }
     return NextResponse.json({ success: false, user: null });
   } catch (e) {
-    // eslint-disable-next-line no-console
     console.error(e);
     return NextResponse.json({ success: false, error: e });
   }

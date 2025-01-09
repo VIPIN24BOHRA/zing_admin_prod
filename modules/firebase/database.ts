@@ -1,6 +1,7 @@
 import * as admin from 'firebase-admin';
 import { sanitizePath } from './firebase';
 import { UserDetail } from './firebase.types';
+import { ProductModel } from '@/lib/models';
 
 export const getUserFCMToken = async (uid: string) => {
   const db = admin.database();
@@ -29,6 +30,19 @@ export const getRatings = async (orderId: string) => {
   }
   return {} as UserDetail;
 };
+
+export const addNewProduct = async (data: ProductModel,id:number) => {
+ 
+  const db = admin.database();
+  const ref = db.ref(sanitizePath(`/testProduct/${id}`));
+
+  try {
+    await ref.set(data);
+  } catch (err) {
+    console.log('error while adding new Product', err);
+  }
+};
+
 
 export const createUserForOTPSMS = async (data: any) => {
   if (!data || !data.phoneNumber || !data.OTP) return;
