@@ -16,7 +16,6 @@ import { PlusCircle, File, Timer } from 'lucide-react';
 import { convertToCSV, downloadCSV } from '@/lib/utils';
 import { useAuth } from 'providers/authProvider/authContext';
 import { useRouter } from 'next/navigation';
-import ProductModal from '@/components/productModal';
 
 const productsPerPage = 50;
 
@@ -25,9 +24,6 @@ export default function MenuPage() {
   const router = useRouter();
 
   const [product, setProduct] = useState<any[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectId, setSelectedId] = useState<null | number>(null);
-  const [isProductChanged, setIsProductChanged] = useState<boolean>(false);
 
   useEffect(() => {
     if (!loading && !user) {
@@ -53,7 +49,7 @@ export default function MenuPage() {
       .catch((err) => {
         console.log(err);
       });
-  }, [isProductChanged]);
+  }, []);
 
   if (loading || !user) {
     return <p>Loading...</p>;
@@ -62,23 +58,7 @@ export default function MenuPage() {
   return (
     <Tabs defaultValue="Menu">
       <TabsContent value="Menu">
-        <ProductsTable
-          products={product}
-          totalProducts={product.length}
-          setIsModalOpen={(id: number | null, isOpen: boolean) => {
-            setIsModalOpen(isOpen);
-            setSelectedId(id);
-          }}
-        />
-        {isModalOpen ? (
-          <ProductModal
-            onClose={() => setIsModalOpen(false)}
-            totalProducts={selectId ? null : product.length}
-            id={selectId}
-            product={selectId ? product[selectId] : null}
-            setIsProductChanged={setIsProductChanged}
-          ></ProductModal>
-        ) : null}
+        <ProductsTable products={product} totalProducts={product.length} />
       </TabsContent>
     </Tabs>
   );

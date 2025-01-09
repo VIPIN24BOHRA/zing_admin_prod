@@ -3,27 +3,23 @@ import { useState } from 'react';
 import ProductModal from '../../../components/productModal';
 import { Trash } from 'lucide-react';
 
-export function Product({
-  product,
-  idx,
-  setIsModalOpen
-}: {
-  product: any;
-  idx: number;
-  setIsModalOpen: (id: null | number, isOpen: boolean) => void;
-}) {
+export function Product({ product, idx }: { product: any; idx: number }) {
+  const [isProductModalOpen, setIsProductModalOpen] = useState(false);
+  const [isDeleteProductModalOpen, setDeleteIsProductModalOpen] =
+    useState(false);
   return (
     <>
       <TableRow
         onClick={() => {
           console.log(idx);
-          setIsModalOpen(idx,true);
+          setIsProductModalOpen(true);
         }}
       >
         <TableCell
           className="font-medium text-[13px] p-1 h-max w-max color-red text-center align-middle leading-[normal]"
           onClick={(e) => {
             e.stopPropagation();
+            setDeleteIsProductModalOpen(true);
           }}
         >
           <span className="inline-block align-middle">
@@ -81,6 +77,12 @@ export function Product({
           )}
         </TableCell>
       </TableRow>
+      <ProductModal
+        isOpen={isProductModalOpen}
+        onClose={() => setIsProductModalOpen(false)}
+        product={product}
+        id={idx}
+      />
     </>
   );
 }

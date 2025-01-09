@@ -1,21 +1,21 @@
 'use-client';
 import { ProductModel } from '@/lib/models';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 interface ProductModalProps {
-  isOpen: boolean;
   onClose: () => void;
-  product?: ProductModel;
-  totalProducts?: number;
-  id?: number;
+  product: ProductModel | null;
+  totalProducts: number | null;
+  id: number | null;
+  setIsProductChanged: (isProductChanged: boolean) => void;
 }
 
 const ProductModal: React.FC<ProductModalProps> = ({
-  isOpen,
   onClose,
   product,
   totalProducts,
-  id
+  id,
+  setIsProductChanged
 }) => {
   const [formData, setFormData] = useState({
     title: product?.title || '',
@@ -32,6 +32,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
     productId: product?.productId || ''
   });
 
+  let debounceTimeout: NodeJS.Timeout;
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -134,10 +135,17 @@ const ProductModal: React.FC<ProductModalProps> = ({
         });
 
         // Close the modal
+        setIsProductChanged(true);
+
+        clearTimeout(debounceTimeout);
+        debounceTimeout = setTimeout(() => {
+          setIsProductChanged(false);
+        }, 1000);
       } else {
         console.error('Error adding product:', data.message || data.error);
       }
       onClose();
+      setIsProductChanged(true);
     } catch (error) {
       console.error(
         'Fetch error:',
@@ -145,8 +153,6 @@ const ProductModal: React.FC<ProductModalProps> = ({
       );
     }
   };
-
-  if (!isOpen) return null;
 
   return (
     <div
@@ -184,7 +190,6 @@ const ProductModal: React.FC<ProductModalProps> = ({
                     className="w-2/3 rounded-md border px-3 py-2"
                   />
                 </div>
-
                 <div className="flex items-center space-x-4">
                   <label className="block w-1/3 text-sm font-medium text-gray-700">
                     Description
@@ -198,21 +203,24 @@ const ProductModal: React.FC<ProductModalProps> = ({
                     rows={3}
                   />
                 </div>
-                <div className="flex items-center space-x-4">
-                  <label className="block w-3/4 text-sm font-medium text-gray-700">
-                    Product Id
-                  </label>
-                  <input
-                    type="number"
-                    name="productId"
-                    placeholder={
-                      product ? product.productId.toString() : 'Product Id'
-                    }
-                    value={formData.productId}
-                    onChange={handleChange}
-                    className="w-3/4 rounded-md border px-3 py-2"
-                  />
-                </div>
+
+                {product ? (
+                  <></>
+                ) : (
+                  <div className="flex items-center space-x-4">
+                    <label className="block w-3/4 text-sm font-medium text-gray-700">
+                      Product Id
+                    </label>
+                    <input
+                      type="number"
+                      name="productId"
+                      placeholder={'Product Id'}
+                      value={formData.productId}
+                      onChange={handleChange}
+                      className="w-3/4 rounded-md border px-3 py-2"
+                    />
+                  </div>
+                )}
                 <div className="flex items-center space-x-4">
                   <div className="flex items-center space-x-4">
                     <label className="block w-2/5 text-sm font-medium text-gray-700">
@@ -259,7 +267,6 @@ const ProductModal: React.FC<ProductModalProps> = ({
                     className="w-2/3 rounded-md border px-3 py-2"
                   />
                 </div>
-
                 <div className="flex items-center space-x-4">
                   <label className="block w-1/3 text-sm font-medium text-gray-700">
                     Large Image URL
@@ -275,7 +282,6 @@ const ProductModal: React.FC<ProductModalProps> = ({
                     className="w-2/3 rounded-md border px-3 py-2"
                   />
                 </div>
-
                 <div className="flex items-center space-x-4">
                   <div className="flex w-1/2 items-center">
                     <label className="block w-1/3 text-sm font-medium text-gray-700">

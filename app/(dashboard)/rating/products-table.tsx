@@ -25,14 +25,12 @@ import ProductModal from '../../../components/productModal';
 export function ProductsTable({
   products,
 
-  totalProducts,
-  setIsModalOpen
+  totalProducts
 }: {
   products: any[];
   totalProducts: number;
-  setIsModalOpen: (id: null | number, isOpen: boolean) => void;
 }) {
-  console.log(totalProducts);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   return (
     <Card>
       <CardHeader>
@@ -42,7 +40,7 @@ export function ProductsTable({
             size="sm"
             variant="outline"
             className="h-8 gap-1 bg-green-500 text-white ml-auto"
-            onClick={() => setIsModalOpen(null, true)}
+            onClick={() => setIsModalOpen(true)}
           >
             <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
               Add Food Item
@@ -87,15 +85,15 @@ export function ProductsTable({
             {products.map((product, idx) => {
               console.log(product);
               return (
-                <Product
-                  key={product.productId}
-                  product={product}
-                  idx={idx}
-                  setIsModalOpen={setIsModalOpen}
-                />
+                <Product key={product.productId} product={product} idx={idx} />
               );
             })}
           </TableBody>
+          <ProductModal
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+            totalProducts={totalProducts}
+          ></ProductModal>
         </Table>
       </CardContent>
     </Card>
