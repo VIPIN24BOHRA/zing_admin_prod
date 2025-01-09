@@ -57,9 +57,15 @@ export default function ProductsPage({
       eventSource = new EventSource('https://api.getzing.app/sse');
       eventSource.onmessage = (event: any) => {
         console.log('Received data:', event.data);
-        const [key, status, deliveredAt, deliveryBoyStatus] =
+        const [key, status, deliveredAt, deliveryBoyStatus, deliveryBoyName] =
           event.data.split('###');
-        console.log(key, status, deliveredAt, deliveryBoyStatus);
+        console.log(
+          key,
+          status,
+          deliveredAt,
+          deliveryBoyStatus,
+          deliveryBoyName
+        );
         if (key && status) {
           setProduct((prevProducts) =>
             prevProducts.map((order) =>
@@ -69,8 +75,12 @@ export default function ProductsPage({
                     status,
                     deliveredAt,
                     deliveryBoy: order.deliveryBoy
-                      ? { ...order.deliveryBoy, status: deliveryBoyStatus }
-                      : { status: deliveryBoyStatus }
+                      ? {
+                          ...order.deliveryBoy,
+                          status: deliveryBoyStatus,
+                          name: deliveryBoyName
+                        }
+                      : { status: deliveryBoyStatus, name: deliveryBoyName }
                   }
                 : order
             )

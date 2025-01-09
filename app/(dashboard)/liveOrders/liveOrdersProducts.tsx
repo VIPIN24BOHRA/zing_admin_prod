@@ -76,7 +76,15 @@ export function LiverOrderProduct({
               : { color: 'rgba(255,124,2,1)' }
           }
         >{`${status ? status : '-'}`}</TableCell>
-        <TableCell className="hidden md:table-cell text-center font-bold p-1 text-[12px]">{`${product?.deliveryBoy?.status ? product?.deliveryBoy?.status : '-'}`}</TableCell>
+        <TableCell className="hidden md:table-cell text-center p-1 text-[11px] font-bold">
+          <span className="text-[rgba(255,0,0)]">
+            {product?.deliveryBoy?.name ? product?.deliveryBoy?.name : ''}
+          </span>
+          <br />
+          <span>
+            {product?.deliveryBoy?.status ? product?.deliveryBoy?.status : ''}
+          </span>
+        </TableCell>
         <TableCell className="hidden md:table-cell text-[12px] p-1">
           {product.createdAt
             ? new Date(product.createdAt).toDateString()?.substring(3)
