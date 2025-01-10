@@ -1,88 +1,82 @@
 import { TableCell, TableRow } from '@/components/ui/table';
 import { useState } from 'react';
-import ProductModal from '../../../components/productModal';
-import { Trash } from 'lucide-react';
+import { OrderDetailsModal } from '@/components/orderDetailsModal';
+import StarRatings from 'react-star-ratings';
 
-export function Product({ product, idx }: { product: any; idx: number }) {
-  const [isProductModalOpen, setIsProductModalOpen] = useState(false);
-  const [isDeleteProductModalOpen, setDeleteIsProductModalOpen] =
-    useState(false);
+export function Product({ product }: { product: any }) {
+  const totalPrice =
+    product.totalPrice -
+    (product?.discount ?? 0) +
+    (product.deliveryFee
+      ? product.deliveryFee
+      : product.totalPrice < 99
+        ? 20
+        : 0);
+  console.log(`product id -> ${product.key}  totalPrice ---> ${totalPrice}`);
+
+  const [deliveryRating, setDeliveryRating] = useState(3);
+  const [tasteRating, setTasteRating] = useState(3);
+
   return (
     <>
-      <TableRow
-        onClick={() => {
-          console.log(idx);
-          setIsProductModalOpen(true);
-        }}
-      >
-        <TableCell
-          className="font-medium text-[13px] p-1 h-max w-max color-red text-center align-middle leading-[normal]"
-          onClick={(e) => {
-            e.stopPropagation();
-            setDeleteIsProductModalOpen(true);
-          }}
-        >
-          <span className="inline-block align-middle">
-            <Trash color="red" />
-          </span>
-        </TableCell>
-
-        <TableCell className="font-medium text-center text-[13px] p-1 ">
-          {idx + 1}
+      <TableRow>
+        <TableCell className="font-medium text-center text-[13px] p-1">
+          #{product.orderNo}
         </TableCell>
 
         <TableCell className="font-medium text-center text-[13px] p-1">
-          {product.title}
+          {product.phoneNumber ? product.phoneNumber : product.uid}
         </TableCell>
         <TableCell className="hidden sm:table-cell text-[12px] p-1">
           <p className="w-[180px] text-ellipsis overflow-hidden ">
-            {product.description}
+            {product.address?.title}
           </p>
         </TableCell>
-
-        <TableCell className="hidden md:table-cell text-center p-1">
-          {product.originalPrice}
-        </TableCell>
-        <TableCell className="hidden md:table-cell text-center text-[12px] p-1">
-          {product.price}
-        </TableCell>
-        <TableCell className="hidden md:table-cell text-center text-[12px] p-1 font-bold">
-          {product.hide ? '✅' : '❌'}
-        </TableCell>
-        <TableCell className="hidden md:table-cell text-center text-[rgba(3,189,71,1)] font-bold p-1 text-[12px]">
-          {product.isVeg ? (
-            <span className="">veg</span>
-          ) : (
-            <span className="text-[#ff0000]">non veg</span>
-          )}
-        </TableCell>
-        <TableCell className="hidden md:table-cell text-[12px] p-1 text-center">
-          {product.servingType ? product.servingType : '-'}
-        </TableCell>
-        <TableCell className="hidden md:table-cell text-[12px] p-1 text-center">
-          {product.quantity ? product.quantity : 'out of stock'}
-        </TableCell>
         <TableCell className="font-medium text-center p-1">
-          {Array.isArray(product.categories) ? (
-            product.categories.map((c: any, idx: number) => (
-              <p
-                key={idx}
-                className="flex flex-row text-[13px] justify-between font-bold"
-              >
-                <span>{c}</span>
-              </p>
-            ))
+          {product.cartItems.map((c: any, idx: number) => (
+            <p
+              key={c?.item?.title + idx}
+              className="flex flex-row text-[13px] justify-between font-bold"
+            >
+              <span> {c?.item?.title} :- </span>
+              <span>{c?.quantity}</span>
+            </p>
+          ))}
+        </TableCell>
+        <TableCell className="hidden md:table-cell  p-1">
+          {deliveryRating ? (
+            <p className="mb-2 flex flex-col items-center">
+              <StarRatings
+                starDimension="15px"
+                starSpacing="2px"
+                rating={deliveryRating}
+                starRatedColor="green"
+                numberOfStars={5}
+                name="Delivery Rating"
+              />
+            </p>
           ) : (
-            <p className="text-[13px]">No Categories</p>
+            ''
           )}
+        </TableCell>
+        <TableCell className="hidden md:table-cell  p-1">
+          {tasteRating ? (
+            <p className="flex flex-col items-center">
+              <StarRatings
+                starDimension="15px"
+                starSpacing="2px"
+                rating={tasteRating}
+                starRatedColor="green"
+                numberOfStars={5}
+                name="Taste Rating"
+              />
+            </p>
+          ) : (
+            ''
+          )}
+
         </TableCell>
       </TableRow>
-      <ProductModal
-        isOpen={isProductModalOpen}
-        onClose={() => setIsProductModalOpen(false)}
-        product={product}
-        id={idx}
-      />
     </>
   );
 }

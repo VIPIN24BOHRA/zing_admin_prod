@@ -19,81 +19,85 @@ import { Product } from './product';
 
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useState } from 'react';
-import ProductModal from '../../../components/productModal';
 
 export function ProductsTable({
   products,
-
-  totalProducts
+  offset,
+  totalProducts,
+  prevPage,
+  nextPage,
+  productsPerPage
 }: {
   products: any[];
+  offset: number;
   totalProducts: number;
+  prevPage: () => void;
+  nextPage: () => void;
+  productsPerPage: number;
 }) {
-  const [isModalOpen, setIsModalOpen] = useState(false);
   return (
     <Card>
       <CardHeader>
-        <CardTitle style={{ display: 'flex' }}>
-          Menu
-          <Button
-            size="sm"
-            variant="outline"
-            className="h-8 gap-1 bg-green-500 text-white ml-auto"
-            onClick={() => setIsModalOpen(true)}
-          >
-            <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
-              Add Food Item
-            </span>
-          </Button>
-        </CardTitle>
-        <CardDescription>Manage your Menu items .</CardDescription>
+        <CardTitle>Order History</CardTitle>
+        <CardDescription>
+          Manage your orders and view sales details.
+        </CardDescription>
+        <CardFooter className="pl-0">
+          <div className="flex items-center justify-between w-full">
+            <div className="text-xs text-muted-foreground">
+              Showing{' '}
+              <strong>
+                {Math.min(offset * productsPerPage, totalProducts) + 1} -{' '}
+                {Math.min((offset + 1) * productsPerPage, totalProducts)}
+              </strong>{' '}
+              of <strong>{totalProducts}</strong> products
+            </div>
+            <div className="flex gap-2">
+              <Button
+                onClick={prevPage}
+                variant="ghost"
+                size="sm"
+                disabled={offset === 0}
+                aria-label="Previous page"
+              >
+                <ChevronLeft className="mr-2 h-4 w-4" />
+                Prev
+              </Button>
+              <Button
+                onClick={nextPage}
+                variant="ghost"
+                size="sm"
+                disabled={(offset + 1) * productsPerPage >= totalProducts}
+                aria-label="Next page"
+              >
+                Next
+                <ChevronRight className="ml-2 h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        </CardFooter>
       </CardHeader>
       <CardContent>
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="text-center"> Delete</TableHead>
-              <TableHead className="text-center"> Product no</TableHead>
-
-              <TableHead className="text-center"> Title</TableHead>
-              <TableHead className="text-center"> Description </TableHead>
-              <TableHead>original Price</TableHead>
-
+              <TableHead className="text-center">Order No</TableHead>
+              <TableHead className="text-center">Phone Number</TableHead>
+              <TableHead className="text-center">Address</TableHead>
+              <TableHead>Total Items</TableHead>
               <TableHead className="hidden md:table-cell text-center">
-                price
+                Delivery Rating
               </TableHead>
               <TableHead className="hidden md:table-cell text-center">
-                hide
-              </TableHead>
-              <TableHead className="hidden md:table-cell text-center">
-                Veg / Nog-veg
-              </TableHead>
-              <TableHead className="hidden md:table-cell text-center">
-                Serving type
-              </TableHead>
-
-              <TableHead className="hidden md:table-cell text-center">
-                quanity
-              </TableHead>
-              <TableHead className="hidden md:table-cell text-center">
-                Categories
+                Taste Rating
               </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {products.map((product, idx) => {
-              console.log(product);
-              return (
-                <Product key={product.productId} product={product} idx={idx} />
-              );
-            })}
+            {products.map((product, idx) => (
+              <Product key={product.key || idx} product={product} />
+            ))}
           </TableBody>
-          <ProductModal
-            isOpen={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
-            totalProducts={totalProducts}
-          ></ProductModal>
         </Table>
       </CardContent>
     </Card>

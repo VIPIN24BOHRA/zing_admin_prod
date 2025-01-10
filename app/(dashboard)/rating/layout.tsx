@@ -1,4 +1,14 @@
 import Link from 'next/link';
+import {
+  Home,
+  LineChart,
+  Package,
+  Package2,
+  PanelLeft,
+  Settings,
+  ShoppingCart,
+  Users2
+} from 'lucide-react';
 
 import {
   Breadcrumb,
@@ -8,6 +18,13 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator
 } from '@/components/ui/breadcrumb';
+import { Button } from '@/components/ui/button';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger
+} from '@/components/ui/tooltip';
 
 export default function DashboardLayout({
   children
@@ -40,7 +57,7 @@ function DashboardBreadcrumb() {
 
         <BreadcrumbSeparator />
         <BreadcrumbItem>
-          <BreadcrumbPage>Menu Items</BreadcrumbPage>
+          <BreadcrumbPage>Order history</BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>
