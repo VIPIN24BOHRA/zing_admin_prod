@@ -8,7 +8,8 @@ import { Alert } from '@mui/material';
 import { useState } from 'react';
 import { get, getDatabase, limitToLast, query, ref } from 'firebase/database';
 import { app } from '@/lib/db';
-import { createRiderOrder } from '@/lib/riderHelper';
+import { createPidgeRiderOrder, createRiderOrder } from '@/lib/riderHelper';
+import Spinner from './ui/spinner';
 
 const copyDetails = async (product: any, totalPrice: any) => {
   const value = `Order No :- ${product.orderNo}
@@ -82,6 +83,7 @@ export const LiveOrderModel = ({
 }) => {
   const [copied, setCopied] = useState(false);
   const [paymentStatus, setPaymentStatus] = useState('');
+  const [loading, setLoading] = useState(false);
 
   return (
     <div
@@ -276,25 +278,32 @@ export const LiveOrderModel = ({
                   Cancel
                 </button>
               )}
-              {showAccept && (
-                <button
-                  className="w-[120px] mx-2 border-none bg-[rgba(0,0,255,0.55)] hover:bg-[rgba(0,0,255,1)] text-white px-4 py-1 text-xs rounded-lg mb-2"
-                  onClick={async (event) => {
-                    event.stopPropagation();
-                    console.log('set status to accepted', product);
+              {showAccept &&
+                (loading ? (
+                  <Spinner />
+                ) : (
+                  <button
+                    className="w-[120px] mx-2 border-none bg-[rgba(0,0,255,0.55)] hover:bg-[rgba(0,0,255,1)] text-white px-4 py-1 text-xs rounded-lg mb-2"
+                    onClick={async (event) => {
+                      event.stopPropagation();
+                      console.log('set status to accepted', product);
+                      setLoading(true);
 
-                    const res = await updateProductStatus(
-                      'ACCEPTED',
-                      product.key
-                    );
-                    if (userType == 'chef') await createRiderOrder(product);
+                      const res = await updateProductStatus(
+                        'ACCEPTED',
+                        product.key
+                      );
 
-                    if (res) setStatus('ACCEPTED');
-                  }}
-                >
-                  Accept
-                </button>
-              )}
+                      if (res) setStatus('ACCEPTED');
+                      if (userType == 'chef')
+                        await createPidgeRiderOrder(product);
+
+                      setLoading(false);
+                    }}
+                  >
+                    Accept
+                  </button>
+                ))}
 
               {showCopy && (
                 <button

@@ -47,6 +47,7 @@ export default function MenuPage() {
       .then((snapshot) => {
         if (snapshot.exists()) {
           const data = snapshot.val();
+
           setProduct(data);
         }
       })

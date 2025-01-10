@@ -49,6 +49,16 @@ const authenticateRider = () => {
     .then((data) => console.log(data))
     .catch((err) => console.error(err));
 };
+const authenticatePidgeRider = () => {
+  console.log('authenticate  pidge rider');
+  fetch('/api/pidge/getToken', {
+    method: 'POST',
+    credentials: 'include' // Important to send/receive cookies
+  })
+    .then((res) => res.json())
+    .then((data) => console.log(data))
+    .catch((err) => console.error(err));
+};
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -98,7 +108,7 @@ export const AuthProvider = ({ children }: any) => {
         console.log(res);
         if (res) {
           setUser(user);
-          authenticateRider();
+          authenticatePidgeRider();
         } else {
           setNotAllowed(true);
         }

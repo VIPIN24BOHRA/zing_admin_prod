@@ -61,9 +61,9 @@ export default function DesktopNav() {
         <NavItem href="#" label="Analytics">
           <LineChart className="h-5 w-5" />
         </NavItem>
-        <NavItem href="/menu" label="Menu items">
+        {/* <NavItem href="/menu" label="Menu items">
           <HandPlatter className="h-5 w-5" />
-        </NavItem>
+        </NavItem> */}
         <NavItem href="/chef" label="Chef orders">
           <ChefHat className="h-5 w-5" />
         </NavItem>

@@ -85,7 +85,14 @@ export const convertToCSV = (data: any) => {
           totalPrice: order.totalPrice,
           discount: order.discount,
           cart: item.item.title,
-          quantity: item.quantity
+          quantity: item.quantity,
+          address:
+            order.address.houseDetails +
+            ' , ' +
+            (order.address.landmark ? order.address.landmark + ' , ' : '') +
+            order.address.title,
+
+          paymentMethod: order.transactionDetails ? 'PAID' : 'CASH'
         };
       });
     })
