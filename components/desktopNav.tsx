@@ -73,6 +73,9 @@ export default function DesktopNav() {
         <NavItem href="/rating" label="Menu items">
           <Star className="h-5 w-5" />
         </NavItem>
+        <NavItem href="/orderstest" label="Orders history">
+          <ShoppingCart className="h-5 w-5" />
+        </NavItem>
         {showLogout && (
           <NavItem href="#" label="Log out">
             <LogOut

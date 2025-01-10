@@ -2,6 +2,13 @@ import * as admin from 'firebase-admin';
 import { sanitizePath } from './firebase';
 import { UserDetail } from './firebase.types';
 import { ProductModel } from '@/lib/models';
+import {
+  endBefore,
+  limitToLast,
+  orderByKey,
+  query,
+  ref
+} from 'firebase/database';
 
 export const getUserFCMToken = async (uid: string) => {
   const db = admin.database();
@@ -31,8 +38,7 @@ export const getRatings = async (orderId: string) => {
   return {} as UserDetail;
 };
 
-export const addNewProduct = async (data: ProductModel,id:number) => {
- 
+export const addNewProduct = async (data: ProductModel, id: number) => {
   const db = admin.database();
   const ref = db.ref(sanitizePath(`/testProduct/${id}`));
 
@@ -42,7 +48,6 @@ export const addNewProduct = async (data: ProductModel,id:number) => {
     console.log('error while adding new Product', err);
   }
 };
-
 
 export const createUserForOTPSMS = async (data: any) => {
   if (!data || !data.phoneNumber || !data.OTP) return;
@@ -95,5 +100,19 @@ export const addNewPaymentDeatils = async (payment: any) => {
     await ref.set(payment);
   } catch (err) {
     console.log('error while setUserDetails', err);
+  }
+};
+export const getOrders = async (offset: string, limit: number) => {
+  try {
+    const db = admin.database();
+    const ordersRef = db.ref(sanitizePath('orders/'));
+
+    const query = ordersRef.orderByKey().endBefore(offset).limitToLast(limit);
+
+    const snapshot = await query.once('value');
+    return snapshot.exists() ? snapshot : null;
+  } catch (error) {
+    console.error('Error fetching orders:', error);
+    throw new Error('Failed to fetch orders');
   }
 };
