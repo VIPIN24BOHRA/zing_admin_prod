@@ -1,4 +1,5 @@
 import {
+  acceptOrder,
   copyToClipboard,
   updateProductStatus,
   updateStatusCancelled,
@@ -289,12 +290,13 @@ export const LiveOrderModel = ({
                       console.log('set status to accepted', product);
                       setLoading(true);
 
-                      const res = await updateProductStatus(
-                        'ACCEPTED',
-                        product.key
+                      const res = await acceptOrder(
+                        product.key,
+                        product.orderNo
                       );
 
                       if (res) setStatus('ACCEPTED');
+
                       if (userType == 'chef')
                         await createPidgeRiderOrder(product);
 

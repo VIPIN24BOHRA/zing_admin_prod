@@ -6,7 +6,8 @@ import {
   get,
   orderByChild,
   query,
-  equalTo
+  equalTo,
+  update
 } from 'firebase/database';
 import { twMerge } from 'tailwind-merge';
 import { app } from '@/lib/db';
@@ -23,6 +24,21 @@ export const updateProductStatus = async (status: string, key: string) => {
   const orderRef = ref(db, `orders/${key}/status`);
   try {
     await set(orderRef, status);
+    return true;
+  } catch (err) {
+    console.log(`error while updateProductStatus ${err}`);
+    return false;
+  }
+};
+
+export const acceptOrder = async (key: string, orderNo: number) => {
+  if (!key) return;
+
+  const db = getDatabase(app);
+
+  const orderRef = ref(db, `orders/${key}`);
+  try {
+    await update(orderRef, { status: 'ACCEPTED', orderNo: orderNo });
     return true;
   } catch (err) {
     console.log(`error while updateProductStatus ${err}`);
