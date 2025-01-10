@@ -57,7 +57,7 @@ function DashboardBreadcrumb() {
 
         <BreadcrumbSeparator />
         <BreadcrumbItem>
-          <BreadcrumbPage>Order history</BreadcrumbPage>
+          <BreadcrumbPage>Order Rating</BreadcrumbPage>
         </BreadcrumbItem>
       </BreadcrumbList>
     </Breadcrumb>

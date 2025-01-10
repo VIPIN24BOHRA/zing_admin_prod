@@ -22,42 +22,32 @@ import { Button } from '@/components/ui/button';
 
 export function ProductsTable({
   products,
-  offset,
-  totalProducts,
   prevPage,
   nextPage,
-  productsPerPage
+  productsPerPage,
+  index
 }: {
   products: any[];
-  offset: number;
-  totalProducts: number;
   prevPage: () => void;
   nextPage: () => void;
   productsPerPage: number;
+  index: number;
 }) {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Order History</CardTitle>
+        <CardTitle>Order Rating</CardTitle>
         <CardDescription>
           Manage your orders and view sales details.
         </CardDescription>
         <CardFooter className="pl-0">
           <div className="flex items-center justify-between w-full">
-            <div className="text-xs text-muted-foreground">
-              Showing{' '}
-              <strong>
-                {Math.min(offset * productsPerPage, totalProducts) + 1} -{' '}
-                {Math.min((offset + 1) * productsPerPage, totalProducts)}
-              </strong>{' '}
-              of <strong>{totalProducts}</strong> products
-            </div>
             <div className="flex gap-2">
               <Button
                 onClick={prevPage}
                 variant="ghost"
                 size="sm"
-                disabled={offset === 0}
+                disabled={index == 0}
                 aria-label="Previous page"
               >
                 <ChevronLeft className="mr-2 h-4 w-4" />
@@ -67,7 +57,6 @@ export function ProductsTable({
                 onClick={nextPage}
                 variant="ghost"
                 size="sm"
-                disabled={(offset + 1) * productsPerPage >= totalProducts}
                 aria-label="Next page"
               >
                 Next

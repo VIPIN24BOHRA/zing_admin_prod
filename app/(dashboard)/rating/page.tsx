@@ -1,14 +1,10 @@
 'use client';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Button } from '@/components/ui/button';
+import { Tabs, TabsContent } from '@/components/ui/tabs';
 import { ProductsTable } from './products-table';
 import { useEffect, useState } from 'react';
-import { get, getDatabase, limitToLast, query, ref } from 'firebase/database';
-import { app } from '@/lib/db';
-import { PlusCircle, File } from 'lucide-react';
-import { convertToCSV, downloadCSV } from '@/lib/utils';
 import { useAuth } from 'providers/authProvider/authContext';
 import { useRouter } from 'next/navigation';
+import { fetchAndSortOrders } from './ratingHandler';
 
 const productsPerPage = 50;
 
@@ -17,98 +13,88 @@ export default function OrderHistoryPage({
 }: {
   searchParams: { q: string; offset: string };
 }) {
-  const [product, setProduct] = useState<any[]>([]);
-  const [currentProducts, setCurrentProducts] = useState<any[]>([]);
-  const [offset, setOffset] = useState(0);
+  interface Order {
+    key: string;
+    [key: string]: any;
+  }
+
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [offset, setOffset] = useState<string>('z');
+  const [totalOrders, setTotalOrders] = useState<Order[]>([]);
+  const [index, setIndex] = useState<number>(0);
+  const [dataLoading, setdataLoading] = useState(false);
 
   const { user, loading } = useAuth();
   const router = useRouter();
-  
 
   useEffect(() => {
     if (!loading && !user) {
       router.push('/login');
+      return;
     }
-    if (!loading && user?.email === 'kitchen@getzing.app') {
+    if (!loading && user && user.email == 'kitchen@getzing.app') {
+      console.log(user.email);
       router.push('/');
+      return;
     }
-  }, [user, loading, router]);
-
-  useEffect(() => {
-    const fetchAndSortOrders = async () => {
-      try {
-        const db = getDatabase(app);
-        const starCountRef = ref(db, 'orders/');
-
-        const snapshot = await get(query(starCountRef));
-        if (snapshot.exists()) {
-          const data = snapshot.val();
-
-          const Orders =
-            Object.keys(data ?? {})
-              ?.map((key) =>
-                data[key].createdAt
-                  ? {
-                      ...data[key],
-                      key: key
-                    }
-                  : null
-              )
-              ?.filter((v) => v != null) ?? [];
-          Orders.sort((a, b) => b.createdAt - a.createdAt); 
-
-          setProduct(Orders); 
-          setCurrentProducts(Orders.slice(0, productsPerPage));
-        }
-      } catch (err) {
-        console.error('Failed to fetch and sort orders:', err);
-      }
-    };
-
-    fetchAndSortOrders();
-  }, []);
-
-  const prevPage = () => {
-    if (offset > 0) {
-      const newOffset = offset - 1;
-      setOffset(newOffset);
-      setCurrentProducts(
-        product.slice(
-          newOffset * productsPerPage,
-          (newOffset + 1) * productsPerPage
-        )
-      );
-    }
-  };
+    fetchAndSortOrders(offset)
+      .then((data) => {
+        setTotalOrders((prevData) => [...prevData, ...data]);
+        setOrders(data);
+        setdataLoading(false);
+      })
+      .catch((err) => {
+        console.log(err);
+        setdataLoading(false);
+      });
+  }, [user, loading, router, offset]);
 
   const nextPage = () => {
-    const newOffset = offset + 1;
-    if (newOffset * productsPerPage < product.length) {
-      setOffset(newOffset);
-      setCurrentProducts(
-        product.slice(
-          newOffset * productsPerPage,
-          (newOffset + 1) * productsPerPage
+    if (orders.length === 0) return;
+    if (totalOrders.length > (index + 1) * productsPerPage) {
+      setOrders(
+        totalOrders.slice(
+          (index + 1) * productsPerPage,
+          (index + 1) * productsPerPage + productsPerPage
         )
       );
+    } else {
+      setdataLoading(true);
+      const currentOffset = orders[orders.length - 1]?.key;
+      if (currentOffset) setOffset(currentOffset);
     }
+    setIndex(index + 1);
+  };
+
+  const prevPage = () => {
+    if (index === 0) return;
+    const startIndex = (index - 1) * productsPerPage;
+    setOrders(totalOrders.slice(startIndex, startIndex + productsPerPage));
+    setIndex(index - 1);
   };
 
   if (loading || !user) {
-    return <p>Loading...</p>;
+    return (
+      <div className="loading-container">
+        <p>Loading...</p>
+      </div>
+    );
   }
 
   return (
-    <Tabs defaultValue="order history">
-      <TabsContent value="order history">
-        <ProductsTable
-          products={currentProducts}
-          offset={offset}
-          totalProducts={product.length}
-          prevPage={prevPage}
-          nextPage={nextPage}
-          productsPerPage={productsPerPage}
-        />
+    <Tabs defaultValue="order rating">
+      <TabsContent value="order rating">
+        {!dataLoading ? (
+          <ProductsTable
+            products={orders}
+            index={index}
+            nextPage={nextPage}
+            prevPage={prevPage}
+            productsPerPage={productsPerPage}
+          />
+        ) : (
+          <p>Loading...</p>
+        )}
       </TabsContent>
     </Tabs>
   );
