@@ -4,19 +4,6 @@ import { OrderDetailsModal } from '@/components/orderDetailsModal';
 import StarRatings from 'react-star-ratings';
 
 export function Product({ product }: { product: any }) {
-  const totalPrice =
-    product.totalPrice -
-    (product?.discount ?? 0) +
-    (product.deliveryFee
-      ? product.deliveryFee
-      : product.totalPrice < 99
-        ? 20
-        : 0);
-  console.log(`product id -> ${product.key}  totalPrice ---> ${totalPrice}`);
-
-  const [deliveryRating, setDeliveryRating] = useState(3);
-  const [tasteRating, setTasteRating] = useState(3);
-
   return (
     <>
       <TableRow>
@@ -44,12 +31,12 @@ export function Product({ product }: { product: any }) {
           ))}
         </TableCell>
         <TableCell className="hidden md:table-cell  p-1">
-          {deliveryRating ? (
+          {product.rating?.deliveryRating ? (
             <p className="mb-2 flex flex-col items-center">
               <StarRatings
                 starDimension="15px"
                 starSpacing="2px"
-                rating={deliveryRating}
+                rating={product.rating?.deliveryRating}
                 starRatedColor="green"
                 numberOfStars={5}
                 name="Delivery Rating"
@@ -60,12 +47,12 @@ export function Product({ product }: { product: any }) {
           )}
         </TableCell>
         <TableCell className="hidden md:table-cell  p-1">
-          {tasteRating ? (
+          {product.rating?.tasteRating ? (
             <p className="flex flex-col items-center">
               <StarRatings
                 starDimension="15px"
                 starSpacing="2px"
-                rating={tasteRating}
+                rating={product.rating?.tasteRating}
                 starRatedColor="green"
                 numberOfStars={5}
                 name="Taste Rating"
@@ -74,7 +61,6 @@ export function Product({ product }: { product: any }) {
           ) : (
             ''
           )}
-
         </TableCell>
       </TableRow>
     </>

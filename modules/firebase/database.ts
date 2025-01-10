@@ -102,6 +102,27 @@ export const addNewPaymentDeatils = async (payment: any) => {
     console.log('error while setUserDetails', err);
   }
 };
+
+export const getRatingsFromOrderIds = async (
+  startId: string,
+  endId: string
+) => {
+  console.log(startId, endId);
+  try {
+    const db = admin.database();
+    const ordersRef = db.ref(sanitizePath('/ratings'));
+
+    const query = ordersRef.orderByKey().startAt(startId).endAt(endId);
+
+    const snapshot = await query.once('value');
+    if (snapshot.exists()) return snapshot.val();
+    return null;
+  } catch (error) {
+    console.error('Error fetching orders:', error);
+    throw new Error('Failed to fetch orders');
+  }
+};
+
 export const getOrders = async (offset: string, limit: number) => {
   try {
     const db = admin.database();

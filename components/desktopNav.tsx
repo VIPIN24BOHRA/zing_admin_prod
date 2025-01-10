@@ -54,13 +54,13 @@ export default function DesktopNav() {
           <Package className="h-5 w-5" />
         </NavItem>
 
-        <NavItem href="/customers" label="Customers">
+        {/* <NavItem href="/customers" label="Customers">
           <Users2 className="h-5 w-5" />
-        </NavItem>
+        </NavItem> */}
 
-        <NavItem href="#" label="Analytics">
+        {/* <NavItem href="#" label="Analytics">
           <LineChart className="h-5 w-5" />
-        </NavItem>
+        </NavItem> */}
         {/* <NavItem href="/menu" label="Menu items">
           <HandPlatter className="h-5 w-5" />
         </NavItem> */}
@@ -70,7 +70,7 @@ export default function DesktopNav() {
         <NavItem href="/product" label="Menu items">
           <HandPlatter className="h-5 w-5" />
         </NavItem>
-        <NavItem href="/rating" label="Menu items">
+        <NavItem href="/rating" label="Order ratings">
           <Star className="h-5 w-5" />
         </NavItem>
         {showLogout && (

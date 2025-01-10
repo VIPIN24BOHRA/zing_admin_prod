@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getOrders } from 'modules/firebase/database';
+import { getOrders, getRatingsFromOrderIds } from 'modules/firebase/database';
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
-  const offset = searchParams.get('offset') || 'z'; 
-  console.log(offset ,typeof(offset)) ;
+  const offset = searchParams.get('offset') || 'z';
+  console.log(offset, typeof offset);
   const limit = parseInt(searchParams.get('limit') || '50');
 
   try {
@@ -14,7 +14,19 @@ export async function GET(req: NextRequest) {
     }
 
     const data = snapshot.val();
-    const orders = Object.keys(data).map((key) => ({ key, ...data[key] }));
+    const orderkeys = Object.keys(data);
+
+    let ratings = await getRatingsFromOrderIds(
+      orderkeys[0],
+      orderkeys[orderkeys.length - 1]
+    );
+
+    if (!ratings) ratings = {};
+    const orders = orderkeys.map((key) => ({
+      key,
+      ...data[key],
+      rating: ratings[key] ? Object.values(ratings[key])[0] : {}
+    }));
 
     return NextResponse.json({ orders, total: orders.length });
   } catch (error) {

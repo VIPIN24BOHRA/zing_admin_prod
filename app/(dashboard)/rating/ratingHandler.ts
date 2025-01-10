@@ -1,10 +1,6 @@
-
-
-export  const fetchAndSortOrders = async (offset :string) => {
+export const fetchAndSortOrders = async (offset: string) => {
   try {
-    const response = await fetch(
-      `/api/ordertest?limit=50&offset=${offset}`
-    );
+    const response = await fetch(`/api/order?limit=50&offset=${offset}`);
     if (!response.ok) {
       throw new Error(`Error: ${response.status}`);
     }
@@ -12,9 +8,9 @@ export  const fetchAndSortOrders = async (offset :string) => {
 
     const reversedData = [...data.orders].reverse();
 
-    return reversedData ;
+    return reversedData;
   } catch (error) {
     console.error('Failed to fetch orders:', error);
-    throw new Error("Error while loading orders") ;
+    throw new Error('Error while loading orders');
   }
 };
