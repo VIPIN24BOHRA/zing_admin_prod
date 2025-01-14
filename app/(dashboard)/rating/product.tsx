@@ -61,9 +61,9 @@ export function Product({
     }
   };
 
-  const toggleUpdate = () => {
+  const toggleUpdate = async () => {
     if (isUpdate) {
-      updateFeedback(); 
+      await updateFeedback();
     } else {
       setIsUpdate(true);
     }
@@ -127,15 +127,15 @@ export function Product({
             ''
           )}
         </TableCell>
-        <TableCell className="hidden sm:table-cell text-[12px] p-1">
+        <TableCell className="hidden sm:table-cell text-[12px] p-1 ">
           {isUpdate ? (
             <textarea
-              className="w-full"
+              className="w-full p-2"
               value={feedback}
               onChange={(e) => setFeedback(e.target.value)}
             />
           ) : (
-            <p className="w-[180px] text-ellipsis overflow-hidden ">
+            <p className="w-[180px] text-ellipsis overflow-hidden text-center">
               {product.rating.feedback || 'No feedback'}
             </p>
           )}
