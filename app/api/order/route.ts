@@ -45,7 +45,7 @@ export async function GET(req: NextRequest) {
 export async function PUT(req: NextRequest) {
   const { feedback, orderId, mobileNo } = await req.json();
 
-  if (!orderId && !mobileNo && !feedback)
+  if (!orderId || !mobileNo || !feedback)
     return NextResponse.json(
       {
         success: false
