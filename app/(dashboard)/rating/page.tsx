@@ -86,11 +86,13 @@ export default function OrderHistoryPage({
       <TabsContent value="order rating">
         {!dataLoading ? (
           <ProductsTable
-            products={orders}
             index={index}
+            orders={orders}
+            setOrders={setOrders}
+            setTotalOrders={setTotalOrders}
             nextPage={nextPage}
             prevPage={prevPage}
-            productsPerPage={productsPerPage}
+            totalOrders={totalOrders}
           />
         ) : (
           <p>Loading...</p>

@@ -7,7 +7,7 @@ export const fetchAndSortOrders = async (offset: string) => {
     const data = await response.json();
 
     const reversedData = [...data.orders].reverse();
-
+    console.log(data);
     return reversedData;
   } catch (error) {
     console.error('Failed to fetch orders:', error);

@@ -19,19 +19,22 @@ import { Product } from './product';
 
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-
 export function ProductsTable({
-  products,
+  orders,
   prevPage,
   nextPage,
-  productsPerPage,
-  index
+  totalOrders,
+  index,
+  setOrders,
+  setTotalOrders,
 }: {
-  products: any[];
+  orders: any[];
+  totalOrders: any[];
   prevPage: () => void;
   nextPage: () => void;
-  productsPerPage: number;
   index: number;
+  setOrders: (orders: any[]) => void;
+  setTotalOrders: (totalOrders: any[]) => void;
 }) {
   return (
     <Card>
@@ -80,11 +83,20 @@ export function ProductsTable({
               <TableHead className="hidden md:table-cell text-center">
                 Taste Rating
               </TableHead>
+              <TableHead className="text-center">Feedback</TableHead>
+              <TableHead className="text-center">Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {products.map((product, idx) => (
-              <Product key={product.key || idx} product={product} />
+            {orders.map((order, idx) => (
+              <Product
+                key={order.key || idx}
+                product={order}
+                orders={orders}
+                totalOrders={totalOrders}
+                setOrders={setOrders}
+                setTotalOrders={setTotalOrders}
+              />
             ))}
           </TableBody>
         </Table>
