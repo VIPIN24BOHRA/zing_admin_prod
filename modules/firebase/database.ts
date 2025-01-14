@@ -137,3 +137,22 @@ export const getOrders = async (offset: string, limit: number) => {
     throw new Error('Failed to fetch orders');
   }
 };
+
+export const updateRating = async (
+  orderId: string,
+  mobileNo: string,
+  feedback: string
+) => {
+  try {
+    const db = admin.database();
+    const ratingRef = db.ref(
+      sanitizePath(`ratings/${orderId}/${mobileNo}/feedback`)
+    );
+
+    await ratingRef.set(feedback);
+    return true;
+  } catch (error) {
+    console.error('Error updating rating:', error);
+    throw new Error('Failed to fetch orders');
+  }
+};

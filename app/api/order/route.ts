@@ -1,5 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getOrders, getRatingsFromOrderIds } from 'modules/firebase/database';
+import {
+  getOrders,
+  getRatingsFromOrderIds,
+  updateRating
+} from 'modules/firebase/database';
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
@@ -34,6 +38,29 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(
       { error: 'Failed to fetch orders' },
       { status: 500 }
+    );
+  }
+}
+
+export async function PUT(req: NextRequest) {
+  const { feedback, orderId, mobileNo } = await req.json();
+
+  if (!orderId && !mobileNo && !feedback)
+    return NextResponse.json(
+      {
+        success: false
+      },
+      { status: 400 }
+    );
+
+  try {
+    const res = await updateRating(orderId, mobileNo, feedback);
+
+    return NextResponse.json({ success: res });
+  } catch (error) {
+    return NextResponse.json(
+      { error: 'Failed to update rating', success: false },
+      { status: 400 }
     );
   }
 }
