@@ -28,7 +28,7 @@ export function ChefProductsTable({
         </CardTitle>
         <CardDescription>Manage your Orders and View Sales.</CardDescription>
       </CardHeader>
-      <CardContent className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <CardContent className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
         {products.map((product) => {
           console.log(product);
           return (
