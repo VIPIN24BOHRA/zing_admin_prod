@@ -35,7 +35,7 @@ export function ChefProductCard({ product }: { product: any }) {
       if (res) setStatus('ACCEPTED');
 
       await createPidgeRiderOrder(product);
-      printCard(product);
+      // printCard(product);
     } else if (status.toLowerCase() === 'accepted') {
       const res = await setOrderReady(product.key);
       if (res) setStatus('READY');
