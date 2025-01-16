@@ -46,6 +46,21 @@ export const acceptOrder = async (key: string, orderNo: number) => {
   }
 };
 
+export const setOrderReady = async (key: string) => {
+  if (!key) return;
+
+  const db = getDatabase(app);
+
+  const orderRef = ref(db, `orders/${key}/kitchen`);
+  try {
+    await set(orderRef, { status: 'ready', readyAt: Date.now() });
+    return true;
+  } catch (err) {
+    console.log(`error while set Order Ready ${err}`);
+    return false;
+  }
+};
+
 export const downloadCSV = (csvData: any, fileName = 'orders.csv') => {
   const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
@@ -290,4 +305,64 @@ export const generateOTP = (limit: number) => {
     OTP += digits[Math.floor(Math.random() * 10)];
   }
   return OTP;
+};
+
+export const printCard = (order: any) => {
+  // Create a temporary iframe
+  const printFrame = document.createElement('iframe');
+  printFrame.style.position = 'absolute';
+  printFrame.style.top = '-10000px';
+  printFrame.style.left = '-10000px';
+  document.body.appendChild(printFrame);
+
+  // Add content to the iframe
+  const printDoc: any = printFrame.contentWindow || printFrame.contentDocument;
+  if (printDoc == null) return;
+  const doc = printDoc.document || printDoc;
+
+  doc.open();
+  doc.write(`
+    <html>
+      <head>
+        <title>Order Receipt</title>
+        <style>
+          body { font-family: Arial, sans-serif; margin: 20px; }
+          h3 { margin-bottom: 10px; }
+          p, li { margin: 5px 0; }
+        </style>
+      </head>
+      <body>
+        <p><b>Order No :- ${order.orderNo}</b></p>
+        </br>
+    <p><b>Address:</b></p>
+   
+   <p>${order.address.addressType}</p>
+   <p>${order.address.title}</p>
+   <p>${order.address?.houseDetails}</p>
+   <p>${order.address?.landmark ?? ''}</p>
+   </br>
+   <p><b>phone number:</b> ${order.phoneNumber ? order.phoneNumber : order.uid}</p>
+   </br>
+   <p><b>Items:</b> </p>
+   ${order?.cartItems
+     ?.map((cItem: any) => {
+       return `<p>${cItem?.item?.title} - ${cItem?.quantity}</p>`;
+     })
+     ?.join('\n')}
+     </br>
+   <p><b>Total Price: </b></p>
+   <p>${order.totalPrice - (order?.discount ?? 0) + (order.deliveryFee ?? 0)}</p>
+   <p>${(order?.transactionDetails?.merchantTransactionId && order?.transactionDetails?.success ? 'paid' : 'cash').toLocaleUpperCase()}</p>
+   
+      </body>
+    </html>
+  `);
+  doc.close();
+
+  // Trigger print
+  printFrame.onload = () => {
+    printDoc.print();
+    // Remove iframe after printing
+    document.body.removeChild(printFrame);
+  };
 };
