@@ -134,6 +134,11 @@ export function ChefProductCard({ product }: { product: any }) {
           </div>
 
           <div className="flex flex-row justify-between">
+            <span className="text-sm font-semibold">username :-</span>
+            <span>{product.name}</span>
+          </div>
+
+          <div className="flex flex-row justify-between">
             <span className="text-sm font-semibold">mobile no :-</span>
             <span>{product.phoneNumber}</span>
           </div>

@@ -74,6 +74,7 @@ export function ProductsTable({
           <TableHeader>
             <TableRow>
               <TableHead className="text-center">Order No</TableHead>
+              <TableHead className="text-center">username</TableHead>
               <TableHead className="text-center">Phone Number</TableHead>
               <TableHead className="text-center">Address</TableHead>
               <TableHead>Total Items</TableHead>

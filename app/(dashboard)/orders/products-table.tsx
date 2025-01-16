@@ -41,7 +41,7 @@ export function ProductsTable({
         <CardTitle>Orders history</CardTitle>
         <CardDescription>Manage your Orders and view Sales.</CardDescription>
 
-        <CardFooter className='pl-0'>
+        <CardFooter className="pl-0">
           <form className="flex items-center w-full justify-between">
             <div className="text-xs text-muted-foreground">
               Showing{' '}
@@ -84,6 +84,7 @@ export function ProductsTable({
           <TableHeader>
             <TableRow>
               <TableHead className="text-center"> order no </TableHead>
+              <TableHead className="text-center"> username </TableHead>
 
               <TableHead className="text-center"> Phone number</TableHead>
               <TableHead className="text-center">Address </TableHead>
@@ -111,9 +112,9 @@ export function ProductsTable({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {products.map((product, idx) => (
-              <Product key={product.key} product={product} />
-            ))}
+            {products.map((product, idx) => {
+              return <Product key={product.key} product={product} />;
+            })}
           </TableBody>
         </Table>
       </CardContent>

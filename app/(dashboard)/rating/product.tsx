@@ -75,6 +75,9 @@ export function Product({
         <TableCell className="font-medium text-center text-[13px] p-1">
           #{product.orderNo}
         </TableCell>
+        <TableCell className="font-medium text-center text-[13px] p-1">
+          {product.name}
+        </TableCell>
 
         <TableCell className="font-medium text-center text-[13px] p-1">
           {product.phoneNumber || product.uid}

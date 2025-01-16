@@ -40,7 +40,7 @@ export function LiveOrdersProductsTable({
           <TableHeader>
             <TableRow>
               <TableHead className="text-center"> order no </TableHead>
-
+              <TableHead className="text-center"> username </TableHead>
               <TableHead className="text-center"> Phone number</TableHead>
               <TableHead className="text-center">Address </TableHead>
               <TableHead>Total Items</TableHead>

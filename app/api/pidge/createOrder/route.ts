@@ -66,7 +66,7 @@ export async function POST(req: NextRequest) {
               latitude: order.address.lat,
               longitude: order.address.lng
             },
-            name: order.uid,
+            name:order.name || order.uid,
             mobile: order.uid
           },
 

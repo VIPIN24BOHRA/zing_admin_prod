@@ -27,6 +27,10 @@ export function Product({ product }: { product: any }) {
         </TableCell>
 
         <TableCell className="font-medium text-center text-[13px] p-1">
+          {product.name}
+        </TableCell>
+
+        <TableCell className="font-medium text-center text-[13px] p-1">
           {product.phoneNumber ? product.phoneNumber : product.uid}
         </TableCell>
         <TableCell className="hidden sm:table-cell text-[12px] p-1">
