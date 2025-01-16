@@ -33,9 +33,6 @@ export default function ProductsPage({
   const [showPopUp, setShowPopUp] = useState(true);
   const [isOnline, setOnline] = useState(true);
 
-  const search = searchParams.q ?? '';
-  const offset = searchParams.offset ?? 0;
-
   useEffect(() => {
     if (!loading && !user) {
       router.push('/login'); // Redirect to login page
@@ -56,12 +53,29 @@ export default function ProductsPage({
       eventSource = new EventSource('https://api.getzing.app/sse');
       eventSource.onmessage = (event: any) => {
         console.log('Received data:', event.data);
-        const [key, status, deliveredAt] = event.data.split('###');
-        console.log(key, status, deliveredAt);
+        const [
+          key,
+          status,
+          deliveredAt,
+          deliveryBoyStatus,
+          deliveryBoyName,
+          lastUpdatedOn,
+          kitchenStatus
+        ] = event.data.split('###');
+
         if (key && status) {
           setProduct((prevProducts) =>
             prevProducts.map((order) =>
-              order.key === key ? { ...order, status, deliveredAt } : order
+              order.key === key
+                ? {
+                    ...order,
+                    status,
+                    deliveredAt,
+                    kitchen: {
+                      status: kitchenStatus
+                    }
+                  }
+                : order
             )
           );
         }

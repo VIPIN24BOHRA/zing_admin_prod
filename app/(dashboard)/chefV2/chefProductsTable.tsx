@@ -30,14 +30,7 @@ export function ChefProductsTable({
       </CardHeader>
       <CardContent className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
         {products.map((product) => {
-          console.log(product);
-          return (
-            <ChefProductCard
-              key={product.key}
-              product={product}
-              userType={userType}
-            />
-          );
+          return <ChefProductCard key={product.key} product={product} />;
         })}
       </CardContent>
     </Card>

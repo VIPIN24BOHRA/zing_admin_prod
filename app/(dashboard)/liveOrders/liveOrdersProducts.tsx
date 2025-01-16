@@ -24,6 +24,17 @@ export function LiverOrderProduct({
       : product.totalPrice < 99
         ? 20
         : 0);
+  const deliveryBoyName = product?.deliveryBoy?.name
+    ? product?.deliveryBoy?.name
+    : '';
+  const deliveryBoyStatus = product?.deliveryBoy?.status
+    ? product?.deliveryBoy?.status
+    : '';
+  const deliveryStatusLastUpdatedOn = product?.deliveryBoy?.last_updated_on
+    ? new Date(product?.deliveryBoy?.last_updated_on).toLocaleDateString() +
+      ' ' +
+      new Date(product?.deliveryBoy?.last_updated_on).toLocaleTimeString()
+    : '';
 
   useEffect(() => {
     if (status != product.status) {
@@ -77,13 +88,11 @@ export function LiverOrderProduct({
           }
         >{`${status ? status : '-'}`}</TableCell>
         <TableCell className="hidden md:table-cell text-center p-1 text-[11px] font-bold">
-          <span className="text-[rgba(255,0,0)]">
-            {product?.deliveryBoy?.name ? product?.deliveryBoy?.name : ''}
-          </span>
+          <span className="text-[rgba(255,0,0)]">{deliveryBoyName}</span>
           <br />
-          <span>
-            {product?.deliveryBoy?.status ? product?.deliveryBoy?.status : ''}
-          </span>
+          <span>{deliveryBoyStatus}</span>
+          <br />
+          <span>{deliveryStatusLastUpdatedOn}</span>
         </TableCell>
         <TableCell className="hidden md:table-cell text-[12px] p-1">
           {product.createdAt

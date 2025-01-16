@@ -64,7 +64,7 @@ export default function DesktopNav() {
         {/* <NavItem href="/menu" label="Menu items">
           <HandPlatter className="h-5 w-5" />
         </NavItem> */}
-        <NavItem href="/chef" label="Chef orders">
+        <NavItem href="/chefV2" label="Chef orders">
           <ChefHat className="h-5 w-5" />
         </NavItem>
         <NavItem href="/product" label="Menu items">
@@ -73,9 +73,7 @@ export default function DesktopNav() {
         <NavItem href="/rating" label="Order ratings">
           <Star className="h-5 w-5" />
         </NavItem>
-        <NavItem href="/chefTemp" label="Chef orders">
-          <ChefHat className="h-5 w-5" />
-        </NavItem>
+
         {showLogout && (
           <NavItem href="#" label="Log out">
             <LogOut
