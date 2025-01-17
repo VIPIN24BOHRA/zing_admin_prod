@@ -63,7 +63,8 @@ export default function ProductsPage({
           deliveredAt,
           deliveryBoyStatus,
           deliveryBoyName,
-          lastUpdatedOn
+          lastUpdatedOn,
+          kitchenStatus
         ] = event.data.split('###');
         console.log(
           key,
@@ -71,7 +72,8 @@ export default function ProductsPage({
           deliveredAt,
           deliveryBoyStatus,
           deliveryBoyName,
-          lastUpdatedOn
+          lastUpdatedOn,
+          kitchenStatus
         );
         if (key && status) {
           setProduct((prevProducts) =>
@@ -81,6 +83,9 @@ export default function ProductsPage({
                     ...order,
                     status,
                     deliveredAt,
+                    kitchen: {
+                      status: kitchenStatus
+                    },
                     deliveryBoy: order.deliveryBoy
                       ? {
                           ...order.deliveryBoy,
