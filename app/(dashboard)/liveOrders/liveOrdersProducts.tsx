@@ -13,7 +13,12 @@ export function LiverOrderProduct({
 }) {
   const [showModal, setShowModal] = useState(false);
 
-  const [status, setStatus] = useState(product.status ?? '');
+  const [status, setStatus] = useState(
+    product.status?.toLowerCase() == 'accepted' &&
+      product?.kitchen?.status?.toLowerCase() == 'ready'
+      ? 'READY'
+      : product.status
+  );
   const [deliveredAt, setDeliveredAt] = useState(product.deliveredAt ?? 0);
 
   const totalPrice =
@@ -37,13 +42,18 @@ export function LiverOrderProduct({
     : '';
 
   useEffect(() => {
-    if (status != product.status) {
+    if (
+      product.status?.toLowerCase() == 'accepted' &&
+      product?.kitchen?.status?.toLowerCase() == 'ready'
+    )
+      setStatus('READY');
+    else if (status != product.status) {
       setStatus(product.status);
       if (product.deliveredAt) {
         setDeliveredAt(product.deliveredAt);
       }
     }
-  }, [product.status]);
+  }, [product.status, product?.kitchen?.status]);
 
   return (
     <>

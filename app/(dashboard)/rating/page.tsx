@@ -32,11 +32,7 @@ export default function OrderHistoryPage({
       router.push('/login');
       return;
     }
-    if (!loading && user && user.email == 'kitchen@getzing.app') {
-      console.log(user.email);
-      router.push('/');
-      return;
-    }
+
     fetchAndSortOrders(offset)
       .then((data) => {
         setTotalOrders((prevData) => [...prevData, ...data]);
