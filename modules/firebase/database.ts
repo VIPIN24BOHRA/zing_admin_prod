@@ -123,6 +123,37 @@ export const getRatingsFromOrderIds = async (
   }
 };
 
+export const getOrdersFromDates = async (
+  startDate: string,
+  endDate: string
+) => {
+  console.log(`Fetching orders from ${startDate} to ${endDate}`);
+  try {
+    const db = admin.database();
+    const ordersRef = db.ref(sanitizePath('orders/'));
+
+    const query = ordersRef
+      .orderByChild('createdAt')
+      .startAt(startDate)
+      .endAt(endDate);
+
+    const snapshot = await query.once('value');
+    if (snapshot.exists()) {
+      const data = snapshot.val();
+      return Object.entries(data).map(([id, value]) => {
+        if (typeof value === 'object' && value !== null) {
+          return { ...value };
+        }
+        return { id, value };
+      });
+    }
+    return null;
+  } catch (error) {
+    console.error('Error fetching ratings:', error);
+    throw new Error('Failed to fetch ratings');
+  }
+};
+
 export const getOrders = async (offset: string, limit: number) => {
   try {
     const db = admin.database();

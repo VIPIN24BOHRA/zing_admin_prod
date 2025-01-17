@@ -19,64 +19,52 @@ import { Product } from './product';
 
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-
 export function ProductsTable({
-  products,
-  offset,
-  totalProducts,
+  orders,
   prevPage,
   nextPage,
-  productsPerPage
+  totalOrders,
+  index,
+  setOrders,
+  setTotalOrders
 }: {
-  products: any[];
-  offset: number;
-  totalProducts: number;
-  prevPage: any;
-  nextPage: any;
-  productsPerPage: any;
+  orders: any[];
+  totalOrders: any[];
+  prevPage: () => void;
+  nextPage: () => void;
+  index: number;
+  setOrders: (orders: any[]) => void;
+  setTotalOrders: (totalOrders: any[]) => void;
 }) {
   return (
     <Card>
       <CardHeader>
         <CardTitle>Orders history</CardTitle>
         <CardDescription>Manage your Orders and view Sales.</CardDescription>
-
         <CardFooter className="pl-0">
-          <form className="flex items-center w-full justify-between">
-            <div className="text-xs text-muted-foreground">
-              Showing{' '}
-              <strong>
-                {Math.min(offset * productsPerPage, totalProducts) + 1} {' - '}
-                {Math.min((offset + 1) * productsPerPage, totalProducts)}
-              </strong>{' '}
-              of <strong>{totalProducts}</strong> products
-            </div>
-            <div className="flex">
+          <div className="flex items-center justify-between w-full">
+            <div className="flex gap-2">
               <Button
-                formAction={prevPage}
+                onClick={prevPage}
                 variant="ghost"
                 size="sm"
-                type="submit"
-                disabled={offset == 0}
+                disabled={index == 0}
+                aria-label="Previous page"
               >
                 <ChevronLeft className="mr-2 h-4 w-4" />
                 Prev
               </Button>
               <Button
-                formAction={nextPage}
+                onClick={nextPage}
                 variant="ghost"
                 size="sm"
-                type="submit"
-                disabled={
-                  Math.min((offset + 1) * productsPerPage, totalProducts) >=
-                  totalProducts
-                }
+                aria-label="Next page"
               >
                 Next
                 <ChevronRight className="ml-2 h-4 w-4" />
               </Button>
             </div>
-          </form>
+          </div>
         </CardFooter>
       </CardHeader>
       <CardContent>
@@ -97,10 +85,16 @@ export function ProductsTable({
                 Coupon
               </TableHead>
               <TableHead className="hidden md:table-cell text-center">
+                Delivery Boy
+              </TableHead>
+              <TableHead className="hidden md:table-cell text-center">
                 payment method
               </TableHead>
               <TableHead className="hidden md:table-cell text-center">
                 Status
+              </TableHead>
+              <TableHead className="hidden md:table-cell text-center">
+                Kitchen Preparation Time
               </TableHead>
 
               <TableHead className="hidden md:table-cell text-center">
@@ -112,8 +106,8 @@ export function ProductsTable({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {products.map((product, idx) => {
-              return <Product key={product.key} product={product} />;
+            {orders.map((order, idx) => {
+              return <Product key={order.key || idx} product={order} />;
             })}
           </TableBody>
         </Table>

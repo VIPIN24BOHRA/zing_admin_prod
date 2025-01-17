@@ -9,6 +9,8 @@ import { PlusCircle, File } from 'lucide-react';
 import { convertToCSV, downloadCSV } from '@/lib/utils';
 import { useAuth } from 'providers/authProvider/authContext';
 import { useRouter } from 'next/navigation';
+import { fetchAndSortOrders } from './orderHandler';
+import { ExportCsvModal } from '@/components/exportCsvModal';
 
 const productsPerPage = 50;
 
@@ -17,79 +19,87 @@ export default function OrderHistoryPage({
 }: {
   searchParams: { q: string; offset: string };
 }) {
-  const [product, setProduct] = useState<any[]>([]);
-  const [offset, setOffset] = useState(0);
-  const [currentProducts, setCurrentProducts] = useState<any[]>([]);
+  interface Order {
+    key: string;
+    [key: string]: any;
+  }
+
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [offset, setOffset] = useState<string>('z');
+  const [totalOrders, setTotalOrders] = useState<Order[]>([]);
+  const [index, setIndex] = useState<number>(0);
+  const [dataLoading, setdataLoading] = useState(false);
+  const [isExportCsvModalOpen, setIsExportCsvModalOpen] = useState(false);
 
   const { user, loading } = useAuth();
   const router = useRouter();
+
   useEffect(() => {
     if (!loading && !user) {
-      router.push('/login'); // Redirect to login page
+      router.push('/login');
+      return;
     }
     if (!loading && user && user.email == 'kitchen@getzing.app') {
       console.log(user.email);
       router.push('/');
+      return;
     }
-  }, [user, loading, router]);
-
-  const nextPage = () => {
-    const currentOffset = offset;
-    setOffset(currentOffset + 1);
-    setCurrentProducts(
-      product.slice(
-        (offset + 1) * productsPerPage,
-        (offset + 2) * productsPerPage
-      )
-    );
-  };
-
-  const prevPage = () => {
-    const currentOffset = offset;
-    if (currentOffset != 0) {
-      setOffset(currentOffset - 1);
-      setCurrentProducts(
-        product.slice((offset - 1) * productsPerPage, offset * productsPerPage)
-      );
-    }
-  };
-
-  useEffect(() => {
-    const db = getDatabase(app);
-    const starCountRef = ref(db, 'orders/');
-
-    get(query(starCountRef))
-      .then((snapshot) => {
-        if (snapshot.exists()) {
-          const data = snapshot.val();
-
-          const Orders =
-            Object.keys(data ?? {})
-              ?.map((key) =>
-                data[key].createdAt
-                  ? {
-                      ...data[key],
-                      key: key
-                    }
-                  : null
-              )
-              ?.filter((v) => v != null) ?? [];
-          Orders.sort((a, b) => b.createdAt - a.createdAt);
-
-          console.log(Orders.length);
-
-          setCurrentProducts(Orders.slice(0, productsPerPage));
-
-          setProduct(Orders);
-        }
+    fetchAndSortOrders(offset)
+      .then((data) => {
+        setTotalOrders((prevData) => [...prevData, ...data]);
+        setOrders(data);
+        setdataLoading(false);
       })
       .catch((err) => {
         console.log(err);
+        setdataLoading(false);
       });
-  }, []);
+  }, [user, loading, router, offset]);
+
+  const nextPage = () => {
+    if (orders.length === 0) return;
+    if (totalOrders.length > (index + 1) * productsPerPage) {
+      setOrders(
+        totalOrders.slice(
+          (index + 1) * productsPerPage,
+          (index + 1) * productsPerPage + productsPerPage
+        )
+      );
+    } else {
+      setdataLoading(true);
+      const currentOffset = orders[orders.length - 1]?.key;
+      if (currentOffset) setOffset(currentOffset);
+    }
+    setIndex(index + 1);
+  };
+
+  const prevPage = () => {
+    if (index === 0) return;
+    const startIndex = (index - 1) * productsPerPage;
+    setOrders(totalOrders.slice(startIndex, startIndex + productsPerPage));
+    setIndex(index - 1);
+  };
+
+  const handleExportCsvSubmit = (startDate: Date, endDate: Date) => {
+    console.log('Export CSV with dates:', startDate, endDate);
+    // Perform your CSV export logic here
+    setIsExportCsvModalOpen(false); // Close the modal after submission
+  };
+
+  const handleExportCsvClose = () => {
+    setIsExportCsvModalOpen(false);
+  };
 
   if (loading || !user) {
-    return <p>Loading...</p>; // Or a spinner/loading component
+    return (
+      <div className="loading-container">
+        <p>Loading...</p>
+      </div>
+    );
+  }
+
+  if (loading || !user) {
+    return <p>Loading...</p>;
   }
 
   return (
@@ -101,9 +111,9 @@ export default function OrderHistoryPage({
             variant="outline"
             className="h-8 gap-1 bg-black text-white"
             onClick={() => {
-              const data = convertToCSV(product);
-
-              downloadCSV(data);
+              const data = convertToCSV(orders);
+              setIsExportCsvModalOpen(true);
+              // downloadCSV(data);
             }}
           >
             <File className="h-3.5 w-3.5" />
@@ -120,15 +130,26 @@ export default function OrderHistoryPage({
         </div>
       </div>
       <TabsContent value="order history">
-        <ProductsTable
-          products={currentProducts}
-          offset={offset}
-          totalProducts={product.length}
-          nextPage={nextPage}
-          prevPage={prevPage}
-          productsPerPage={productsPerPage}
-        />
+        {!dataLoading ? (
+          <ProductsTable
+            index={index}
+            orders={orders}
+            setOrders={setOrders}
+            setTotalOrders={setTotalOrders}
+            nextPage={nextPage}
+            prevPage={prevPage}
+            totalOrders={totalOrders}
+          />
+        ) : (
+          <p>Loading...</p>
+        )}
       </TabsContent>
+      {isExportCsvModalOpen ? (
+        <ExportCsvModal
+          onClose={handleExportCsvClose}
+          onSubmit={handleExportCsvSubmit}
+        ></ExportCsvModal>
+      ) : null}
     </Tabs>
   );
 }

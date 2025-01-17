@@ -90,6 +90,28 @@ export const convertToCSV = (data: any) => {
           createdDate: new Date(order.createdAt).toLocaleDateString(),
           createdTime: new Date(order.createdAt).toLocaleTimeString(),
           coupon: order?.coupon ?? '',
+          customerName: order.name,
+          kitchenPreparationTime: order?.kitchen?.readyAt
+            ? (Math.floor(
+                (order?.kitchen?.readyAt - order.createdAt) / (1000 * 60 * 60)
+              )
+                ? Math.floor(
+                    (order?.kitchen?.readyAt - order.createdAt) /
+                      (1000 * 60 * 60)
+                  ) + 'h '
+                : '') +
+              Math.floor(
+                ((order?.kitchen?.readyAt - order.createdAt) %
+                  (1000 * 60 * 60)) /
+                  (1000 * 60)
+              ) +
+              'min ' +
+              Math.floor(
+                ((order?.kitchen?.readyAt - order.createdAt) % (1000 * 60)) /
+                  1000
+              ) +
+              'sec '
+            : '-',
           deliveredIn: order.deliveredAt
             ? (Math.floor(
                 (order.deliveredAt - order.createdAt) / (1000 * 60 * 60)
@@ -109,6 +131,7 @@ export const convertToCSV = (data: any) => {
               'sec '
             : '',
           deliveryFee: order.deliveryFee,
+          deliverBoy: order.product?.deliveryBoy?.name ?? '-',
           orderNo: order.orderNo,
           status: order.status,
           totalQuantity: order.cartItems.length,
