@@ -73,7 +73,19 @@ export default function ProductsPage({
                     deliveredAt,
                     kitchen: {
                       status: kitchenStatus
-                    }
+                    },
+                    deliveryBoy: order.deliveryBoy
+                      ? {
+                          ...order.deliveryBoy,
+                          status: deliveryBoyStatus,
+                          name: deliveryBoyName,
+                          last_updated_on: lastUpdatedOn
+                        }
+                      : {
+                          status: deliveryBoyStatus,
+                          name: deliveryBoyName,
+                          last_updated_on: lastUpdatedOn
+                        }
                   }
                 : order
             )

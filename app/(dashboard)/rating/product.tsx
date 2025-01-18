@@ -83,7 +83,7 @@ export function Product({
           {product.phoneNumber || product.uid}
         </TableCell>
         <TableCell className="hidden sm:table-cell text-[12px] p-1">
-          <p className="w-[180px] text-ellipsis overflow-hidden ">
+          <p className="w-[150px] text-ellipsis overflow-hidden ">
             {product.address?.title}
           </p>
         </TableCell>
@@ -91,12 +91,36 @@ export function Product({
           {product.cartItems.map((c: any, idx: number) => (
             <p
               key={c?.item?.title + idx}
-              className="flex flex-row text-[13px] justify-between font-bold"
+              className="flex flex-row text-[12px] justify-between font-bold"
             >
               <span> {c?.item?.title} :- </span>
               <span>{c?.quantity}</span>
             </p>
           ))}
+        </TableCell>
+        <TableCell className="font-bold text-red-500 text-center text-[12px] p-1">
+          {product?.status}
+        </TableCell>
+        <TableCell className="hidden md:table-cell text-[11px] p-1 text-center font-bold">
+          <br />
+          {product.deliveredAt
+            ? (Math.floor(
+                (product.deliveredAt - product.createdAt) / (1000 * 60 * 60)
+              )
+                ? Math.floor(
+                    (product.deliveredAt - product.createdAt) / (1000 * 60 * 60)
+                  ) + 'h '
+                : '') +
+              Math.floor(
+                ((product.deliveredAt - product.createdAt) % (1000 * 60 * 60)) /
+                  (1000 * 60)
+              ) +
+              'min ' +
+              Math.floor(
+                ((product.deliveredAt - product.createdAt) % (1000 * 60)) / 1000
+              ) +
+              'sec '
+            : '-'}
         </TableCell>
         <TableCell className="hidden md:table-cell  p-1">
           {product.rating?.deliveryRating ? (
@@ -138,7 +162,7 @@ export function Product({
               onChange={(e) => setFeedback(e.target.value)}
             />
           ) : (
-            <p className="w-[180px] text-ellipsis overflow-hidden text-center">
+            <p className="w-[150px] text-ellipsis overflow-hidden text-center">
               {product.rating.feedback || 'No feedback'}
             </p>
           )}
