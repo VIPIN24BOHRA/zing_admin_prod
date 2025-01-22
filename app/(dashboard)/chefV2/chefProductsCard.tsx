@@ -25,6 +25,10 @@ export function ChefProductCard({ product }: { product: any }) {
     else if (status != product.status) setStatus(product.status);
   }, [product.status, product?.kitchen?.status]);
 
+  const deliveryBoyName = product?.deliveryBoy?.name
+    ? product?.deliveryBoy?.name
+    : '';
+
   const handleButtonClick = async () => {
     if (!status) return;
 
@@ -45,22 +49,22 @@ export function ChefProductCard({ product }: { product: any }) {
   };
   return (
     <Card
-      className="p-0 flex flex-col justify-between min-h-[300px] shadow-lg"
+      className="p-0 flex flex-col justify-between shadow-lg"
       style={
         status.toLowerCase() == 'pending'
           ? {
-              backgroundColor: 'rgba(3,189,71,0.2)',
-              border: '1px solid rgba(3,189,71,1)'
+              backgroundColor: 'rgba(255,0,0,0.2)',
+              border: '1px solid rgba(255, 0, 0,1)'
             }
           : status.toLowerCase() == 'accepted'
             ? {
-                backgroundColor: 'rgba(255,124,2,0.2)',
-                border: '1px solid rgba(255,124,2,1)'
+                backgroundColor: 'rgba(3,189,71,0.2)',
+                border: '1px solid rgba(3,189,71,1)'
               }
             : status.toLowerCase() == 'ready'
               ? {
-                  backgroundColor: 'rgba(151, 71, 255, 0.2)',
-                  border: '1px solid rgba(151, 71, 255, 1)'
+                  backgroundColor: 'rgba(255,124,2,0.2)',
+                  border: '1px solid rgba(255,124,2,1)'
                 }
               : status.toLowerCase() == 'out for delivery'
                 ? {
@@ -69,56 +73,56 @@ export function ChefProductCard({ product }: { product: any }) {
                   }
                 : status.toLowerCase() == 'cancelled'
                   ? {
-                      backgroundColor: 'rgba(255,0,0,0.2)',
-                      border: '1px solid rgba(255, 0, 0,1)'
+                      // backgroundColor: 'rgba(151, 71, 255, 0.2)',
+                      // border: '1px solid rgba(151, 71, 255, 1)'
                     }
                   : {
-                      backgroundColor: 'rgba(0,181,226,0.2)',
-                      border: '1px solid rgba(100, 149, 237,1)'
+                      // backgroundColor: 'rgba(0,181,226,0.2)',
+                      // border: '1px solid rgba(100, 149, 237,1)'
                     }
       }
     >
       <CardContent className="p-0">
         {/* Header Section */}
         <div
-          className="flex flex-col justify-between border-b-2 pb-2 p-4"
+          className="flex flex-col justify-between border-b-2 p-2 px-4"
           style={
             status.toLowerCase() == 'pending'
               ? {
-                  borderBottom: '1px solid rgba(3,189,71,1)'
+                  borderBottom: '1px solid rgba(255, 0, 0,1)'
                 }
               : status.toLowerCase() == 'accepted'
                 ? {
-                    borderBottom: '1px solid rgba(255,124,2,1)'
+                    borderBottom: '1px solid rgba(3,189,71,1)'
                   }
                 : status.toLowerCase() == 'ready'
-                  ? { borderBottom: '1px solid rgba(151, 71, 255, 1)' }
+                  ? { borderBottom: '1px solid rgba(255,124,2,1)' }
                   : status.toLowerCase() == 'out for delivery'
                     ? {
                         borderBottom: '1px solid rgba(251, 177, 23,1)'
                       }
                     : status.toLowerCase() == 'cancelled'
-                      ? { borderBottom: '1px solid rgba(255, 0, 0,1)' }
+                      ? { borderBottom: '1px solid rgba(151, 71, 255, 1)' }
                       : {
                           borderBottom: '1px solid rgba(100, 149, 237,1)'
                         }
           }
         >
-          <div className="flex flex-row justify-between mb-2">
+          <div className="flex flex-row justify-between mb-1">
             <span className="mr-4 font-bold">Order #{product.orderNo}</span>
             <span
               style={
                 status.toLowerCase() === 'pending'
-                  ? { color: 'rgba(3,189,71,1)' }
+                  ? { color: '#ff0000' }
                   : status.toLowerCase() === 'accepted'
-                    ? { color: 'rgba(255,124,2,1)' }
+                    ? { color: 'rgba(3,189,71,1)' }
                     : status.toLowerCase() == 'ready'
-                      ? { color: 'rgba(151, 71, 255, 1)' }
+                      ? { color: 'rgba(255,124,2,1)' }
                       : status.toLowerCase() === 'out for delivery'
                         ? { color: 'rgba(251, 177, 23,1)' }
                         : status.toLowerCase() == 'cancelled'
                           ? { color: '#ff0000' }
-                          : { color: '#6495ED' }
+                          : { color: 'rgba(3,189,71,1)' }
               }
               className="font-semibold text-sm"
             >
@@ -126,9 +130,9 @@ export function ChefProductCard({ product }: { product: any }) {
             </span>
           </div>
 
-          <div className="flex flex-row justify-between mb-2">
-            <span className="text-sm font-semibold">created at :- </span>
-            <span className="text-sm text-gray-500">
+          <div className="flex flex-row justify-between mb-1">
+            <span className="text-xs font-semibold">created at :- </span>
+            <span className="text-xs text-gray-500">
               {new Date(product.createdAt).toLocaleString()}
             </span>
           </div>
@@ -138,14 +142,27 @@ export function ChefProductCard({ product }: { product: any }) {
             <span>{product.name}</span>
           </div>
 
+          <div className="flex flex-row justify-between mb-1">
+            <span className="text-xs font-semibold">mobile no :-</span>
+            <span className="text-xs">{product.phoneNumber}</span>
+          </div>
           <div className="flex flex-row justify-between">
-            <span className="text-sm font-semibold">mobile no :-</span>
-            <span>{product.phoneNumber}</span>
+            <span className="text-sm font-semibold">username :-</span>
+            <span>{product.name}</span>
+          </div>
+
+          <div className="flex flex-row justify-between mb-1">
+            <span className="text-xs font-semibold">mobile no :-</span>
+            <span className="text-xs">{product.phoneNumber}</span>
+          </div>
+          <div className="flex flex-row justify-between">
+            <span className="text-xs font-semibold">delivery boy :-</span>
+            <span className="text-xs font-bold">{deliveryBoyName}</span>
           </div>
         </div>
 
         {/* Items Section */}
-        <div className="mt-4 p-4">
+        <div className="p-2 px-4">
           {product.cartItems.map((cartItem: any, index: number) => (
             <div key={index} className="text-xl  font-semibold mb-2">
               <p className="flex flex-row justify-start">
@@ -162,7 +179,7 @@ export function ChefProductCard({ product }: { product: any }) {
       </CardContent>
 
       {/* Button Section */}
-      <div className="p-4 px-8 flex ">
+      <div className="p-2 px-8 flex ">
         {loading ? (
           <Spinner />
         ) : status.toLowerCase() == 'pending' ||
@@ -171,9 +188,9 @@ export function ChefProductCard({ product }: { product: any }) {
             onClick={handleButtonClick}
             className={`w-full py-1 rounded-[30px] text-white ${
               status.toLowerCase() === 'pending'
-                ? 'bg-green-500 hover:bg-green-700'
+                ? 'bg-red-500 hover:bg-red-700'
                 : status.toLowerCase() === 'accepted'
-                  ? 'bg-orange-500 hover:bg-orange-700'
+                  ? 'bg-green-500 hover:bg-green-700'
                   : 'bg-gray-400 cursor-not-allowed'
             }`}
           >
