@@ -8,17 +8,14 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const { type, order_id, event, data, track_url, order_url } =
-      await req.json();
+    const { response } = await req.json();
 
-    console.log(type, order_id, event, data, track_url, order_url);
-
+    console.log(response);
     return NextResponse.json({
       success: true
     });
   } catch (e) {
     // eslint-disable-next-line no-console
-
     console.error(e);
     return NextResponse.json({ success: false, error: e });
   }

@@ -51,6 +51,22 @@ export async function createPidgeOrder(order: any, token: string) {
   }
 }
 
+export async function cancelPidgeOrder(id: string, token: string) {
+  const url = `https://api.pidge.in/v1.0/store/channel/vendor/${id}/cancel`;
+  const headers = {
+    'Content-Type': 'application/json',
+    Authorization: token
+  };
+  try {
+    const response = await axios.post(url, {}, { headers });
+    console.log('data:', response.data);
+    return response.data;
+  } catch (error) {
+    console.log(`error for create order : ${error}`);
+    throw Error('error while canceling pidge order');
+  }
+}
+
 export async function createOrderApi(
   token: String,
   order: any,
@@ -99,4 +115,80 @@ export async function createPidgeRiderOrder(order: any) {
   });
   const result = await res.json();
   console.log(result);
+}
+
+export async function cancelPidgeRiderOrder(id: string) {
+  const res = await fetch('/api/pidge/cancelOrder', {
+    method: 'POST',
+    body: JSON.stringify({ id }),
+    headers: {
+      'content-type': 'application/json'
+    },
+    credentials: 'include' // Ensures cookies are sent with the request
+  });
+  const result = await res.json();
+  console.log(result);
+}
+
+export async function createPaymentSession(
+  order_amount: number,
+  order_id: string,
+  phone: string,
+  user_id: string
+) {
+  const body = {
+    order_currency: 'INR',
+    order_amount: order_amount,
+    customer_details: {
+      customer_id: user_id,
+      customer_phone: phone
+    },
+    order_id: order_id,
+    order_meta: {
+      notify_url: 'https://webhook.site/af3cbb29-815e-4113-bddf-9c149c99a9c2'
+    }
+  };
+
+  const headers: any = {
+    'content-type': 'application/json',
+    'x-client-id': process.env.CASHFREE_CLIENT_ID,
+    'x-client-secret': process.env.CASHFREE_SECRET_KEY,
+    'x-api-version': '2023-08-01'
+  };
+  try {
+    const res = await fetch('https://api.cashfree.com/pg/orders', {
+      method: 'POST',
+      body: JSON.stringify(body),
+      headers: headers
+      // Ensures cookies are sent with the request
+    });
+    const result = await res.json();
+    console.log(result);
+    return result;
+  } catch (err) {
+    console.log(err);
+    throw Error('erro while createPaymentSession');
+  }
+}
+
+export async function getPaymentStatus(order_id: string) {
+  const headers: any = {
+    'content-type': 'application/json',
+    'x-client-id': process.env.CASHFREE_CLIENT_ID,
+    'x-client-secret': process.env.CASHFREE_SECRET_KEY,
+    'x-api-version': '2023-08-01'
+  };
+  try {
+    const res = await fetch(`https://api.cashfree.com/pg/orders/${order_id}`, {
+      method: 'GET',
+      headers: headers
+      // Ensures cookies are sent with the request
+    });
+    const result = await res.json();
+    console.log(result);
+    return result;
+  } catch (err) {
+    console.log(err);
+    throw Error('erro while createPaymentSession');
+  }
 }
