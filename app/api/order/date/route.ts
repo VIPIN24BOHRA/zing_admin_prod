@@ -11,8 +11,8 @@ export async function GET(req: NextRequest) {
       { error: 'Failed to fetch orders' },
       { status: 500 }
     );
-  startDate = new Date(Number(startDate)).setHours(0, 0, 0, 0);
-  endDate = new Date(Number(endDate)).setHours(23, 59, 59, 999);
+  startDate = Number(startDate)
+  endDate = Number(endDate)
 
   console.log(new Date(startDate).toLocaleString(), new Date(endDate).toLocaleString());
 

@@ -39,18 +39,16 @@ export const ExportCsvModal = ({
 
   const handleDateChange = (date: Date | null, type: 'start' | 'end') => {
     if (date && !isNaN(date.getTime())) {
-      // Check for unwanted text pattern (if applicable in your setup)
-      const formattedDate = date.toISOString().split('T')[0]; // e.g., "2025-01-08"
+      const formattedDate = date.toISOString().split('T')[0];
       const invalidPattern = /\d{4}\/\d{2}\/\d{2}(sm|sc|kn)/i; // Example pattern
       if (invalidPattern.test(formattedDate)) {
         setError('Invalid date format or pattern detected.');
         return;
       }
-      setError(null); // Clear any existing errors
+      setError(null);
 
-      // Update the corresponding date
-      if (type === 'start') setStartDate(date);
-      if (type === 'end') setEndDate(date);
+      if (type === 'start') setStartDate(new Date(date.setHours(0, 0, 0, 0)));
+      if (type === 'end') setEndDate(new Date(date.setHours(23, 59, 59, 999)));
     }
   };
 
@@ -86,7 +84,7 @@ export const ExportCsvModal = ({
             selected={startDate}
             onChange={(date) => handleDateChange(date, 'start')}
             dateFormat="yyyy/MM/dd"
-            maxDate={new Date()} // Prevent future dates
+            maxDate={new Date()}
             className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
             placeholderText="Select start date"
           />
@@ -100,7 +98,7 @@ export const ExportCsvModal = ({
           </label>
           <DatePicker
             id="end-date-picker"
-            selected={endDate}
+            selected={endDate!}
             onChange={(date) => handleDateChange(date, 'end')}
             dateFormat="yyyy/MM/dd"
             maxDate={new Date()} // Prevent future dates
