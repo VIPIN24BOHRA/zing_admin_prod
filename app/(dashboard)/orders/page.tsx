@@ -85,7 +85,7 @@ export default function OrderHistoryPage({
     const startTimestamp = startDate.getTime();
     const endTimestamp = endDate.getTime();
 
-    const apiUrl = `http://localhost:3000/api/order/date?endDate=${endTimestamp}&startDate=${startTimestamp}`;
+    const apiUrl = `api/order/date?endDate=${endTimestamp}&startDate=${startTimestamp}`;
     fetch(apiUrl, {
       method: 'GET'
     })
@@ -96,8 +96,7 @@ export default function OrderHistoryPage({
         return response.json();
       })
       .then((result) => {
-        console.log('API response:', result.data);
-       const csvData = convertToCSV(result.data);
+        const csvData = convertToCSV(result.data);
 
         downloadCSV(csvData);
       })

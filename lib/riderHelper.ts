@@ -67,6 +67,22 @@ export async function cancelPidgeOrder(id: string, token: string) {
   }
 }
 
+export async function unallocatePidgeOrder(id: string, token: string) {
+  const url = `https://api.pidge.in//v1.0/store/channel/vendor/${id}/fulfillment/cancel`;
+  const headers = {
+    'Content-Type': 'application/json',
+    Authorization: token
+  };
+  try {
+    const response = await axios.post(url, {}, { headers });
+    console.log('data:', response.data);
+    return response.data;
+  } catch (error) {
+    console.log(`error for unallocate order : ${error}`);
+    throw Error('error while unallocating pidge order');
+  }
+}
+
 export async function createOrderApi(
   token: String,
   order: any,

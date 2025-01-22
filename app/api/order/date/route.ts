@@ -11,12 +11,14 @@ export async function GET(req: NextRequest) {
       { error: 'Failed to fetch orders' },
       { status: 500 }
     );
-  startDate = Number(startDate);
-  endDate = Number(endDate);
+  startDate = new Date(Number(startDate)).setHours(0, 0, 0, 0);
+  endDate = new Date(Number(endDate)).setHours(23, 59, 59, 999);
+
+  console.log(new Date(startDate).toLocaleString(), new Date(endDate).toLocaleString());
 
   try {
     const orders = await getOrdersFromDates(startDate, endDate);
-    console.log(orders);
+
     const formattedOrders = orders
       ? Object.entries(orders).map(([id, value]) => ({ id, ...value }))
       : [];
