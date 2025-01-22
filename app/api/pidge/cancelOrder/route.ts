@@ -32,7 +32,8 @@ export async function POST(req: NextRequest) {
     const res = await cancelPidgeOrder(id, token);
 
     return NextResponse.json({
-      success: true
+      success: true,
+      result: res
     });
   } catch (e) {
     // eslint-disable-next-line no-console
