@@ -101,6 +101,23 @@ export function Product({
         <TableCell className="font-bold text-red-500 text-center text-[12px] p-1">
           {product?.status}
         </TableCell>
+
+        <TableCell className="font-medium text-center text-[13px] p-1">
+          {product?.coupon}
+        </TableCell>
+
+        <TableCell className="font-medium text-center text-[13px] p-1">
+          {product.createdAt
+            ? new Date(product.createdAt).toDateString()?.substring(3)
+            : 0}
+
+          <br />
+
+          {product.createdAt
+            ? new Date(product.createdAt).toLocaleTimeString()
+            : 0}
+        </TableCell>
+
         <TableCell className="hidden md:table-cell text-[11px] p-1 text-center font-bold">
           <br />
           {product.deliveredAt

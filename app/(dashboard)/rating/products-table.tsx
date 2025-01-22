@@ -79,6 +79,8 @@ export function ProductsTable({
               <TableHead className="text-center">Address</TableHead>
               <TableHead>Total Items</TableHead>
               <TableHead className="text-center">Status</TableHead>
+              <TableHead className="text-center">Coupon</TableHead>
+              <TableHead className="text-center">Creation Time</TableHead>
               <TableHead className="text-center">Delivered in</TableHead>
               <TableHead className="hidden md:table-cell text-center">
                 Delivery Rating
