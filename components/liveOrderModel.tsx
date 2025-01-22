@@ -201,7 +201,6 @@ export const LiveOrderModel = ({
                   Set Delivered
                 </button>
               )}
-
               {showOutForDelivery && (
                 <button
                   className="w-[120px] mx-2 border-none bg-[rgba(255,124,2,0.65)] hover:bg-[rgba(255,124,2,1)] text-white px-4 py-1 text-xs rounded-lg mb-2"
@@ -220,7 +219,6 @@ export const LiveOrderModel = ({
                   Out for delivery
                 </button>
               )}
-
               {showCancel && (
                 <button
                   className="w-[120px] mx-2 border-none bg-[rgba(255,0,0,0.55)] hover:bg-[rgba(255,0,0,1)] text-white px-4 py-1 text-xs rounded-lg mb-2"
@@ -259,7 +257,6 @@ export const LiveOrderModel = ({
                   out of service
                 </button>
               )}
-
               {showCancel && (
                 <button
                   className="w-[120px] mx-2 border-none bg-[rgba(255,0,0,0.55)] hover:bg-[rgba(255,0,0,1)] text-white px-4 py-1 text-xs rounded-lg mb-2"
@@ -306,7 +303,6 @@ export const LiveOrderModel = ({
                     Accept
                   </button>
                 ))}
-
               {showCopy && (
                 <button
                   className="relative w-[120px] mx-2 border-[1px] border-[#000] hover:bg-black  text-black hover:text-white px-4 py-1 text-xs rounded-lg mb-2 "
@@ -332,7 +328,6 @@ export const LiveOrderModel = ({
                   ) : null}
                 </button>
               )}
-
               {product?.transactionDetails?.merchantTransactionId ? (
                 <div>
                   <button
@@ -351,6 +346,45 @@ export const LiveOrderModel = ({
                   <span>{paymentStatus}</span>
                 </div>
               ) : null}
+              {showCancel && (
+                <button
+                  className="w-[120px] mx-2 border-none bg-[rgba(128,128,128,0.65)] hover:bg-[rgba(128,128,128,1)] text-white px-4 py-1 text-xs rounded-lg mb-2"
+                  onClick={async (event) => {
+                    event.stopPropagation();
+                    console.log('Unallocating order with id:', product.key);
+
+                    try {
+                      const response = await fetch('/api/pidge/unallocate', {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ id: product.key })
+                      });
+
+                      if (!response.ok) {
+                        throw new Error(
+                          `HTTP error! Status: ${response.status}`
+                        );
+                      }
+
+                      const data = await response.json();
+                      console.log('Unallocation successful:', data);
+
+                      // Update the status to indicate unallocation, if required
+                      setStatus('UNALLOCATED');
+                      alert('Order unallocated successfully!');
+                    } catch (error) {
+                      console.error('Error while unallocating order:', error);
+                      alert(
+                        'Failed to unallocate the order. Please try again.'
+                      );
+                    }
+                  }}
+                >
+                  Unallocate
+                </button>
+              )}
             </div>
 
             <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">

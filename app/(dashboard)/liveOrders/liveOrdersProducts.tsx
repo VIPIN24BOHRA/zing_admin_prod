@@ -101,7 +101,9 @@ export function LiverOrderProduct({
           }
         >{`${status ? status : '-'}`}</TableCell>
         <TableCell className="hidden md:table-cell text-center p-1 text-[11px] font-bold">
-          <span className="text-[rgba(255,0,0)]">{deliveryBoyName}</span>
+          <span className="text-[rgba(255,0,0)]">
+            {deliveryBoyStatus == 'PENDING' ? '' : deliveryBoyName}
+          </span>
           <br />
           <span>{deliveryBoyStatus}</span>
           <br />
