@@ -6,7 +6,11 @@ export async function GET(req: NextRequest) {
   let startDate: any = searchParams.get('startDate');
   let endDate: any = searchParams.get('endDate');
 
-  if (!startDate || !endDate) return null;
+  if (!startDate || !endDate)
+    return NextResponse.json(
+      { error: 'Failed to fetch orders' },
+      { status: 500 }
+    );
   startDate = Number(startDate);
   endDate = Number(endDate);
 
