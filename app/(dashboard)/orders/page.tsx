@@ -96,8 +96,7 @@ export default function OrderHistoryPage({
         return response.json();
       })
       .then((result) => {
-        console.log('API response:', result.data);
-       const csvData = convertToCSV(result.data);
+        const csvData = convertToCSV(result.data);
 
         downloadCSV(csvData);
       })
