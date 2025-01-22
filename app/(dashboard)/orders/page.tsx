@@ -79,11 +79,31 @@ export default function OrderHistoryPage({
     setOrders(totalOrders.slice(startIndex, startIndex + productsPerPage));
     setIndex(index - 1);
   };
-
   const handleExportCsvSubmit = (startDate: Date, endDate: Date) => {
     console.log('Export CSV with dates:', startDate, endDate);
-    // Perform your CSV export logic here
-    setIsExportCsvModalOpen(false); // Close the modal after submission
+
+    const startTimestamp = startDate.getTime();
+    const endTimestamp = endDate.getTime();
+
+    const apiUrl = `http://localhost:3000/api/order/date?endDate=${endTimestamp}&startDate=${startTimestamp}`;
+    fetch(apiUrl, {
+      method: 'GET'
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
+      .then((result) => {
+        console.log('API response:', result.data);
+       const csvData = convertToCSV(result.data);
+
+        downloadCSV(csvData);
+      })
+      .catch((error) => {
+        console.error('Error during API call or CSV export:', error);
+      });
   };
 
   const handleExportCsvClose = () => {
@@ -111,9 +131,7 @@ export default function OrderHistoryPage({
             variant="outline"
             className="h-8 gap-1 bg-black text-white"
             onClick={() => {
-              const data = convertToCSV(orders);
               setIsExportCsvModalOpen(true);
-              // downloadCSV(data);
             }}
           >
             <File className="h-3.5 w-3.5" />
