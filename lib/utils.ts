@@ -91,7 +91,7 @@ export const convertToCSV = (data: any) => {
           createdTime: new Date(order.createdAt).toLocaleTimeString(),
           coupon: order?.coupon ?? '',
           customerName: order.name,
-          kitchenPreparationTime: order?.kitchen?.readyAt
+          KPT: order?.kitchen?.readyAt
             ? (Math.floor(
                 (order?.kitchen?.readyAt - order.createdAt) / (1000 * 60 * 60)
               )

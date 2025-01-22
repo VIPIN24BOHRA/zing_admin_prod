@@ -71,15 +71,15 @@ export function ProductsTable({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="text-center"> order no </TableHead>
-              <TableHead className="text-center"> username </TableHead>
+              <TableHead className="text-center"> Order no </TableHead>
+              <TableHead className="text-center"> Name </TableHead>
 
-              <TableHead className="text-center"> Phone number</TableHead>
+              <TableHead className="text-center"> Mobile</TableHead>
               <TableHead className="text-center">Address </TableHead>
               <TableHead>Total Items</TableHead>
 
               <TableHead className="hidden md:table-cell text-center">
-                Total Price
+                Price
               </TableHead>
               <TableHead className="hidden md:table-cell text-center">
                 Coupon
@@ -88,13 +88,13 @@ export function ProductsTable({
                 Delivery Boy
               </TableHead>
               <TableHead className="hidden md:table-cell text-center">
-                payment method
+                Payment
               </TableHead>
               <TableHead className="hidden md:table-cell text-center">
                 Status
               </TableHead>
               <TableHead className="hidden md:table-cell text-center">
-                Kitchen Preparation Time
+                KPT
               </TableHead>
 
               <TableHead className="hidden md:table-cell text-center">
