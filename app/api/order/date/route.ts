@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
 
   try {
     const orders = await getOrdersFromDates(startDate, endDate);
-    console.log(orders);
+
     const formattedOrders = orders
       ? Object.entries(orders).map(([id, value]) => ({ id, ...value }))
       : [];
