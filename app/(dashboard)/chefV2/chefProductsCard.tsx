@@ -119,7 +119,7 @@ export function ChefProductCard({ product }: { product: any }) {
                     : status.toLowerCase() == 'ready'
                       ? { color: 'rgba(255,124,2,1)' }
                       : status.toLowerCase() === 'out for delivery'
-                        ? { color: 'rgba(251, 177, 23,1)' }
+                        ? { color: 'rgba(100, 149, 237,1)' }
                         : status.toLowerCase() == 'cancelled'
                           ? { color: '#ff0000' }
                           : { color: 'rgba(3,189,71,1)' }
@@ -137,9 +137,18 @@ export function ChefProductCard({ product }: { product: any }) {
             </span>
           </div>
 
-          <div className="flex flex-row justify-between">
-            <span className="text-sm font-semibold">username :-</span>
-            <span>{product.name}</span>
+          <div className="flex flex-row justify-between mb-1">
+            <span className="text-xs font-semibold">mobile no :-</span>
+            <span className="text-xs">{product.phoneNumber}</span>
+          </div>
+          <div className="flex flex-row justify-between mb-1">
+            <span className="text-xs font-semibold">Coupon :-</span>
+            <span className="text-xs ">{product?.coupon ?? ''}</span>
+          </div>
+
+          <div className="flex flex-row justify-between mb-1">
+            <span className="text-xs font-semibold">user name :-</span>
+            <span className="text-xs font-bold">{product.name}</span>
           </div>
 
           <div className="flex flex-row justify-between mb-1">
@@ -162,6 +171,7 @@ export function ChefProductCard({ product }: { product: any }) {
         </div>
 
         {/* Items Section */}
+
         <div className="p-2 px-4">
           {product.cartItems.map((cartItem: any, index: number) => (
             <div key={index} className="text-xl  font-semibold mb-2">
@@ -179,6 +189,7 @@ export function ChefProductCard({ product }: { product: any }) {
       </CardContent>
 
       {/* Button Section */}
+
       <div className="p-2 px-8 flex ">
         {loading ? (
           <Spinner />

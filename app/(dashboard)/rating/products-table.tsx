@@ -26,7 +26,7 @@ export function ProductsTable({
   totalOrders,
   index,
   setOrders,
-  setTotalOrders,
+  setTotalOrders
 }: {
   orders: any[];
   totalOrders: any[];
@@ -78,12 +78,15 @@ export function ProductsTable({
               <TableHead className="text-center">Phone Number</TableHead>
               <TableHead className="text-center">Address</TableHead>
               <TableHead>Total Items</TableHead>
+              <TableHead className="text-center">Status</TableHead>
+              <TableHead className="text-center">Delivered in</TableHead>
               <TableHead className="hidden md:table-cell text-center">
                 Delivery Rating
               </TableHead>
               <TableHead className="hidden md:table-cell text-center">
                 Taste Rating
               </TableHead>
+
               <TableHead className="text-center">Feedback</TableHead>
               <TableHead className="text-center">Action</TableHead>
             </TableRow>
