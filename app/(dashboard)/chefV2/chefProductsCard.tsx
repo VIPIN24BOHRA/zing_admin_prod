@@ -58,28 +58,18 @@ export function ChefProductCard({ product }: { product: any }) {
             }
           : status.toLowerCase() == 'accepted'
             ? {
-                backgroundColor: 'rgba(3,189,71,0.2)',
-                border: '1px solid rgba(3,189,71,1)'
+                backgroundColor: 'rgba(255, 244, 0,0.2)',
+                border: '1px solid rgba(251, 177, 23,1)'
               }
             : status.toLowerCase() == 'ready'
               ? {
-                  backgroundColor: 'rgba(255,124,2,0.2)',
-                  border: '1px solid rgba(255,124,2,1)'
+                  backgroundColor: 'rgba(3,189,71,0.2)',
+                  border: '1px solid rgba(3,189,71,1)'
                 }
-              : status.toLowerCase() == 'out for delivery'
-                ? {
-                    backgroundColor: 'rgba(255, 244, 0,0.2)',
-                    border: '1px solid rgba(251, 177, 23,1)'
-                  }
-                : status.toLowerCase() == 'cancelled'
-                  ? {
-                      // backgroundColor: 'rgba(151, 71, 255, 0.2)',
-                      // border: '1px solid rgba(151, 71, 255, 1)'
-                    }
-                  : {
-                      // backgroundColor: 'rgba(0,181,226,0.2)',
-                      // border: '1px solid rgba(100, 149, 237,1)'
-                    }
+              : {
+                  // backgroundColor: 'rgba(0,181,226,0.2)',
+                  // border: '1px solid rgba(100, 149, 237,1)'
+                }
       }
     >
       <CardContent className="p-0">
@@ -93,19 +83,11 @@ export function ChefProductCard({ product }: { product: any }) {
                 }
               : status.toLowerCase() == 'accepted'
                 ? {
-                    borderBottom: '1px solid rgba(3,189,71,1)'
+                    borderBottom: '1px solid rgba(251, 177, 23,1)'
                   }
                 : status.toLowerCase() == 'ready'
-                  ? { borderBottom: '1px solid rgba(255,124,2,1)' }
-                  : status.toLowerCase() == 'out for delivery'
-                    ? {
-                        borderBottom: '1px solid rgba(251, 177, 23,1)'
-                      }
-                    : status.toLowerCase() == 'cancelled'
-                      ? { borderBottom: '1px solid rgba(151, 71, 255, 1)' }
-                      : {
-                          borderBottom: '1px solid rgba(100, 149, 237,1)'
-                        }
+                  ? { borderBottom: '1px solid rgba(3,189,71,1)' }
+                  : {}
           }
         >
           <div className="flex flex-row justify-between mb-1">
@@ -115,9 +97,9 @@ export function ChefProductCard({ product }: { product: any }) {
                 status.toLowerCase() === 'pending'
                   ? { color: '#ff0000' }
                   : status.toLowerCase() === 'accepted'
-                    ? { color: 'rgba(3,189,71,1)' }
+                    ? { color: 'rgba(251, 177, 23,1)' }
                     : status.toLowerCase() == 'ready'
-                      ? { color: 'rgba(255,124,2,1)' }
+                      ? { color: 'rgba(3,189,71,1)' }
                       : status.toLowerCase() === 'out for delivery'
                         ? { color: 'rgba(100, 149, 237,1)' }
                         : status.toLowerCase() == 'cancelled'
@@ -151,19 +133,6 @@ export function ChefProductCard({ product }: { product: any }) {
             <span className="text-xs font-bold">{product.name}</span>
           </div>
 
-          <div className="flex flex-row justify-between mb-1">
-            <span className="text-xs font-semibold">mobile no :-</span>
-            <span className="text-xs">{product.phoneNumber}</span>
-          </div>
-          <div className="flex flex-row justify-between">
-            <span className="text-sm font-semibold">username :-</span>
-            <span>{product.name}</span>
-          </div>
-
-          <div className="flex flex-row justify-between mb-1">
-            <span className="text-xs font-semibold">mobile no :-</span>
-            <span className="text-xs">{product.phoneNumber}</span>
-          </div>
           <div className="flex flex-row justify-between">
             <span className="text-xs font-semibold">delivery boy :-</span>
             <span className="text-xs font-bold">{deliveryBoyName}</span>
@@ -171,7 +140,6 @@ export function ChefProductCard({ product }: { product: any }) {
         </div>
 
         {/* Items Section */}
-
         <div className="p-2 px-4">
           {product.cartItems.map((cartItem: any, index: number) => (
             <div key={index} className="text-xl  font-semibold mb-2">
@@ -189,7 +157,6 @@ export function ChefProductCard({ product }: { product: any }) {
       </CardContent>
 
       {/* Button Section */}
-
       <div className="p-2 px-8 flex ">
         {loading ? (
           <Spinner />
@@ -201,7 +168,7 @@ export function ChefProductCard({ product }: { product: any }) {
               status.toLowerCase() === 'pending'
                 ? 'bg-red-500 hover:bg-red-700'
                 : status.toLowerCase() === 'accepted'
-                  ? 'bg-green-500 hover:bg-green-700'
+                  ? 'bg-yellow-500 hover:bg-yellow-700'
                   : 'bg-gray-400 cursor-not-allowed'
             }`}
           >
