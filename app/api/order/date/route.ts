@@ -12,7 +12,9 @@ export async function GET(req: NextRequest) {
       { status: 500 }
     );
   startDate = new Date(Number(startDate)).setHours(0, 0, 0, 0);
-  endDate = new Date(Number(endDate)).setHours(23, 59, 59, 59);
+  endDate = new Date(Number(endDate)).setHours(23, 59, 59, 999);
+
+  console.log(new Date(startDate).toLocaleString(), new Date(endDate).toLocaleString());
 
   try {
     const orders = await getOrdersFromDates(startDate, endDate);
