@@ -124,10 +124,11 @@ export const getRatingsFromOrderIds = async (
 };
 
 export const getOrdersFromDates = async (
-  startDate: string,
-  endDate: string
+  startDate: number,
+  endDate: number
 ) => {
   console.log(`Fetching orders from ${startDate} to ${endDate}`);
+  console.log(new Date(Number(startDate)), new Date(Number(endDate)));
   try {
     const db = admin.database();
     const ordersRef = db.ref(sanitizePath('orders/'));

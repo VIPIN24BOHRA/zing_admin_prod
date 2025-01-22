@@ -3,11 +3,15 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
   const { searchParams } = req.nextUrl;
-  const startDate = searchParams.get('startDate');
-  const endDate = searchParams.get('endDate');
+  let startDate: any = searchParams.get('startDate');
+  let endDate: any = searchParams.get('endDate');
+
+  if (!startDate || !endDate) return null;
+  startDate = Number(startDate);
+  endDate = Number(endDate);
 
   try {
-    const orders = await getOrdersFromDates(startDate!, endDate!);
+    const orders = await getOrdersFromDates(startDate, endDate);
     console.log(orders);
     const formattedOrders = orders
       ? Object.entries(orders).map(([id, value]) => ({ id, ...value }))
