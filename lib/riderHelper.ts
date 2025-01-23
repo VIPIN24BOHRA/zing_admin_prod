@@ -105,9 +105,6 @@ export async function createOrderApi(
   }
 }
 
-
-
-
 export async function createPaymentSession(
   order_amount: number,
   order_id: string,
@@ -123,7 +120,7 @@ export async function createPaymentSession(
     },
     order_id: order_id,
     order_meta: {
-      notify_url: 'https://webhook.site/af3cbb29-815e-4113-bddf-9c149c99a9c2'
+      notify_url: 'https://dashboard.getzing.app/api/webhook/cashfree'
     }
   };
 
@@ -163,7 +160,7 @@ export async function getPaymentStatus(order_id: string) {
       // Ensures cookies are sent with the request
     });
     const result = await res.json();
-    console.log(result);
+
     return result;
   } catch (err) {
     console.log(err);

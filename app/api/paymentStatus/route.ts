@@ -22,9 +22,15 @@ export async function POST(req: NextRequest) {
 
     const result = await getPaymentStatus(order_id);
 
+    const response = {
+      cf_order_id: result.cf_order_id,
+      order_id: result.order_id,
+      order_status: result.order_status
+    };
+
     return NextResponse.json({
       success: true,
-      status: result.order_status
+      response: response
     });
   } catch (e) {
     // eslint-disable-next-line no-console
