@@ -12,19 +12,17 @@ export const ExportCsvModal = ({
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const validateDates = () => {
-    // Ensure both dates are selected
     if (!startDate || !endDate) {
       setError('Both start and end dates are required.');
       return false;
     }
-    // Ensure endDate is not before startDate
     if (endDate < startDate) {
       setError('End date cannot be before start date.');
       return false;
     }
-    // Restrict date ranges exceeding one year
     if (
       (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24) >
       365
@@ -32,29 +30,28 @@ export const ExportCsvModal = ({
       setError('The date range cannot exceed 1 year.');
       return false;
     }
-    // Clear errors if everything is valid
     setError(null);
     return true;
   };
 
   const handleDateChange = (date: Date | null, type: 'start' | 'end') => {
     if (date && !isNaN(date.getTime())) {
-      const formattedDate = date.toISOString().split('T')[0];
-      const invalidPattern = /\d{4}\/\d{2}\/\d{2}(sm|sc|kn)/i; // Example pattern
-      if (invalidPattern.test(formattedDate)) {
-        setError('Invalid date format or pattern detected.');
-        return;
-      }
       setError(null);
-
       if (type === 'start') setStartDate(new Date(date.setHours(0, 0, 0, 0)));
       if (type === 'end') setEndDate(new Date(date.setHours(23, 59, 59, 999)));
     }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (validateDates()) {
-      onSubmit(startDate as Date, endDate as Date);
+      setIsSubmitting(true);
+      try {
+        await onSubmit(startDate as Date, endDate as Date);
+      } catch (error) {
+        console.error('Error during submission:', error);
+      } finally {
+        setIsSubmitting(false);
+      }
     }
   };
 
@@ -98,11 +95,11 @@ export const ExportCsvModal = ({
           </label>
           <DatePicker
             id="end-date-picker"
-            selected={endDate!}
+            selected={endDate}
             onChange={(date) => handleDateChange(date, 'end')}
             dateFormat="yyyy/MM/dd"
-            maxDate={new Date()} // Prevent future dates
-            minDate={startDate || undefined} // Prevent selecting dates before startDate
+            maxDate={new Date()}
+            minDate={startDate || undefined}
             className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
             placeholderText="Select end date"
           />
@@ -120,15 +117,18 @@ export const ExportCsvModal = ({
           <button
             onClick={onClose}
             className="px-4 py-2 bg-gray-300 text-gray-700 rounded-md hover:bg-gray-400"
+            disabled={isSubmitting}
           >
             Cancel
           </button>
           <button
             onClick={handleSubmit}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-            disabled={!startDate || !endDate || Boolean(error)}
+            className={`px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 ${
+              isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
+            }`}
+            disabled={!startDate || !endDate || Boolean(error) || isSubmitting}
           >
-            Submit
+            {isSubmitting ? 'Submitting...' : 'Submit'}
           </button>
         </div>
       </div>
