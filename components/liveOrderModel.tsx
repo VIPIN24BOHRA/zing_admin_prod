@@ -1,6 +1,8 @@
 import {
   acceptOrder,
+  cancelPidgeRiderOrder,
   copyToClipboard,
+  unallocatePidgeRiderOrder,
   updateProductStatus,
   updateStatusCancelled,
   updateStatusDelivered
@@ -9,7 +11,7 @@ import { Alert } from '@mui/material';
 import { useState } from 'react';
 import { get, getDatabase, limitToLast, query, ref } from 'firebase/database';
 import { app } from '@/lib/db';
-import { createPidgeRiderOrder, createRiderOrder } from '@/lib/riderHelper';
+import { createPidgeRiderOrder } from '@/lib/utils';
 import Spinner from './ui/spinner';
 
 const copyDetails = async (product: any, totalPrice: any) => {
@@ -85,6 +87,8 @@ export const LiveOrderModel = ({
   const [copied, setCopied] = useState(false);
   const [paymentStatus, setPaymentStatus] = useState('');
   const [loading, setLoading] = useState(false);
+  const [cancelling, setCancelling] = useState(false);
+  const [unallocating, setUnallocating] = useState(false);
 
   return (
     <div
@@ -257,25 +261,32 @@ export const LiveOrderModel = ({
                   out of service
                 </button>
               )}
-              {showCancel && (
-                <button
-                  className="w-[120px] mx-2 border-none bg-[rgba(255,0,0,0.55)] hover:bg-[rgba(255,0,0,1)] text-white px-4 py-1 text-xs rounded-lg mb-2"
-                  onClick={async (event) => {
-                    event.stopPropagation();
-                    console.log('set status to out of service', product);
+              {showCancel &&
+                (cancelling ? (
+                  <Spinner />
+                ) : (
+                  <button
+                    className="w-[120px] mx-2 border-none bg-[rgba(255,0,0,0.55)] hover:bg-[rgba(255,0,0,1)] text-white px-4 py-1 text-xs rounded-lg mb-2"
+                    onClick={async (event) => {
+                      event.stopPropagation();
+                      console.log('set status to out of service', product);
+                      setCancelling(true);
+                      const res = await updateStatusCancelled(
+                        { ...product },
+                        product.key,
+                        'Order has been cancelled'
+                      );
 
-                    const res = await updateStatusCancelled(
-                      { ...product },
-                      product.key,
-                      'Order has been cancelled'
-                    );
+                      if (res) setStatus('CANCELLED');
+                      if (product?.deliveryBoy?.id)
+                        await cancelPidgeRiderOrder(product?.deliveryBoy?.id);
 
-                    if (res) setStatus('CANCELLED');
-                  }}
-                >
-                  Cancel
-                </button>
-              )}
+                      setCancelling(false);
+                    }}
+                  >
+                    Cancel
+                  </button>
+                ))}
               {showAccept &&
                 (loading ? (
                   <Spinner />
@@ -346,45 +357,25 @@ export const LiveOrderModel = ({
                   <span>{paymentStatus}</span>
                 </div>
               ) : null}
-              {showCancel && (
-                <button
-                  className="w-[120px] mx-2 border-none bg-[rgba(128,128,128,0.65)] hover:bg-[rgba(128,128,128,1)] text-white px-4 py-1 text-xs rounded-lg mb-2"
-                  onClick={async (event) => {
-                    event.stopPropagation();
-                    console.log('Unallocating order with id:', product.key);
+              {showCancel &&
+                (unallocating ? (
+                  <Spinner />
+                ) : (
+                  <button
+                    className="w-[120px] mx-2 border-none bg-[rgba(128,128,128,0.65)] hover:bg-[rgba(128,128,128,1)] text-white px-4 py-1 text-xs rounded-lg mb-2"
+                    onClick={async (event) => {
+                      event.stopPropagation();
+                      console.log('Unallocating order with id:', product.key);
 
-                    try {
-                      const response = await fetch('/api/pidge/unallocate', {
-                        method: 'POST',
-                        headers: {
-                          'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({ id: product.key })
-                      });
-
-                      if (!response.ok) {
-                        throw new Error(
-                          `HTTP error! Status: ${response.status}`
+                      if (product?.deliveryBoy?.id)
+                        await unallocatePidgeRiderOrder(
+                          product?.deliveryBoy?.id
                         );
-                      }
-
-                      const data = await response.json();
-                      console.log('Unallocation successful:', data);
-
-                      // Update the status to indicate unallocation, if required
-                      setStatus('UNALLOCATED');
-                      alert('Order unallocated successfully!');
-                    } catch (error) {
-                      console.error('Error while unallocating order:', error);
-                      alert(
-                        'Failed to unallocate the order. Please try again.'
-                      );
-                    }
-                  }}
-                >
-                  Unallocate
-                </button>
-              )}
+                    }}
+                  >
+                    Unallocate
+                  </button>
+                ))}
             </div>
 
             <div className="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">

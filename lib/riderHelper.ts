@@ -105,46 +105,8 @@ export async function createOrderApi(
   }
 }
 
-export async function createRiderOrder(order: any) {
-  console.log(order);
-  const res = await fetch('/api/createRiderOrder', {
-    method: 'POST',
-    body: JSON.stringify(order),
-    headers: {
-      'content-type': 'application/json'
-    },
-    credentials: 'include' // Ensures cookies are sent with the request
-  });
-  const result = await res.json();
-  console.log(result);
-}
 
-export async function createPidgeRiderOrder(order: any) {
-  console.log(order);
-  const res = await fetch('/api/pidge/createOrder', {
-    method: 'POST',
-    body: JSON.stringify(order),
-    headers: {
-      'content-type': 'application/json'
-    },
-    credentials: 'include' // Ensures cookies are sent with the request
-  });
-  const result = await res.json();
-  console.log(result);
-}
 
-export async function cancelPidgeRiderOrder(id: string) {
-  const res = await fetch('/api/pidge/cancelOrder', {
-    method: 'POST',
-    body: JSON.stringify({ id }),
-    headers: {
-      'content-type': 'application/json'
-    },
-    credentials: 'include' // Ensures cookies are sent with the request
-  });
-  const result = await res.json();
-  console.log(result);
-}
 
 export async function createPaymentSession(
   order_amount: number,
