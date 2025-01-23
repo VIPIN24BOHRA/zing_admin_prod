@@ -40,20 +40,21 @@ export default function MenuPage() {
   }, [user, loading, router]);
 
   useEffect(() => {
-    const db = getDatabase(app);
-    const starCountRef = ref(db, 'testProduct/');
-
-    get(query(starCountRef))
-      .then((snapshot) => {
-        if (snapshot.exists()) {
-          const data = snapshot.val();
-
-          setProduct(data);
+    const fetchProducts = async () => {
+      try {
+        const response = await fetch('/api/product');
+        if (!response.ok) {
+          throw new Error('Failed to fetch products');
         }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+
+        const data = await response.json();
+        setProduct(data.products);
+      } catch (err) {
+        console.error('Error fetching products:', err);
+      }
+    };
+
+    fetchProducts();
   }, [isProductChanged]);
 
   if (loading || !user) {

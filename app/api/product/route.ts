@@ -1,10 +1,29 @@
-import { fetchUserFromToken } from '@/lib/authHelper';
 import { ProductModel } from '@/lib/models';
-import { addNewProduct } from 'modules/firebase/database';
+import { addNewProduct, getAllProduct } from 'modules/firebase/database';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
-  return NextResponse.json({ message: 'Product API is up and running' });
+  try {
+    const data = await getAllProduct();
+
+    if (!data) {
+      return NextResponse.json({ orders: [], total: 0 });
+    }
+
+    const productKeys = Object.keys(data);
+    const products = productKeys.map((key) => ({
+      id: key,
+      ...data[key]
+    }));
+
+    return NextResponse.json({ products, total: products.length });
+  } catch (err) {
+    console.error('Error in GET request:', err);
+    return NextResponse.json(
+      { message: 'An error occurred while fetching products' },
+      { status: 500 }
+    );
+  }
 }
 
 export async function POST(req: NextRequest) {
@@ -28,7 +47,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({
       success: true,
       message: 'Product added successfully',
-      product: body,
+      product: body
     });
   } catch (e: any) {
     console.error('Error in POST:', e);
@@ -47,13 +66,15 @@ function validateProduct(product: ProductModel): string | null {
     return 'Product original price must be a positive number';
   if (typeof product.price !== 'number' || product.price <= 0)
     return 'Product price must be a positive number';
-  if (typeof product.hide !== 'boolean') return 'Product hide must be a boolean value';
-  if (typeof product.isVeg !== 'boolean') return 'Product isVeg must be a boolean value';
+  if (typeof product.hide !== 'boolean')
+    return 'Product hide must be a boolean value';
+  if (typeof product.isVeg !== 'boolean')
+    return 'Product isVeg must be a boolean value';
   if (!product.servingType) return 'Product serving type is required';
   if (!product.quantity) return 'Product quantity is required';
   if (!product.imageUrl) return 'Product image URL is required';
   if (!product.largeImageUrl) return 'Product large image URL is required';
   if (!product.productId || typeof product.productId !== 'number')
     return 'Product ID is required and must be a number';
-  return null; 
+  return null;
 }
