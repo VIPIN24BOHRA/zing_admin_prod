@@ -146,6 +146,47 @@ export async function createPaymentSession(
   }
 }
 
+export async function createTestPaymentSession(
+  order_amount: number,
+  order_id: string,
+  phone: string,
+  user_id: string
+) {
+  const body = {
+    order_currency: 'INR',
+    order_amount: order_amount,
+    customer_details: {
+      customer_id: user_id,
+      customer_phone: phone
+    },
+    order_id: order_id,
+    order_meta: {
+      notify_url: 'https://dashboard.getzing.app/api/webhook/cashfree'
+    }
+  };
+
+  const headers: any = {
+    'content-type': 'application/json',
+    'x-client-id': process.env.TEST_CASHFREE_CLIENT_ID,
+    'x-client-secret': process.env.TEST_CASHFREE_SECRET_KEY,
+    'x-api-version': '2023-08-01'
+  };
+  try {
+    const res = await fetch('https://sandbox.cashfree.com/pg/orders', {
+      method: 'POST',
+      body: JSON.stringify(body),
+      headers: headers
+      // Ensures cookies are sent with the request
+    });
+    const result = await res.json();
+    console.log(result);
+    return result;
+  } catch (err) {
+    console.log(err);
+    throw Error('erro while createPaymentSession');
+  }
+}
+
 export async function getPaymentStatus(order_id: string) {
   const headers: any = {
     'content-type': 'application/json',
@@ -159,6 +200,31 @@ export async function getPaymentStatus(order_id: string) {
       headers: headers
       // Ensures cookies are sent with the request
     });
+    const result = await res.json();
+
+    return result;
+  } catch (err) {
+    console.log(err);
+    throw Error('erro while createPaymentSession');
+  }
+}
+
+export async function getTestPaymentStatus(order_id: string) {
+  const headers: any = {
+    'content-type': 'application/json',
+    'x-client-id': process.env.TEST_CASHFREE_CLIENT_ID,
+    'x-client-secret': process.env.TEST_CASHFREE_SECRET_KEY,
+    'x-api-version': '2023-08-01'
+  };
+  try {
+    const res = await fetch(
+      `https://sandbox.cashfree.com/pg/orders/${order_id}`,
+      {
+        method: 'GET',
+        headers: headers
+        // Ensures cookies are sent with the request
+      }
+    );
     const result = await res.json();
 
     return result;
