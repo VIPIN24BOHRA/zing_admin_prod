@@ -161,7 +161,7 @@ export async function createTestPaymentSession(
     },
     order_id: order_id,
     order_meta: {
-      notify_url: 'https://dashboard.getzing.app/api/webhook/cashfree'
+      notify_url: 'https://webhook.site/d41ace5e-61c2-4616-8b7a-9f12e9be7876'
     }
   };
 
