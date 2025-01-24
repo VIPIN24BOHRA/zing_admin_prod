@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Column } from 'drizzle-orm';
 import { acceptOrder, printCard, setOrderReady } from '@/lib/utils';
-import { createPidgeRiderOrder } from '@/lib/riderHelper';
+import { createPidgeRiderOrder } from '@/lib/utils';
 import Spinner from '@/components/ui/spinner';
 
 export function ChefProductCard({ product }: { product: any }) {

@@ -1,36 +1,42 @@
 /* eslint-disable import/extensions */
 
-import { createPaymentSession, getPaymentStatus } from '@/lib/riderHelper';
+import { createTestPaymentSession } from '@/lib/riderHelper';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
-  return NextResponse.json('get payment  status is up and running');
+  return NextResponse.json(
+    `create payment is up and running ${process.env.CASHFREE_CLIENT_ID?.substring(0, 3)}`
+  );
 }
 
 export async function POST(req: NextRequest) {
   try {
-    const { apiKey, order_id } = await req.json();
+    const { apiKey, order_amount, order_id, phone, user_id } = await req.json();
     if (!apiKey || apiKey !== process.env.NEXT_PUBLIC_WEB_API_KEY) {
       return NextResponse.json({ success: false, error: 'Invalid Api key' });
     }
-    if (!order_id) {
+    if (!order_amount || !order_id || !phone || !user_id) {
       return NextResponse.json({
         success: false,
         error: 'required fields are missing'
       });
     }
 
-    const result = await getPaymentStatus(order_id);
-
+    const result = await createTestPaymentSession(
+      order_amount,
+      order_id,
+      phone,
+      user_id
+    );
     const response = {
       cf_order_id: result.cf_order_id,
       order_id: result.order_id,
-      order_status: result.order_status
+      payment_session_id: result.payment_session_id
     };
 
     return NextResponse.json({
       success: true,
-      response: response
+      response
     });
   } catch (e) {
     // eslint-disable-next-line no-console

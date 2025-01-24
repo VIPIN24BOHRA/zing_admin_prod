@@ -4,7 +4,9 @@ import { createPaymentSession } from '@/lib/riderHelper';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
-  return NextResponse.json('create payment is up and running');
+  return NextResponse.json(
+    `create payment is up and running ${process.env.CASHFREE_CLIENT_ID?.substring(0, 3)}`
+  );
 }
 
 export async function POST(req: NextRequest) {

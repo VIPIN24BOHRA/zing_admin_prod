@@ -1,6 +1,6 @@
 /* eslint-disable import/extensions */
 
-import { createPaymentSession, getPaymentStatus } from '@/lib/riderHelper';
+import { getTestPaymentStatus } from '@/lib/riderHelper';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    const result = await getPaymentStatus(order_id);
+    const result = await getTestPaymentStatus(order_id);
 
     const response = {
       cf_order_id: result.cf_order_id,
