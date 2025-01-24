@@ -1,5 +1,6 @@
 'use-client';
 import { ProductModel } from '@/lib/models';
+import { uploadImage } from '@/lib/storage';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 
 interface ProductModalProps {
@@ -177,25 +178,39 @@ const ProductModal: React.FC<ProductModalProps> = ({
 
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
-  // Handle category selection
   const handleCategoryChange = (e: ChangeEvent<HTMLSelectElement>): void => {
     const selectedValue = e.target.value;
     if (selectedValue && !selectedCategories.includes(selectedValue)) {
       setSelectedCategories([...selectedCategories, selectedValue]);
     }
-    e.target.value = ''; // Reset the dropdown to placeholder
+    e.target.value = ''; 
   };
 
-  // Remove category
   const removeCategory = (categoryToRemove: string): void => {
     setSelectedCategories(
       selectedCategories.filter((category) => category !== categoryToRemove)
     );
   };
 
+  const handleFileUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      try {
+        const key = file.name;
+        await uploadImage(key, file);
+        alert('Image uploaded successfully!');
+      } catch (error) {
+        console.error('Error uploading image:', error);
+        alert('Failed to upload image.');
+      }
+    }
+  };
+
   return (
     <div
-      className="relative z-10"
+      className="relative z-10 w-full h-[100vh]"
       aria-labelledby="modal-title"
       role="dialog"
       aria-modal="true"
@@ -207,7 +222,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
       ></div>
       <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
         <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-          <div className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-4/5 sm:h-9/10">
+          <div className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:h-[100vh]">
             <form onSubmit={handleSubmit} className="bg-white p-6">
               <h3
                 className="text-lg font-semibold text-gray-900"
@@ -338,10 +353,11 @@ const ProductModal: React.FC<ProductModalProps> = ({
                         id="dropzone-file"
                         type="file"
                         className="hidden"
+                        onChange={(e) => handleFileUpload(e)}
                       />
                     </label>
                   </div>
-                  <div className="flex flex-col items-center justify-center w-1/2 h-40 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
+                  {/* <div className="flex flex-col items-center justify-center w-1/2 h-40 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
                     <label
                       htmlFor="dropzone-file-large"
                       className="flex flex-col items-center justify-center w-full h-full"
@@ -376,7 +392,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
                         className="hidden"
                       />
                     </label>
-                  </div>
+                  </div> */}
                 </div>
                 <div className="w-full">
                   <label
