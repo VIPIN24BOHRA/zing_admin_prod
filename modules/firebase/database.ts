@@ -216,7 +216,7 @@ export const getPendingOrderTEST = async (pendingPrderId: String) => {
 };
 
 export const addNewAppliedCoupon = async (uid: string, code: string) => {
-  if (!uid && !code) {
+  if (uid && code) {
     try {
       console.log('saving applied cupons');
       const db = admin.database();
@@ -274,7 +274,7 @@ export const savePaymentDetails = async (paymentDetails: any) => {
 
 export const addNewAppliedCouponTEST = async (uid: string, code: string) => {
   console.log('addNewAppliedCouponTEST', uid, code);
-  if (!uid && !code) {
+  if (uid && code) {
     try {
       console.log('saving applied cupons');
       const db = admin.database();
