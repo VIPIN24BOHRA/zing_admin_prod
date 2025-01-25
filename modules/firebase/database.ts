@@ -273,6 +273,7 @@ export const savePaymentDetails = async (paymentDetails: any) => {
 };
 
 export const addNewAppliedCouponTEST = async (uid: string, code: string) => {
+  console.log('addNewAppliedCouponTEST', uid, code);
   if (!uid && !code) {
     try {
       console.log('saving applied cupons');
@@ -286,7 +287,7 @@ export const addNewAppliedCouponTEST = async (uid: string, code: string) => {
       if (snapshot.exists()) {
         count = snapshot.val() ? snapshot.val() : 0;
       }
-
+      console.log(count);
       await db.ref(`testDB/appliedCupons/${uid}/${code}`).set(count + 1);
 
       return true;
