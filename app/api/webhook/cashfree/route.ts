@@ -16,11 +16,7 @@ export async function POST(req: NextRequest) {
     const response = await req.json();
     console.log(response);
 
-    if (
-      response &&
-      response.type == 'PAYMENT_SUCCESS_WEBHOOK' &&
-      !response.data?.payment_gateway_details
-    ) {
+    if (response && response.type == 'PAYMENT_SUCCESS_WEBHOOK') {
       const { order, payment } = response.data;
       console.log(order, payment);
 
