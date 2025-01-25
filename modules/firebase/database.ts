@@ -186,3 +186,134 @@ export const updateRating = async (
     throw new Error('Failed to fetch orders');
   }
 };
+
+export const getPendingOrder = async (pendingPrderId: String) => {
+  try {
+    const db = admin.database();
+    const ordersRef = db.ref(
+      sanitizePath(`testDB/pendingOrder/${pendingPrderId}`)
+    );
+
+    const snapshot = await ordersRef.once('value');
+    return snapshot.exists() ? snapshot.val() : null;
+  } catch (error) {
+    console.error('Error fetching pending order:', error);
+    throw new Error('Failed to fetch pending orders');
+  }
+};
+
+export const addNewAppliedCoupon = async (uid: string, code: string) => {
+  if (!uid && !code) {
+    try {
+      console.log('saving applied cupons');
+      const db = admin.database();
+
+      const snapshot = await db
+        .ref(`appliedCupons/${uid}/${code}`)
+        .once('value');
+
+      let count = 0;
+      if (snapshot.exists()) {
+        count = snapshot.val() ? snapshot.val() : 0;
+      }
+
+      await db.ref(`appliedCupons/${uid}/${code}`).set(count + 1);
+
+      return true;
+    } catch (err) {
+      console.log('error while add applied coupon');
+      return false;
+    }
+  }
+  return false;
+};
+
+export const createOrder = async (order: any, transactionDetail: any) => {
+  try {
+    const db = admin.database();
+
+    order.createdAt = Date.now();
+    order.transactionDetail = transactionDetail;
+    await db.ref('orderCounter').set(admin.database.ServerValue.increment(1));
+    const snap = await db.ref('orderCounter').get();
+    const orderCount = snap.val();
+    order.orderNo = orderCount;
+
+    await db.ref('orders').push().set(order);
+    await addNewAppliedCoupon(order.uid, order.code);
+  } catch (error) {
+    console.error('Error fetching pending order:', error);
+    throw new Error('Failed to fetch pending orders');
+  }
+};
+
+export const savePaymentDetails = async (paymentDetails: any) => {
+  try {
+    const db = admin.database();
+
+    await db
+      .ref(`payment/cashfree/${paymentDetails.order.order_id}`)
+      .set(paymentDetails);
+  } catch (error) {
+    console.error('Error fetching pending order:', error);
+  }
+};
+
+export const addNewAppliedCouponTEST = async (uid: string, code: string) => {
+  if (!uid && !code) {
+    try {
+      console.log('saving applied cupons');
+      const db = admin.database();
+
+      const snapshot = await db
+        .ref(`testDB/appliedCupons/${uid}/${code}`)
+        .once('value');
+
+      let count = 0;
+      if (snapshot.exists()) {
+        count = snapshot.val() ? snapshot.val() : 0;
+      }
+
+      await db.ref(`testDB/appliedCupons/${uid}/${code}`).set(count + 1);
+
+      return true;
+    } catch (err) {
+      console.log('error while add applied coupon');
+      return false;
+    }
+  }
+  return false;
+};
+
+export const createOrderTEST = async (order: any, transactionDetail: any) => {
+  try {
+    const db = admin.database();
+
+    order.createdAt = Date.now();
+    order.transactionDetail = transactionDetail;
+    await db
+      .ref('testDB/orderCounter')
+      .set(admin.database.ServerValue.increment(1));
+    const snap = await db.ref('testDB/orderCounter').get();
+    const orderCount = snap.val();
+    order.orderNo = orderCount;
+
+    await db.ref('testDB/orders').push().set(order);
+    await addNewAppliedCouponTEST(order.uid, order.code);
+  } catch (error) {
+    console.error('Error fetching pending order:', error);
+    throw new Error('Failed to fetch pending orders');
+  }
+};
+
+export const savePaymentDetailsTEST = async (paymentDetails: any) => {
+  try {
+    const db = admin.database();
+
+    await db
+      .ref(`testDB/payment/cashfree/${paymentDetails.order.order_id}`)
+      .set(paymentDetails);
+  } catch (error) {
+    console.error('Error fetching pending order:', error);
+  }
+};

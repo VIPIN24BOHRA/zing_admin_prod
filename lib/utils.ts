@@ -347,36 +347,19 @@ export const printCard = (order: any) => {
   doc.write(`
     <html>
       <head>
-        <title>Order Receipt</title>
+        <title></title>
         <style>
-          body { font-family: Arial, sans-serif; margin: 20px; }
-          h3 { margin-bottom: 10px; }
-          p, li { margin: 5px 0; }
+          body { font-family: Arial, sans-serif; text-align:center;}
+          p {font-size:10px; font-weight: bold; padding:0px; margin:0px; margin-bottom:4px;}
         </style>
       </head>
       <body>
         <p><b>Order No :- ${order.orderNo}</b></p>
-        </br>
-    <p><b>Address:</b></p>
-   
-   <p>${order.address.addressType}</p>
-   <p>${order.address.title}</p>
-   <p>${order.address?.houseDetails}</p>
-   <p>${order.address?.landmark ?? ''}</p>
-   </br>
-   <p><b>phone number:</b> ${order.phoneNumber ? order.phoneNumber : order.uid}</p>
-   </br>
-   <p><b>Items:</b> </p>
    ${order?.cartItems
      ?.map((cItem: any) => {
        return `<p>${cItem?.item?.title} - ${cItem?.quantity}</p>`;
      })
      ?.join('\n')}
-     </br>
-   <p><b>Total Price: </b></p>
-   <p>${order.totalPrice - (order?.discount ?? 0) + (order.deliveryFee ?? 0)}</p>
-   <p>${(order?.transactionDetails?.merchantTransactionId && order?.transactionDetails?.success ? 'paid' : 'cash').toLocaleUpperCase()}</p>
-   
       </body>
     </html>
   `);
