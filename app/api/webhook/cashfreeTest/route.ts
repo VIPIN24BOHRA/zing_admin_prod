@@ -2,6 +2,7 @@
 import {
   createOrderTEST,
   getPendingOrder,
+  getPendingOrderTEST,
   savePaymentDetailsTEST
 } from 'modules/firebase/database';
 import { NextRequest, NextResponse } from 'next/server';
@@ -20,8 +21,9 @@ export async function POST(req: NextRequest) {
       !response.data?.payment_gateway_details
     ) {
       const { order, payment } = response.data;
+      console.log(order, payment);
 
-      const pendingOrder = await getPendingOrder(order.order_id);
+      const pendingOrder = await getPendingOrderTEST(order.order_id);
 
       const transactionDetail = {
         cfOrderId: payment.cf_payment_id,
@@ -29,6 +31,7 @@ export async function POST(req: NextRequest) {
         status:
           payment.payment_status == 'SUCCESS' ? 'PAID' : payment.payment_status
       };
+      console.log(pendingOrder, transactionDetail);
 
       // create order.
       await createOrderTEST(pendingOrder, transactionDetail);

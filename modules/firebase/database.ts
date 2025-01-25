@@ -187,10 +187,10 @@ export const updateRating = async (
   }
 };
 
-export const getPendingOrder = async (pendingPrderId: String) => {
+export const getPendingOrder = async (pendingOrderId: String) => {
   try {
     const db = admin.database();
-    const ordersRef = db.ref(sanitizePath(`pendingOrder/${pendingPrderId}`));
+    const ordersRef = db.ref(sanitizePath(`pendingOrder/${pendingOrderId}`));
 
     const snapshot = await ordersRef.once('value');
     return snapshot.exists() ? snapshot.val() : null;
