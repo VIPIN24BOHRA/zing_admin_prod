@@ -190,6 +190,19 @@ export const updateRating = async (
 export const getPendingOrder = async (pendingPrderId: String) => {
   try {
     const db = admin.database();
+    const ordersRef = db.ref(sanitizePath(`pendingOrder/${pendingPrderId}`));
+
+    const snapshot = await ordersRef.once('value');
+    return snapshot.exists() ? snapshot.val() : null;
+  } catch (error) {
+    console.error('Error fetching pending order:', error);
+    throw new Error('Failed to fetch pending orders');
+  }
+};
+
+export const getPendingOrderTEST = async (pendingPrderId: String) => {
+  try {
+    const db = admin.database();
     const ordersRef = db.ref(
       sanitizePath(`testDB/pendingOrder/${pendingPrderId}`)
     );
