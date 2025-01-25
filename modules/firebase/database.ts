@@ -253,7 +253,7 @@ export const createOrder = async (order: any, transactionDetail: any) => {
     order.orderNo = orderCount;
 
     await db.ref('orders').push().set(order);
-    await addNewAppliedCoupon(order.uid, order.code);
+    await addNewAppliedCoupon(order.uid, order.coupon);
   } catch (error) {
     console.error('Error fetching pending order:', error);
     throw new Error('Failed to fetch pending orders');
@@ -312,7 +312,7 @@ export const createOrderTEST = async (order: any, transactionDetail: any) => {
     order.orderNo = orderCount;
 
     await db.ref('testDB/orders').push().set(order);
-    await addNewAppliedCouponTEST(order.uid, order.code);
+    await addNewAppliedCouponTEST(order.uid, order.coupon);
   } catch (error) {
     console.error('Error fetching pending order:', error);
     throw new Error('Failed to fetch pending orders');
