@@ -118,10 +118,7 @@ export async function createPaymentSession(
       customer_id: user_id,
       customer_phone: phone
     },
-    order_id: order_id,
-    order_meta: {
-      notify_url: 'https://dashboard.getzing.app/api/webhook/cashfree'
-    }
+    order_id: order_id
   };
 
   const headers: any = {
