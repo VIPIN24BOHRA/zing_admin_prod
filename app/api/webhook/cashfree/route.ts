@@ -14,6 +14,7 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const response = await req.json();
+    console.log(response);
 
     if (
       response &&
