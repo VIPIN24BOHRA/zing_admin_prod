@@ -64,6 +64,20 @@ export const getAllProduct = async () => {
   }
 };
 
+export const getAllCategories =async() =>{
+  try {
+    const db = admin.database();
+    const ordersRef = db.ref(sanitizePath('/configuration/categories/'));
+
+    const snapshot = await ordersRef.once('value');
+
+    return snapshot.exists() ? snapshot.val() : null;
+  } catch (error) {
+    console.error('Error fetching products:', error);
+    throw new Error('Failed to fetch products');
+  }
+}
+
 export const createUserForOTPSMS = async (data: any) => {
   if (!data || !data.phoneNumber || !data.OTP) return;
   const db = admin.database();

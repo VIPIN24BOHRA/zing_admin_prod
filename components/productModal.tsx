@@ -54,6 +54,12 @@ const ProductModal: React.FC<ProductModalProps> = ({
     }
   }, []);
 
+  useEffect(() => {
+    if (product?.categories && Array.isArray(product.categories)) {
+      setSelectedCategories(product.categories);
+    }
+  }, [product]);
+
   let debounceTimeout: NodeJS.Timeout;
 
   const handleChange = (
@@ -197,26 +203,21 @@ const ProductModal: React.FC<ProductModalProps> = ({
     }
   };
 
-  const foodCategories: string[] = [
-    'Vegetarian',
-    'Non-Vegetarian',
-    'Vegan',
-    'Gluten-Free',
-    'Desserts',
-    'Beverages',
-    'Seafood',
-    'Snacks',
-    'Fast Food',
-    'Healthy',
-    'Indian',
-    'Chinese',
-    'Italian',
-    'Mexican',
-    'Mediterranean',
-    'Breakfast',
-    'Lunch',
-    'Dinner'
-  ];
+  const [foodCategories, setFoodCategories] = useState<string[] | null>(null);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await fetch('/api/product/categories');
+        const result = await response.json();
+        console.log(result);
+        setFoodCategories(result.data);
+      } catch (error) {
+        console.error('Error fetching categories:', error);
+      }
+    };
+    fetchCategories();
+  }, []);
 
   const handleCategoryChange = (e: ChangeEvent<HTMLSelectElement>): void => {
     const selectedValue = e.target.value;
@@ -303,11 +304,11 @@ const ProductModal: React.FC<ProductModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-30 w-screen overflow-y-auto">
-      <div className="relative flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+      <div className="relative flex min-h-full items-end justify-center p-2 text-center sm:items-center sm:p-0">
         <div className="relative flex transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:w-full sm:h-[100vh]">
           <form
             onSubmit={handleSubmit}
-            className="bg-white p-12 w-3/4 flex flex-col border-r-2 border-dashed border-[#aaa]"
+            className="bg-white px-12 py-2 w-3/4 flex flex-col border-r-2 border-dashed border-[#aaa]"
           >
             <h3
               className="text-[28px] font-semibold text-gray-900 flex-none"
@@ -315,7 +316,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
             >
               {product ? 'Update Product' : 'Add Product'}
             </h3>
-            <div className="mt-4 grow space-y-4 flex flex-col">
+            <div className="mt-1 grow space-y-2 flex flex-col">
               <div className="mb-2 flex flex-col items-center w-full">
                 <label className="block w-full text-sm font-medium text-gray-700">
                   Title
@@ -402,10 +403,10 @@ const ProductModal: React.FC<ProductModalProps> = ({
                 </div>
               </div>
 
-              <div className="pt-6 flex-col w-full">
+              <div className="pt-2 flex-col w-full">
                 <div className="flex space-x-4">
                   {/* First Dropzone */}
-                  <div className="flex flex-col items-center w-1/2 justify-center h-24 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-800 transition ease-in-out">
+                  <div className="flex flex-col items-center w-1/2 justify-center h-20 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-800 transition ease-in-out">
                     <label
                       htmlFor="dropzone-file"
                       className="flex flex-col items-center justify-center w-full h-full"
@@ -416,7 +417,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
                         ) : (
                           <>
                             <svg
-                              className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
+                              className="w-8 h-8 mb-2 text-gray-500 dark:text-gray-400"
                               aria-hidden="true"
                               xmlns="http://www.w3.org/2000/svg"
                               fill="none"
@@ -446,7 +447,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
                     </label>
                   </div>
                   {/* Second Dropzone */}
-                  <div className="flex flex-col items-center w-1/2 justify-center h-24 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-800 transition ease-in-out">
+                  <div className="flex flex-col items-center w-1/2 justify-center h-20 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-800 transition ease-in-out">
                     <label
                       htmlFor="dropzone-file-large"
                       className="flex flex-col items-center justify-center w-full h-full"
@@ -457,7 +458,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
                         ) : (
                           <>
                             <svg
-                              className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
+                              className="w-8 h-8 mb-2 text-gray-500 dark:text-gray-400"
                               aria-hidden="true"
                               xmlns="http://www.w3.org/2000/svg"
                               fill="none"
@@ -489,7 +490,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
                   </div>
                 </div>
 
-                <div className="pt-6 w-full self-start flex items-center">
+                <div className="pt-2 w-full self-start flex items-center">
                   <div className="w-1/2">
                     <label className="text-sm font-medium text-gray-700 mt-2">
                       Product Id
@@ -557,14 +558,14 @@ const ProductModal: React.FC<ProductModalProps> = ({
                     onChange={handleCategoryChange}
                     className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   >
-                    <option value="" disabled>
-                      Choose a category
-                    </option>
-                    {foodCategories.map((category, index) => (
-                      <option key={index} value={category}>
-                        {category}
-                      </option>
-                    ))}
+                    <option value="">Choose a category</option>
+                    {foodCategories
+                      ? foodCategories.map((category, index) => (
+                          <option key={index} value={category}>
+                            {category}
+                          </option>
+                        ))
+                      : ''}
                   </select>
 
                   {/* Selected Categories */}
@@ -592,11 +593,10 @@ const ProductModal: React.FC<ProductModalProps> = ({
                 </div>
               </div>
             </div>
-            <div className="h-10"></div>
           </form>
           <div className="grow flex flex-col h-full items-center space-y-4 p-2 bg-gray-200">
             <p className="text-lg font-bold">Preview</p>
-            <p className='text-sm font-semibold'>Card preview</p>
+            <p className="text-sm font-semibold">Card preview</p>
             <div className="shadow-xl rounded-lg w-[160px]">
               <div className="w-[160px] h-[140px] rounded-t-lg bg-gray-100 flex flex-col items-center justify-center relative">
                 {imagePreview ? (
@@ -627,9 +627,13 @@ const ProductModal: React.FC<ProductModalProps> = ({
                 )}
               </div>
               <div className="p-2 bg-white">
-                <p className="text-sm">{formData.title ? formData.title : "----"}</p>
+                <p className="text-sm">
+                  {formData.title ? formData.title : '----'}
+                </p>
                 <div className="my-4 flex justify-between items-center">
-                  <p className="text-sm font-semibold text-green-500">₹{formData.price ? formData.price : '--'}</p>
+                  <p className="text-sm font-semibold text-green-500">
+                    ₹{formData.price ? formData.price : '--'}
+                  </p>
                   <button className="flex items-center border-[1px] border-green-500 rounded-lg px-2 py-1">
                     <span className="text-xs pr-2 text-green-500">Add</span>
                     <span className="text-xs text-green-500">+</span>
@@ -638,7 +642,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
               </div>
             </div>
 
-            <p className='text-sm font-semibold pt-12'>Description preview</p>
+            <p className="text-sm font-semibold pt-12">Description preview</p>
             <div className="w-[320px] h-[200px] shadow-xl rounded-lg bg-white flex flex-col items-center justify-center relative">
               {largeImagePreview ? (
                 <>
@@ -669,7 +673,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
             </div>
           </div>
         </div>
-        <div className="absolute flex justify-end items-center bottom-0 shadow-[0_-5px_35px_rgba(0,0,0,0.25)] h-20 bg-white w-full">
+        <div className="absolute flex justify-end items-center bottom-0 shadow-[0_-5px_35px_rgba(0,0,0,0.25)] h-16 bg-white w-full">
           <button
             type="button"
             onClick={onClose}
