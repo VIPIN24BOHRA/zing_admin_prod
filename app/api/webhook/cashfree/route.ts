@@ -1,9 +1,8 @@
 /* eslint-disable import/extensions */
 import {
-  createOrderTEST,
+  createOrder,
   getPendingOrder,
-  getPendingOrderTEST,
-  savePaymentDetailsTEST
+  savePaymentDetails
 } from 'modules/firebase/database';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -20,7 +19,7 @@ export async function POST(req: NextRequest) {
       const { order, payment } = response.data;
       console.log(order, payment);
 
-      const pendingOrder = await getPendingOrderTEST(order.order_id);
+      const pendingOrder = await getPendingOrder(order.order_id);
 
       const transactionDetail = {
         cfOrderId: payment.cf_payment_id,
@@ -31,9 +30,9 @@ export async function POST(req: NextRequest) {
       console.log(pendingOrder, transactionDetail);
 
       // create order.
-      await createOrderTEST(pendingOrder, transactionDetail);
+      await createOrder(pendingOrder, transactionDetail);
 
-      await savePaymentDetailsTEST({
+      await savePaymentDetails({
         order,
         payment,
         orderStatus:
@@ -43,7 +42,7 @@ export async function POST(req: NextRequest) {
       // save payment details in /payment/cashfree
     } else if (response && response.type == 'PAYMENT_FAILED_WEBHOOK') {
       const { order, payment } = response.data;
-      await savePaymentDetailsTEST({
+      await savePaymentDetails({
         order,
         payment,
         orderStatus:
