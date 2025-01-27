@@ -39,8 +39,9 @@ export const OrderDetailsModal = ({
 
                   <div className="mt-4">
                     <p className="text-sm text-gray-500 font-bold">
-                      {(product?.transactionDetails?.merchantTransactionId &&
-                      product?.transactionDetails?.success
+                      {((product?.transactionDetails?.merchantTransactionId &&
+                        product?.transactionDetails?.success) ||
+                      product?.transactionDetail?.cfOrderId
                         ? 'paid'
                         : 'cash'
                       ).toLocaleUpperCase()}

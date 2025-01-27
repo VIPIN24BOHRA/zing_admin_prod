@@ -31,7 +31,7 @@ const copyDetails = async (product: any, totalPrice: any) => {
      ?.join('\n')}
    Total Price: 
    ${totalPrice}
-   ${(product?.transactionDetails?.merchantTransactionId && product?.transactionDetails?.success ? 'paid' : 'cash').toLocaleUpperCase()}
+   ${((product?.transactionDetails?.merchantTransactionId && product?.transactionDetails?.success) || product?.transactionDetail?.cfOrderId ? 'paid' : 'cash').toLocaleUpperCase()}
    `;
   return copyToClipboard(value);
 };
@@ -122,8 +122,9 @@ export const LiveOrderModel = ({
 
                   <div className="mt-4">
                     <p className="text-sm text-gray-500 font-bold">
-                      {(product?.transactionDetails?.merchantTransactionId &&
-                      product?.transactionDetails?.success
+                      {((product?.transactionDetails?.merchantTransactionId &&
+                        product?.transactionDetails?.success) ||
+                      product?.transactionDetail?.cfOrderId
                         ? 'paid'
                         : 'cash'
                       ).toLocaleUpperCase()}
@@ -339,7 +340,8 @@ export const LiveOrderModel = ({
                   ) : null}
                 </button>
               )}
-              {product?.transactionDetails?.merchantTransactionId ? (
+              {/* {product?.transactionDetails?.merchantTransactionId ||
+              product?.transactionDetail?.cfOrderId ? (
                 <div>
                   <button
                     className="relative w-[120px] mx-2 border-[1px] border-[#000] hover:bg-black  text-black hover:text-white px-4 py-1 text-xs rounded-lg mb-2 "
@@ -356,7 +358,7 @@ export const LiveOrderModel = ({
                   </button>
                   <span>{paymentStatus}</span>
                 </div>
-              ) : null}
+              ) : null} */}
               {showCancel &&
                 (unallocating ? (
                   <Spinner />

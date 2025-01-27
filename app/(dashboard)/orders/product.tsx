@@ -52,7 +52,7 @@ export function Product({ product }: { product: any }) {
         <TableCell className="hidden md:table-cell text-center p-1">{`Rs ${totalPrice}`}</TableCell>
         <TableCell className="hidden md:table-cell text-center text-[12px] p-1">{`${product?.coupon ?? '-'}`}</TableCell>
         <TableCell className="hidden md:table-cell text-center text-[12px] p-1">{`${product?.deliveryBoy?.name ?? '-'}`}</TableCell>
-        <TableCell className="hidden md:table-cell text-center text-[12px] p-1 font-bold">{`${(product?.transactionDetails?.merchantTransactionId && product?.transactionDetails?.success ? 'paid' : 'cash').toLocaleUpperCase()}`}</TableCell>
+        <TableCell className="hidden md:table-cell text-center text-[12px] p-1 font-bold">{`${((product?.transactionDetails?.merchantTransactionId && product?.transactionDetails?.success) || product?.transactionDetail?.cfOrderId ? 'paid' : 'cash').toLocaleUpperCase()}`}</TableCell>
         <TableCell
           className="hidden md:table-cell text-center text-[rgba(3,189,71,1)] font-bold p-1 text-[12px]"
           style={

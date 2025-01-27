@@ -66,15 +66,16 @@ export async function POST(req: NextRequest) {
               latitude: order.address.lat,
               longitude: order.address.lng
             },
-            name:order.name || order.uid,
+            name: order.name || order.uid,
             mobile: order.uid
           },
 
           source_order_id: order.key,
           reference_id: order.orderNo ? String(order.orderNo) : '',
-          cod_amount: order.transactionDetails
-            ? 0
-            : order.totalPrice + order.deliveryFee - order.discount,
+          cod_amount:
+            order.transactionDetails || order.transactionDetail
+              ? 0
+              : order.totalPrice + order.deliveryFee - order.discount,
           bill_amount: order.totalPrice + order.deliveryFee - order.discount,
           products: order.cartItems.map((items: any) => ({
             quantity: items.quantity,
