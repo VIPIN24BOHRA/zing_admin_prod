@@ -2,12 +2,14 @@ import {
   getStorage,
   ref as storageRef,
   uploadBytes,
-  getMetadata
+  getDownloadURL,
+  getMetadata,
 } from 'firebase/storage';
 import { app } from './db';
 
-export const uploadImage = async (key: string, file: File) => {
-  if (!key || !file) return;
+export const uploadImage = async (key: string, file: File): Promise<string | null> => {
+  console.log(key, file);
+  if (!key || !file) return null;
 
   const storage = getStorage(app);
   const imageRef = storageRef(storage, `images/${key}`);
@@ -20,13 +22,18 @@ export const uploadImage = async (key: string, file: File) => {
       if (error.code === 'storage/object-not-found') {
         console.log(`File with key "${key}" does not exist. Uploading it.`);
       } else {
-        throw error; 
+        throw error;
       }
     }
 
     await uploadBytes(imageRef, file);
     console.log('File uploaded or replaced successfully.');
+
+    const downloadURL = await getDownloadURL(imageRef);
+    console.log('Download URL:', downloadURL);
+    return downloadURL;
   } catch (error) {
     console.error('Error handling file upload or replacement:', error);
+    return null;
   }
 };

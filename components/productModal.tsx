@@ -18,6 +18,18 @@ const ProductModal: React.FC<ProductModalProps> = ({
   id,
   setIsProductChanged
 }) => {
+  const [isUploadingImage, setIsUploadingImage] = useState(false);
+  const [isUploadingLargeImage, setIsUploadingLargeImage] = useState(false);
+
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [largeImagePreview, setLargeImagePreview] = useState<string | null>(
+    null
+  );
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [largeImageFile, setLargeImageFile] = useState<File | null>(null);
+
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+
   const [formData, setFormData] = useState({
     title: product?.title || '',
     description: product?.description || '',
@@ -25,15 +37,25 @@ const ProductModal: React.FC<ProductModalProps> = ({
     price: product?.price || 0,
     hide: product?.hide || false,
     isVeg: product?.isVeg || false,
+    categories: selectedCategories,
     servingType: product?.servingType || '-',
     quantity: product?.quantity || '',
-    categories: product?.categories || [''],
     imageUrl: product?.imageUrl || '',
     largeImageUrl: product?.imageUrl || '',
     productId: product?.productId || ''
   });
 
+  useEffect(() => {
+    if (!formData.productId) {
+      setFormData((prevData) => ({
+        ...prevData,
+        productId: Date.now().toString()
+      }));
+    }
+  }, []);
+
   let debounceTimeout: NodeJS.Timeout;
+
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -42,17 +64,6 @@ const ProductModal: React.FC<ProductModalProps> = ({
     const { name, value, type, checked } = e.target as HTMLInputElement;
 
     setFormData((prevData) => {
-      if (name === 'categories') {
-        // Split values into an array or handle as needed (comma-separated example here)
-        const updatedCategories = value
-          .split(',')
-          .map((category) => category.trim());
-        return {
-          ...prevData,
-          categories: updatedCategories
-        };
-      }
-
       return {
         ...prevData,
         [name]:
@@ -85,27 +96,59 @@ const ProductModal: React.FC<ProductModalProps> = ({
       }
     }
 
-    const payload = {
-      product: {
-        title: formData.title,
-        description: formData.description,
-        originalPrice: Number(formData.originalPrice),
-        price: Number(formData.price),
-        hide: formData.hide,
-        isVeg: formData.isVeg,
-        servingType: formData.servingType,
-        quantity: Number(formData.quantity),
-        categories: formData.categories,
-        imageUrl: formData.imageUrl,
-        largeImageUrl: formData.largeImageUrl,
-        productId: Number(formData.productId)
-      },
-      id: totalProducts ? totalProducts : id
-    };
-
-    console.log('Payload:', payload);
+    if (
+      (!imageFile && !formData.imageUrl) ||
+      (!largeImageFile && !formData.largeImageUrl)
+    ) {
+      alert('Both image and large image files or URLs are required.');
+      return;
+    }
 
     try {
+      let imageUrl: any = formData.imageUrl;
+      let largeImageUrl: any = formData.largeImageUrl!;
+
+      if (imageFile) {
+        try {
+          imageUrl = await uploadImage(`${formData.productId}`, imageFile);
+          console.log('Image URL:', imageUrl);
+        } catch (err) {
+          console.error('Error uploading image:', err);
+        }
+      }
+
+      if (largeImageFile) {
+        try {
+          largeImageUrl = await uploadImage(
+            `${formData.productId}_500`,
+            largeImageFile
+          );
+          console.log('Large Image URL:', largeImageUrl);
+        } catch (err) {
+          console.error('Error uploading large image:', err);
+        }
+      }
+
+      const payload = {
+        product: {
+          title: formData.title,
+          description: formData.description,
+          originalPrice: Number(formData.originalPrice),
+          price: Number(formData.price),
+          hide: formData.hide,
+          isVeg: formData.isVeg,
+          servingType: formData.servingType,
+          quantity: Number(formData.quantity),
+          categories: selectedCategories,
+          imageUrl,
+          largeImageUrl,
+          productId: Number(formData.productId)
+        },
+        id: totalProducts || id
+      };
+
+      console.log('Payload:', payload);
+
       const response = await fetch('/api/product', {
         method: 'POST',
         headers: {
@@ -119,7 +162,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
       if (response.ok) {
         console.log('Product added successfully:', data);
 
-        // Clear the form data
+        // Clear form data
         setFormData({
           title: '',
           description: '',
@@ -135,7 +178,6 @@ const ProductModal: React.FC<ProductModalProps> = ({
           isVeg: false
         });
 
-        // Close the modal
         setIsProductChanged(true);
 
         clearTimeout(debounceTimeout);
@@ -145,13 +187,12 @@ const ProductModal: React.FC<ProductModalProps> = ({
       } else {
         console.error('Error adding product:', data.message || data.error);
       }
+
       onClose();
       setIsProductChanged(true);
     } catch (error) {
-      console.error(
-        'Fetch error:',
-        error instanceof Error ? error.message : error
-      );
+      console.error('Error:', error instanceof Error ? error.message : error);
+      alert('Failed to upload images or add the product.');
     }
   };
 
@@ -176,14 +217,12 @@ const ProductModal: React.FC<ProductModalProps> = ({
     'Dinner'
   ];
 
-  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
-
   const handleCategoryChange = (e: ChangeEvent<HTMLSelectElement>): void => {
     const selectedValue = e.target.value;
     if (selectedValue && !selectedCategories.includes(selectedValue)) {
       setSelectedCategories([...selectedCategories, selectedValue]);
     }
-    e.target.value = ''; 
+    e.target.value = '';
   };
 
   const removeCategory = (categoryToRemove: string): void => {
@@ -192,19 +231,82 @@ const ProductModal: React.FC<ProductModalProps> = ({
     );
   };
 
-  const handleFileUpload = async (
-    event: React.ChangeEvent<HTMLInputElement>
+  // const handleFileUpload = async (
+  //   event: React.ChangeEvent<HTMLInputElement>,
+  //   isLargeImage: boolean
+  // ) => {
+  //   const file = event.target.files?.[0];
+  //   if (file) {
+  //     const allowedFileTypes = ['image/png', 'image/jpeg'];
+  //     if (!allowedFileTypes.includes(file.type)) {
+  //       alert('Only PNG and JPEG files are allowed.');
+  //       return;
+  //     }
+  //     isLargeImage ? setIsUploadingLargeImage(true) : setIsUploadingImage(true);
+
+  //     try {
+  //       const key = file.name;
+  //       // Simulate image upload delay
+  //       await new Promise((resolve) => setTimeout(resolve, 1000));
+  //       // await uploadImage(key, file);
+  //       alert('Image uploaded successfully!');
+  //     } catch (error) {
+  //       console.error('Error uploading image:', error);
+  //       alert('Failed to upload image.');
+  //     } finally {
+  //       isLargeImage
+  //         ? setIsUploadingLargeImage(false)
+  //         : setIsUploadingImage(false);
+  //     }
+  //   }
+  // };
+  const handleFileUpload = (
+    event: React.ChangeEvent<HTMLInputElement>,
+    isLarge: boolean
   ) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      try {
-        const key = file.name;
-        await uploadImage(key, file);
-        alert('Image uploaded successfully!');
-      } catch (error) {
-        console.error('Error uploading image:', error);
-        alert('Failed to upload image.');
+    try {
+      const file = event.target.files?.[0];
+      if (!file) {
+        console.error('No file selected');
+        return;
       }
+      isLarge ? setIsUploadingLargeImage(true) : setIsUploadingImage(true);
+
+      // Validate file type
+      const validTypes = [
+        'image/svg+xml',
+        'image/png',
+        'image/jpeg',
+        'image/gif'
+      ];
+      if (!validTypes.includes(file.type)) {
+        alert('Invalid file type. Please upload SVG, PNG, JPG, or GIF files.');
+        return;
+      }
+
+      // Validate file size (example: 1MB limit)
+      const maxSizeInBytes = 1 * 1024 * 1024; // 1MB
+      if (file.size > maxSizeInBytes) {
+        alert('File size exceeds the limit of 1MB.');
+        return;
+      }
+
+      // Generate a preview URL for the image
+      const previewUrl = URL.createObjectURL(file);
+
+      // Update the state with the preview URL
+      if (isLarge) {
+        setLargeImagePreview(previewUrl);
+        setLargeImageFile(file);
+      } else {
+        setImagePreview(previewUrl);
+        setImageFile(file);
+      }
+    } catch (error) {
+      console.error('Error while uploading file:', error);
+      alert('An error occurred during file upload. Please try again.');
+    } finally {
+      isLarge ? setIsUploadingLargeImage(false) : setIsUploadingImage(false);
     }
   };
 
@@ -222,8 +324,8 @@ const ProductModal: React.FC<ProductModalProps> = ({
       ></div>
       <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
         <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-          <div className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:h-[100vh]">
-            <form onSubmit={handleSubmit} className="bg-white p-6">
+          <div className="relative flex transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:h-[100vh]">
+            <form onSubmit={handleSubmit} className="bg-white p-6 w-3/4">
               <h3
                 className="text-lg font-semibold text-gray-900"
                 id="modal-title"
@@ -320,198 +422,264 @@ const ProductModal: React.FC<ProductModalProps> = ({
                 </div>
 
                 <div className="flex items-center justify-between space-x-4 w-full">
-                  <div className="flex flex-col items-center justify-center w-1/2 h-40 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
+                  {/* First Dropzone */}
+                  <div className="flex flex-col items-center justify-center w-1/3 h-52 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-800 transition ease-in-out">
                     <label
                       htmlFor="dropzone-file"
                       className="flex flex-col items-center justify-center w-full h-full"
                     >
                       <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                        <svg
-                          className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
-                          aria-hidden="true"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 20 16"
-                        >
-                          <path
-                            stroke="currentColor"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
-                          />
-                        </svg>
-                        <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                          <span className="font-semibold">Image</span>: Click to
-                          upload or drag and drop
-                        </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
-                          SVG, PNG, JPG or GIF (MAX. 800x400px)
-                        </p>
+                        {isUploadingImage ? (
+                          'Uploading...'
+                        ) : (
+                          <>
+                            <svg
+                              className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
+                              aria-hidden="true"
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 20 16"
+                            >
+                              <path
+                                stroke="currentColor"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+                              />
+                            </svg>
+                            <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                              <span className="font-semibold">Image</span>:
+                              Click to upload or drag and drop
+                            </p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                              SVG, PNG, JPG or GIF (MAX. 800x400px)
+                            </p>
+                          </>
+                        )}
                       </div>
                       <input
                         id="dropzone-file"
                         type="file"
                         className="hidden"
-                        onChange={(e) => handleFileUpload(e)}
+                        onChange={(e) => handleFileUpload(e, false)}
                       />
                     </label>
                   </div>
-                  {/* <div className="flex flex-col items-center justify-center w-1/2 h-40 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-gray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
+                  {/* Second Dropzone */}
+                  <div className="flex flex-col items-center justify-center w-1/3 h-52 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-800 transition ease-in-out">
                     <label
                       htmlFor="dropzone-file-large"
                       className="flex flex-col items-center justify-center w-full h-full"
                     >
                       <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                        <svg
-                          className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
-                          aria-hidden="true"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 20 16"
-                        >
-                          <path
-                            stroke="currentColor"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
-                          />
-                        </svg>
-                        <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                          <span className="font-semibold">Large Image</span>:
-                          Click to upload or drag and drop
-                        </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
-                          SVG, PNG, JPG or GIF (MAX. 800x400px)
-                        </p>
+                        {isUploadingLargeImage ? (
+                          'Uploading...'
+                        ) : (
+                          <>
+                            <svg
+                              className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
+                              aria-hidden="true"
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 20 16"
+                            >
+                              <path
+                                stroke="currentColor"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+                              />
+                            </svg>
+                            <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                              <span className="font-semibold">Large Image</span>
+                              : Click to upload or drag and drop
+                            </p>
+                            <p className="text-xs text-gray-500 dark:text-gray-400">
+                              SVG, PNG, JPG or GIF (MAX. 800x400px)
+                            </p>
+                          </>
+                        )}
                       </div>
                       <input
                         id="dropzone-file-large"
                         type="file"
                         className="hidden"
+                        onChange={(e) => handleFileUpload(e, true)}
+                        disabled={isUploadingLargeImage}
                       />
                     </label>
-                  </div> */}
-                </div>
-                <div className="w-full">
-                  <label
-                    htmlFor="food-category"
-                    className="block mb-2 text-sm font-medium text-gray-900"
-                  >
-                    Select Food Categories
-                  </label>
-                  <select
-                    id="food-category"
-                    name="categories"
-                    onChange={handleCategoryChange}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
-                  >
-                    <option value="" disabled>
-                      Choose a category
-                    </option>
-                    {foodCategories.map((category, index) => (
-                      <option key={index} value={category}>
-                        {category}
-                      </option>
-                    ))}
-                  </select>
+                  </div>
 
-                  {/* Selected Categories */}
-                  <div className="mt-4">
-                    {selectedCategories.length > 0 && (
-                      <div className="flex flex-wrap gap-2">
-                        {selectedCategories.map((category, index) => (
-                          <div
-                            key={index}
-                            className="flex items-center px-3 py-1 bg-gray-200 rounded-full text-sm font-medium"
-                          >
-                            <span>{category}</span>
-                            <button
-                              type="button"
-                              onClick={() => removeCategory(category)}
-                              className="ml-2 text-red-500 hover:text-red-700"
-                            >
-                              &times;
-                            </button>
-                          </div>
+                  <div className="w-1/3 self-start flex flex-col justify-between h-full">
+                    <div>
+                      <label
+                        htmlFor="food-category"
+                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-100"
+                      >
+                        Select Food Categories
+                      </label>
+                      <select
+                        id="food-category"
+                        name="categories"
+                        onChange={handleCategoryChange}
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                      >
+                        <option value="" disabled>
+                          Choose a category
+                        </option>
+                        {foodCategories.map((category, index) => (
+                          <option key={index} value={category}>
+                            {category}
+                          </option>
                         ))}
+                      </select>
+
+                      {/* Selected Categories */}
+                      <div className="mt-4">
+                        {selectedCategories.length > 0 && (
+                          <div className="flex flex-wrap gap-2">
+                            {selectedCategories.map((category, index) => (
+                              <div
+                                key={index}
+                                className="flex items-center px-3 py-1 bg-gray-200 rounded-full text-sm font-medium text-gray-700 dark:bg-gray-600 dark:text-gray-300"
+                              >
+                                <span>{category}</span>
+                                <button
+                                  type="button"
+                                  onClick={() => removeCategory(category)}
+                                  className="ml-2 text-red-500 hover:text-red-700"
+                                >
+                                  &times;
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-              <div className="mt-6 flex justify-between items-center">
-                {/* Left side: Generate, Input field, Retry */}
-                <div className="flex items-center space-x-2">
-                  <button
-                    type="button"
-                    className="rounded-md bg-blue-500 px-4 py-2 text-white"
-                    // onClick={handleGenerate}
-                  >
-                    Generate
-                  </button>
-                  <input
-                    type="text"
-                    placeholder="Product Id"
-                    className="rounded-md border border-gray-300 px-3 py-2"
-                  />
-                  <button
-                    type="button"
-                    className="rounded-md bg-gray-300 p-2"
-                    // onClick={handleRetry}
-                  >
-                    🔄
-                  </button>
-                </div>
+                      <label className="text-sm font-medium text-gray-700 mt-2">
+                        Product Id
+                      </label>
+                      <div className="flex items-center space-x-4 mt-2">
+                        <input
+                          readOnly
+                          type="text"
+                          name="productId"
+                          placeholder={formData.productId.toString()}
+                          value={formData.productId.toString()}
+                          className="rounded-md border px-3 py-2 flex-1"
+                        />
+                      </div>
 
-                {/* Middle section: Hide and Veg checkboxes */}
-                <div className="flex space-x-4">
-                  <div className="flex items-center">
-                    <label className="block text-sm font-medium text-gray-700 mr-2">
-                      Hide
-                    </label>
-                    <input
-                      type="checkbox"
-                      name="hide"
-                      checked={formData.hide}
-                      onChange={handleChange}
-                      className="rounded"
-                    />
-                  </div>
-                  <div className="flex items-center">
-                    <label className="block text-sm font-medium text-gray-700 mr-2">
-                      Veg
-                    </label>
-                    <input
-                      type="checkbox"
-                      name="isVeg"
-                      checked={formData.isVeg}
-                      onChange={handleChange}
-                      className="rounded"
-                    />
-                  </div>
-                </div>
+                      <div className="mt-4 flex justify-stretch">
+                        <div className="flex justify-evenly w-full">
+                          <div className="flex items-center">
+                            <label className="block text-sm font-medium text-gray-700 mr-2">
+                              Hide
+                            </label>
+                            <input
+                              type="checkbox"
+                              name="hide"
+                              checked={formData.hide}
+                              onChange={handleChange}
+                              className="rounded"
+                            />
+                          </div>
+                          <div className="flex items-center">
+                            <label className="block text-sm font-medium text-gray-700 mr-2">
+                              Veg
+                            </label>
+                            <input
+                              type="checkbox"
+                              name="isVeg"
+                              checked={formData.isVeg}
+                              onChange={handleChange}
+                              className="rounded"
+                            />
+                          </div>
+                        </div>
+                      </div>
 
-                {/* Right side: Cancel and Submit buttons */}
-                <div className="space-x-2">
-                  <button
-                    type="button"
-                    onClick={onClose}
-                    className="rounded-md bg-gray-300 px-4 py-2"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="rounded-md bg-black px-4 py-2 text-white"
-                    onClick={handleSubmit}
-                  >
-                    {product ? 'Update Item' : 'Add Item'}
-                  </button>
+                      <div className="flex justify-end space-x-2 mt-20">
+                        <button
+                          type="button"
+                          onClick={onClose}
+                          className="rounded-md bg-gray-300 px-4 py-2 w-40"
+                        >
+                          Cancel
+                        </button>
+                        <button
+                          type="submit"
+                          className="rounded-md bg-black px-4 py-2 w-40 text-white"
+                          onClick={handleSubmit}
+                        >
+                          {product ? 'Update Item' : 'Add Item'}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </form>
+            <div className="w-1/4 flex flex-col h-full items-center justify-center space-y-4">
+              <div className="w-[350px] h-[230px] border-2 border-dashed rounded-lg bg-red-50 flex flex-col items-center justify-center relative">
+                {largeImagePreview ? (
+                  <>
+                    <img
+                      src={largeImagePreview}
+                      alt="Uploaded Preview"
+                      className="w-full h-full object-cover"
+                    />
+                    <button
+                      className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
+                      onClick={() => {
+                        setLargeImagePreview(null);
+                        setLargeImageFile(null);
+                      }}
+                    >
+                      &times;
+                    </button>
+                  </>
+                ) : product ? (
+                  <img
+                    src={product.largeImageUrl}
+                    alt="Uploaded Preview"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  'No large image uploaded'
+                )}
+              </div>
+              <div className="w-[180px] h-[180px] border-2 border-dashed rounded-lg bg-gray-50 flex flex-col items-center justify-center relative">
+                {imagePreview ? (
+                  <>
+                    <img
+                      src={imagePreview}
+                      alt="Uploaded Large Preview"
+                      className="w-full h-full object-cover"
+                    />
+                    <button
+                      className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center"
+                      onClick={() => {
+                        setImagePreview(null);
+                        setImageFile(null);
+                      }}
+                    >
+                      &times;
+                    </button>
+                  </>
+                ) : product ? (
+                  <img
+                    src={product.imageUrl}
+                    alt="Uploaded Preview"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  'No  image uploaded'
+                )}
+              </div>
+            </div>
           </div>
         </div>
       </div>

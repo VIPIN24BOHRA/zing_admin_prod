@@ -1,7 +1,5 @@
 import { TableCell, TableRow } from '@/components/ui/table';
-import { useState } from 'react';
-import ProductModal from '../../../components/productModal';
-import { Trash } from 'lucide-react';
+import Image from 'next/image';
 
 export function Product({
   product,
@@ -17,22 +15,20 @@ export function Product({
       <TableRow
         onClick={() => {
           console.log(idx);
-          setIsModalOpen(idx,true);
+          setIsModalOpen(idx, true);
         }}
       >
-        <TableCell
-          className="font-medium text-[13px] p-1 h-max w-max color-red text-center align-middle leading-[normal]"
-          onClick={(e) => {
-            e.stopPropagation();
-          }}
-        >
-          <span className="inline-block align-middle">
-            <Trash color="red" />
-          </span>
-        </TableCell>
-
         <TableCell className="font-medium text-center text-[13px] p-1 ">
           {idx + 1}
+        </TableCell>
+        <TableCell>
+          <Image
+            src={product.imageUrl}
+            alt="Food Image"
+            unoptimized
+            width={100}
+            height={100}
+          />
         </TableCell>
 
         <TableCell className="font-medium text-center text-[13px] p-1">
