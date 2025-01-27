@@ -69,7 +69,6 @@ const ProductModal: React.FC<ProductModalProps> = ({
   ) => {
     const { name, value, type, checked } = e.target as HTMLInputElement;
 
-    console.log(name, value, type, checked);
     setFormData((prevData) => {
       return {
         ...prevData,
@@ -77,7 +76,9 @@ const ProductModal: React.FC<ProductModalProps> = ({
           type === 'checkbox'
             ? checked
             : ['originalPrice', 'price', 'quantity', 'productId'].includes(name)
-              ? Math.max(0, Number(value))
+              ? value === '' || isNaN(Number(value))
+                ? value 
+                : Math.max(0, Number(value))
               : value
       };
     });
