@@ -230,36 +230,6 @@ const ProductModal: React.FC<ProductModalProps> = ({
       selectedCategories.filter((category) => category !== categoryToRemove)
     );
   };
-
-  // const handleFileUpload = async (
-  //   event: React.ChangeEvent<HTMLInputElement>,
-  //   isLargeImage: boolean
-  // ) => {
-  //   const file = event.target.files?.[0];
-  //   if (file) {
-  //     const allowedFileTypes = ['image/png', 'image/jpeg'];
-  //     if (!allowedFileTypes.includes(file.type)) {
-  //       alert('Only PNG and JPEG files are allowed.');
-  //       return;
-  //     }
-  //     isLargeImage ? setIsUploadingLargeImage(true) : setIsUploadingImage(true);
-
-  //     try {
-  //       const key = file.name;
-  //       // Simulate image upload delay
-  //       await new Promise((resolve) => setTimeout(resolve, 1000));
-  //       // await uploadImage(key, file);
-  //       alert('Image uploaded successfully!');
-  //     } catch (error) {
-  //       console.error('Error uploading image:', error);
-  //       alert('Failed to upload image.');
-  //     } finally {
-  //       isLargeImage
-  //         ? setIsUploadingLargeImage(false)
-  //         : setIsUploadingImage(false);
-  //     }
-  //   }
-  // };
   const handleFileUpload = (
     event: React.ChangeEvent<HTMLInputElement>,
     isLarge: boolean
@@ -312,7 +282,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
 
   return (
     <div
-      className="relative z-10 w-full h-[100vh]"
+      className="relative z-30 w-full h-[100vh]"
       aria-labelledby="modal-title"
       role="dialog"
       aria-modal="true"
@@ -324,7 +294,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
       ></div>
       <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
         <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-          <div className="relative flex transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:my-8 sm:w-full sm:h-[100vh]">
+          <div className="relative flex transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all sm:w-full sm:h-[100vh]">
             <form onSubmit={handleSubmit} className="bg-white p-6 w-3/4">
               <h3
                 className="text-lg font-semibold text-gray-900"
@@ -421,202 +391,209 @@ const ProductModal: React.FC<ProductModalProps> = ({
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between space-x-4 w-full">
-                  {/* First Dropzone */}
-                  <div className="flex flex-col items-center justify-center w-1/3 h-52 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-800 transition ease-in-out">
-                    <label
-                      htmlFor="dropzone-file"
-                      className="flex flex-col items-center justify-center w-full h-full"
-                    >
-                      <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                        {isUploadingImage ? (
-                          'Uploading...'
-                        ) : (
-                          <>
-                            <svg
-                              className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
-                              aria-hidden="true"
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 20 16"
-                            >
-                              <path
-                                stroke="currentColor"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
-                              />
-                            </svg>
-                            <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                              <span className="font-semibold">Image</span>:
-                              Click to upload or drag and drop
-                            </p>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">
-                              SVG, PNG, JPG or GIF (MAX. 800x400px)
-                            </p>
-                          </>
-                        )}
-                      </div>
-                      <input
-                        id="dropzone-file"
-                        type="file"
-                        className="hidden"
-                        onChange={(e) => handleFileUpload(e, false)}
-                      />
-                    </label>
-                  </div>
-                  {/* Second Dropzone */}
-                  <div className="flex flex-col items-center justify-center w-1/3 h-52 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-800 transition ease-in-out">
-                    <label
-                      htmlFor="dropzone-file-large"
-                      className="flex flex-col items-center justify-center w-full h-full"
-                    >
-                      <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                        {isUploadingLargeImage ? (
-                          'Uploading...'
-                        ) : (
-                          <>
-                            <svg
-                              className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
-                              aria-hidden="true"
-                              xmlns="http://www.w3.org/2000/svg"
-                              fill="none"
-                              viewBox="0 0 20 16"
-                            >
-                              <path
-                                stroke="currentColor"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth="2"
-                                d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
-                              />
-                            </svg>
-                            <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
-                              <span className="font-semibold">Large Image</span>
-                              : Click to upload or drag and drop
-                            </p>
-                            <p className="text-xs text-gray-500 dark:text-gray-400">
-                              SVG, PNG, JPG or GIF (MAX. 800x400px)
-                            </p>
-                          </>
-                        )}
-                      </div>
-                      <input
-                        id="dropzone-file-large"
-                        type="file"
-                        className="hidden"
-                        onChange={(e) => handleFileUpload(e, true)}
-                        disabled={isUploadingLargeImage}
-                      />
-                    </label>
-                  </div>
-
-                  <div className="w-1/3 self-start flex flex-col justify-between h-full">
-                    <div>
+                <div className="flex-col items-center justify-between space-x-4 w-full">
+                  <div className="flex space-x-4">
+                    {/* First Dropzone */}
+                    <div className="flex flex-col items-center justify-center w-1/3 h-52 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-800 transition ease-in-out">
                       <label
-                        htmlFor="food-category"
-                        className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-100"
+                        htmlFor="dropzone-file"
+                        className="flex flex-col items-center justify-center w-full h-full"
                       >
-                        Select Food Categories
-                      </label>
-                      <select
-                        id="food-category"
-                        name="categories"
-                        onChange={handleCategoryChange}
-                        className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                      >
-                        <option value="" disabled>
-                          Choose a category
-                        </option>
-                        {foodCategories.map((category, index) => (
-                          <option key={index} value={category}>
-                            {category}
-                          </option>
-                        ))}
-                      </select>
-
-                      {/* Selected Categories */}
-                      <div className="mt-4">
-                        {selectedCategories.length > 0 && (
-                          <div className="flex flex-wrap gap-2">
-                            {selectedCategories.map((category, index) => (
-                              <div
-                                key={index}
-                                className="flex items-center px-3 py-1 bg-gray-200 rounded-full text-sm font-medium text-gray-700 dark:bg-gray-600 dark:text-gray-300"
+                        <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                          {isUploadingImage ? (
+                            'Uploading...'
+                          ) : (
+                            <>
+                              <svg
+                                className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
+                                aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 20 16"
                               >
-                                <span>{category}</span>
-                                <button
-                                  type="button"
-                                  onClick={() => removeCategory(category)}
-                                  className="ml-2 text-red-500 hover:text-red-700"
-                                >
-                                  &times;
-                                </button>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                      <label className="text-sm font-medium text-gray-700 mt-2">
-                        Product Id
-                      </label>
-                      <div className="flex items-center space-x-4 mt-2">
+                                <path
+                                  stroke="currentColor"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth="2"
+                                  d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+                                />
+                              </svg>
+                              <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                                <span className="font-semibold">Image</span>:
+                                Click to upload or drag and drop
+                              </p>
+                              <p className="text-xs text-gray-500 dark:text-gray-400">
+                                SVG, PNG, JPG or GIF (MAX. 800x400px)
+                              </p>
+                            </>
+                          )}
+                        </div>
                         <input
-                          readOnly
-                          type="text"
-                          name="productId"
-                          placeholder={formData.productId.toString()}
-                          value={formData.productId.toString()}
-                          className="rounded-md border px-3 py-2 flex-1"
+                          id="dropzone-file"
+                          type="file"
+                          className="hidden"
+                          onChange={(e) => handleFileUpload(e, false)}
                         />
-                      </div>
+                      </label>
+                    </div>
+                    {/* Second Dropzone */}
+                    <div className="flex flex-col items-center justify-center w-1/3 h-52 border-2 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 dark:bg-gray-700 dark:border-gray-600 dark:hover:bg-gray-800 transition ease-in-out">
+                      <label
+                        htmlFor="dropzone-file-large"
+                        className="flex flex-col items-center justify-center w-full h-full"
+                      >
+                        <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                          {isUploadingLargeImage ? (
+                            'Uploading...'
+                          ) : (
+                            <>
+                              <svg
+                                className="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400"
+                                aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 20 16"
+                              >
+                                <path
+                                  stroke="currentColor"
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth="2"
+                                  d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
+                                />
+                              </svg>
+                              <p className="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                                <span className="font-semibold">
+                                  Large Image
+                                </span>
+                                : Click to upload or drag and drop
+                              </p>
+                              <p className="text-xs text-gray-500 dark:text-gray-400">
+                                SVG, PNG, JPG or GIF (MAX. 800x400px)
+                              </p>
+                            </>
+                          )}
+                        </div>
+                        <input
+                          id="dropzone-file-large"
+                          type="file"
+                          className="hidden"
+                          onChange={(e) => handleFileUpload(e, true)}
+                          disabled={isUploadingLargeImage}
+                        />
+                      </label>
+                    </div>
 
-                      <div className="mt-4 flex justify-stretch">
-                        <div className="flex justify-evenly w-full">
-                          <div className="flex items-center">
-                            <label className="block text-sm font-medium text-gray-700 mr-2">
-                              Hide
-                            </label>
-                            <input
-                              type="checkbox"
-                              name="hide"
-                              checked={formData.hide}
-                              onChange={handleChange}
-                              className="rounded"
-                            />
-                          </div>
-                          <div className="flex items-center">
-                            <label className="block text-sm font-medium text-gray-700 mr-2">
-                              Veg
-                            </label>
-                            <input
-                              type="checkbox"
-                              name="isVeg"
-                              checked={formData.isVeg}
-                              onChange={handleChange}
-                              className="rounded"
-                            />
+                    <div className="w-1/3 self-start flex flex-col justify-between h-full">
+                      <div>
+                        <label className="text-sm font-medium text-gray-700 mt-2">
+                          Product Id
+                        </label>
+                        <div className="flex items-center space-x-4 mt-2">
+                          <input
+                            readOnly
+                            type="text"
+                            name="productId"
+                            placeholder={formData.productId.toString()}
+                            value={formData.productId.toString()}
+                            className="rounded-md border px-3 py-2 flex-1"
+                          />
+                        </div>
+
+                        <div className="mt-4 flex justify-stretch">
+                          <div className="flex justify-evenly w-full">
+                            <div className="flex items-center">
+                              <label className="block text-sm font-medium text-gray-700 mr-2">
+                                Hide
+                              </label>
+                              <input
+                                type="checkbox"
+                                name="hide"
+                                checked={formData.hide}
+                                onChange={handleChange}
+                                className="rounded"
+                              />
+                            </div>
+                            <div className="flex items-center">
+                              <label className="block text-sm font-medium text-gray-700 mr-2">
+                                Veg
+                              </label>
+                              <input
+                                type="checkbox"
+                                name="isVeg"
+                                checked={formData.isVeg}
+                                onChange={handleChange}
+                                className="rounded"
+                              />
+                            </div>
                           </div>
                         </div>
-                      </div>
 
-                      <div className="flex justify-end space-x-2 mt-20">
-                        <button
-                          type="button"
-                          onClick={onClose}
-                          className="rounded-md bg-gray-300 px-4 py-2 w-40"
-                        >
-                          Cancel
-                        </button>
-                        <button
-                          type="submit"
-                          className="rounded-md bg-black px-4 py-2 w-40 text-white"
-                          onClick={handleSubmit}
-                        >
-                          {product ? 'Update Item' : 'Add Item'}
-                        </button>
+                        <div className="flex justify-end space-x-2 mt-20">
+                          <button
+                            type="button"
+                            onClick={onClose}
+                            className="rounded-md bg-gray-300 px-4 py-2 w-40"
+                          >
+                            Cancel
+                          </button>
+                          <button
+                            type="submit"
+                            className="rounded-md bg-black px-4 py-2 w-40 text-white"
+                            onClick={handleSubmit}
+                          >
+                            {product ? 'Update Item' : 'Add Item'}
+                          </button>
+                        </div>
                       </div>
+                    </div>
+                  </div>
+                  {/*Categories */}
+                  <div className="w-2/3 justify-start">
+                    <label
+                      htmlFor="food-category"
+                      className="m-0 block mb-2 text-sm font-medium text-gray-900 dark:text-gray-100"
+                    >
+                      Select Food Categories
+                    </label>
+                    <select
+                      id="food-category"
+                      name="categories"
+                      onChange={handleCategoryChange}
+                      className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    >
+                      <option value="" disabled>
+                        Choose a category
+                      </option>
+                      {foodCategories.map((category, index) => (
+                        <option key={index} value={category}>
+                          {category}
+                        </option>
+                      ))}
+                    </select>
+
+                    {/* Selected Categories */}
+                    <div className="mt-4">
+                      {selectedCategories.length > 0 && (
+                        <div className="flex flex-wrap gap-2">
+                          {selectedCategories.map((category, index) => (
+                            <div
+                              key={index}
+                              className="flex items-center px-3 py-1 bg-gray-200 rounded-full text-sm font-medium text-gray-700 dark:bg-gray-600 dark:text-gray-300"
+                            >
+                              <span>{category}</span>
+                              <button
+                                type="button"
+                                onClick={() => removeCategory(category)}
+                                className="ml-2 text-red-500 hover:text-red-700"
+                              >
+                                &times;
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
