@@ -235,6 +235,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
     isLarge: boolean
   ) => {
     try {
+      const fileInput = event.target;
       const file = event.target.files?.[0];
       if (!file) {
         console.error('No file selected');
@@ -243,14 +244,9 @@ const ProductModal: React.FC<ProductModalProps> = ({
       isLarge ? setIsUploadingLargeImage(true) : setIsUploadingImage(true);
 
       // Validate file type
-      const validTypes = [
-        'image/svg+xml',
-        'image/png',
-        'image/jpeg',
-        'image/gif'
-      ];
+      const validTypes = ['image/png', 'image/jpeg', 'image/jpg'];
       if (!validTypes.includes(file.type)) {
-        alert('Invalid file type. Please upload SVG, PNG, JPG, or GIF files.');
+        alert('Invalid file type. Please upload PNG, JPG, or JPEG files.');
         return;
       }
 
@@ -261,17 +257,41 @@ const ProductModal: React.FC<ProductModalProps> = ({
         return;
       }
 
-      // Generate a preview URL for the image
-      const previewUrl = URL.createObjectURL(file);
+      // Validate dimensions
+      const img = new Image();
+      img.src = URL.createObjectURL(file);
 
-      // Update the state with the preview URL
-      if (isLarge) {
-        setLargeImagePreview(previewUrl);
-        setLargeImageFile(file);
-      } else {
-        setImagePreview(previewUrl);
-        setImageFile(file);
-      }
+      img.onload = () => {
+        const { width } = img;
+        const maxWidth = isLarge ? 500 : 300;
+
+        if (width > maxWidth) {
+          alert(
+            `Invalid image dimensions. The width should not exceed ${maxWidth}px.`
+          );
+          URL.revokeObjectURL(img.src); // Clean up the object URL
+          return;
+        }
+
+        // Generate a preview URL for the image
+        const previewUrl = img.src;
+
+        // Update the state with the preview URL
+        if (isLarge) {
+          setLargeImagePreview(previewUrl);
+          setLargeImageFile(file);
+        } else {
+          setImagePreview(previewUrl);
+          setImageFile(file);
+        }
+      };
+
+      img.onerror = () => {
+        alert('Failed to load the image. Please try again.');
+        URL.revokeObjectURL(img.src); // Clean up the object URL
+      };
+
+      fileInput.value = '';
     } catch (error) {
       console.error('Error while uploading file:', error);
       alert('An error occurred during file upload. Please try again.');
