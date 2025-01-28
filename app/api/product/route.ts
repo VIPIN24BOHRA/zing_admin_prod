@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
     console.log('Product Data:', body);
     await addNewProduct(product, id);
 
-    console.log()
+    console.log();
 
     return NextResponse.json({
       success: true,
@@ -73,7 +73,7 @@ function validateProduct(product: ProductModel): string | null {
     return 'Product hide must be a boolean value';
   if (typeof product.isVeg !== 'boolean')
     return 'Product isVeg must be a boolean value';
-  if (!product.servingType) return 'Product serving type is required';
+  // if (!product.servingType) return 'Product serving type is required';
   if (!product.quantity) return 'Product quantity is required';
   if (!product.imageUrl) return 'Product image URL is required';
   if (!product.largeImageUrl) return 'Product large image URL is required';
