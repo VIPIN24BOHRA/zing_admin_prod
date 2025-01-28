@@ -2,6 +2,7 @@
 import { ProductModel } from '@/lib/models';
 import { uploadImage } from '@/lib/storage';
 import React, { ChangeEvent, useEffect, useState } from 'react';
+import Spinner from './ui/spinner';
 
 interface ProductModalProps {
   onClose: () => void;
@@ -147,7 +148,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
         try {
           const imageName =
             largeImageFile.name.split('.')[0] +
-            `_${formData.productId}_${Date.now().toString()}`;
+            `_${formData.productId}_${Date.now().toString()}_500`;
           largeImageUrl = await uploadImage(imageName, largeImageFile);
           console.log('Large Image URL:', largeImageUrl);
         } catch (err) {
@@ -705,20 +706,20 @@ const ProductModal: React.FC<ProductModalProps> = ({
           >
             Cancel
           </button>
-          <button
-            type="submit"
-            className="mx-6 rounded-md bg-green-500 px-4 py-2 w-40 text-white"
-            onClick={handleSubmit}
-            disabled={isSaveLoading}
-          >
-            {isSaveLoading
-              ? product
-                ? 'Updating...'
-                : 'Saving...'
-              : product
-                ? 'Update'
-                : 'Save'}
-          </button>
+          {isSaveLoading ? (
+            <div className="mx-6 rounded-md px-4 py-2 w-40 text-white flex items-center justify-center">
+              <Spinner/>
+            </div>
+          ) : (
+            <button
+              type="submit"
+              className="mx-6 rounded-md bg-green-500 px-4 py-2 w-40 text-white"
+              onClick={handleSubmit}
+              disabled={isSaveLoading}
+            >
+              {product ? 'Update' : 'Save'}
+            </button>
+          )}
         </div>
       </div>
     </div>
