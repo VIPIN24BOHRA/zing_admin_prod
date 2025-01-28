@@ -644,7 +644,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
                   <img
                     src={product.imageUrl}
                     alt="Uploaded Preview"
-                    className="w-full h-full object-cover"
+                    className="w-full rounded-t-lg h-full object-cover"
                   />
                 ) : (
                   'upload img'
@@ -689,7 +689,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
                 <img
                   src={product.largeImageUrl}
                   alt="Uploaded Preview"
-                  className="w-full h-full object-cover"
+                  className="w-full h-full rounded-lg  object-cover"
                 />
               ) : (
                 'upload description img'
