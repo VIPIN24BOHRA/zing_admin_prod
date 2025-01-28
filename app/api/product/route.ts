@@ -30,6 +30,7 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
     const product: ProductModel = body.product;
+    console.log('api', body);
     const id: number = body.id;
 
     // Validate product
@@ -43,6 +44,8 @@ export async function POST(req: NextRequest) {
 
     console.log('Product Data:', body);
     await addNewProduct(product, id);
+
+    console.log()
 
     return NextResponse.json({
       success: true,

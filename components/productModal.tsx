@@ -20,6 +20,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
 }) => {
   const [isUploadingImage, setIsUploadingImage] = useState(false);
   const [isUploadingLargeImage, setIsUploadingLargeImage] = useState(false);
+  const [isSaveLoading, setIsSaveLoading] = useState(false);
 
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [largeImagePreview, setLargeImagePreview] = useState<string | null>(
@@ -33,12 +34,12 @@ const ProductModal: React.FC<ProductModalProps> = ({
   const [formData, setFormData] = useState({
     title: product?.title || '',
     description: product?.description || '',
-    originalPrice: product?.originalPrice || 0,
-    price: product?.price || 0,
+    originalPrice: product?.originalPrice || '',
+    price: product?.price || '',
     hide: product?.hide || false,
     isVeg: product?.isVeg || false,
     categories: selectedCategories,
-    servingType: product?.servingType || '-',
+    servingType: product?.servingType || '',
     quantity: product?.quantity || '',
     imageUrl: product?.imageUrl || '',
     largeImageUrl: product?.imageUrl || '',
@@ -77,7 +78,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
             ? checked
             : ['originalPrice', 'price', 'quantity', 'productId'].includes(name)
               ? value === '' || isNaN(Number(value))
-                ? value 
+                ? value
                 : Math.max(0, Number(value))
               : value
       };
@@ -87,12 +88,15 @@ const ProductModal: React.FC<ProductModalProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    if (isSaveLoading) return;
+
+    setIsSaveLoading(true);
+
     const requiredFields = [
       'title',
       'description',
       'originalPrice',
       'price',
-      'servingType',
       'quantity',
       'categories'
     ];
@@ -100,8 +104,15 @@ const ProductModal: React.FC<ProductModalProps> = ({
     for (const field of requiredFields) {
       if (!formData[field as keyof typeof formData]) {
         alert(`Please fill out the ${field} field.`);
+        setIsSaveLoading(false);
         return;
       }
+    }
+
+    if (selectedCategories.length === 0) {
+      alert('Please select at least one category.');
+      setIsSaveLoading(false);
+      return;
     }
 
     if (
@@ -109,6 +120,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
       (!largeImageFile && !formData.largeImageUrl)
     ) {
       alert('Both image and large image files or URLs are required.');
+      setIsSaveLoading(false);
       return;
     }
 
@@ -118,22 +130,30 @@ const ProductModal: React.FC<ProductModalProps> = ({
 
       if (imageFile) {
         try {
-          imageUrl = await uploadImage(`${formData.productId}`, imageFile);
+          const imageName =
+            imageFile.name.split('.')[0] +
+            `_${formData.productId}_${Date.now().toString()}`;
+          console.log('imageFile', imageFile);
+          imageUrl = await uploadImage(imageName, imageFile);
           console.log('Image URL:', imageUrl);
         } catch (err) {
           console.error('Error uploading image:', err);
+          setIsSaveLoading(false);
+          return;
         }
       }
 
       if (largeImageFile) {
         try {
-          largeImageUrl = await uploadImage(
-            `${formData.productId}_500`,
-            largeImageFile
-          );
+          const imageName =
+            largeImageFile.name.split('.')[0] +
+            `_${formData.productId}_${Date.now().toString()}`;
+          largeImageUrl = await uploadImage(imageName, largeImageFile);
           console.log('Large Image URL:', largeImageUrl);
         } catch (err) {
           console.error('Error uploading large image:', err);
+          setIsSaveLoading(false);
+          return;
         }
       }
 
@@ -170,7 +190,6 @@ const ProductModal: React.FC<ProductModalProps> = ({
       if (response.ok) {
         console.log('Product added successfully:', data);
 
-        // Clear form data
         setFormData({
           title: '',
           description: '',
@@ -201,6 +220,8 @@ const ProductModal: React.FC<ProductModalProps> = ({
     } catch (error) {
       console.error('Error:', error instanceof Error ? error.message : error);
       alert('Failed to upload images or add the product.');
+    } finally {
+      setIsSaveLoading(false);
     }
   };
 
@@ -370,7 +391,9 @@ const ProductModal: React.FC<ProductModalProps> = ({
                   <input
                     type="number"
                     name="price"
-                    placeholder={product ? product.price.toString() : 'Price'}
+                    placeholder={
+                      product ? product.price.toString() : 'Discount Price'
+                    }
                     value={formData.price}
                     onChange={handleChange}
                     className="w-full rounded-md border px-3 py-2"
@@ -686,8 +709,15 @@ const ProductModal: React.FC<ProductModalProps> = ({
             type="submit"
             className="mx-6 rounded-md bg-green-500 px-4 py-2 w-40 text-white"
             onClick={handleSubmit}
+            disabled={isSaveLoading}
           >
-            {product ? 'Update' : 'Save'}
+            {isSaveLoading
+              ? product
+                ? 'Updating...'
+                : 'Saving...'
+              : product
+                ? 'Update'
+                : 'Save'}
           </button>
         </div>
       </div>
