@@ -53,9 +53,9 @@ export function ProductsTable({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="text-center"> Delete</TableHead>
               <TableHead className="text-center"> Product no</TableHead>
 
+              <TableHead className="text-center"> Image</TableHead>
               <TableHead className="text-center"> Title</TableHead>
               <TableHead className="text-center"> Description </TableHead>
               <TableHead>original Price</TableHead>
@@ -83,6 +83,7 @@ export function ProductsTable({
           </TableHeader>
           <TableBody>
             {products.map((product, idx) => {
+              console.log(product);
               return (
                 <Product
                   key={product.productId}
