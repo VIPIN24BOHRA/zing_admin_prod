@@ -3,6 +3,7 @@ import { ProductModel } from '@/lib/models';
 import { uploadImage } from '@/lib/storage';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import Spinner from './ui/spinner';
+import { generateId } from '@/lib/utils';
 
 interface ProductModalProps {
   onClose: () => void;
@@ -51,7 +52,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
     if (!formData.productId) {
       setFormData((prevData) => ({
         ...prevData,
-        productId: Date.now().toString()
+        productId: `#PI_${generateId(6)}`
       }));
     }
   }, []);
@@ -523,15 +524,13 @@ const ProductModal: React.FC<ProductModalProps> = ({
                     <div className="flex items-center space-x-4 mt-2">
                       <input
                         readOnly
+                        disabled
                         type="text"
                         name="productId"
                         placeholder={formData.productId.toString()}
                         value={formData.productId.toString()}
                         className="rounded-md border px-3 py-2 flex-1"
                       />
-                      <button className="bg-blue-500 text-white rounded-lg px-6 py-2">
-                        generate id
-                      </button>
                     </div>
                   </div>
 
@@ -708,7 +707,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
           </button>
           {isSaveLoading ? (
             <div className="mx-6 rounded-md px-4 py-2 w-40 text-white flex items-center justify-center">
-              <Spinner/>
+              <Spinner />
             </div>
           ) : (
             <button

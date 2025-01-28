@@ -40,7 +40,7 @@ export const getRatings = async (orderId: string) => {
 
 export const addNewProduct = async (data: ProductModel, id: number) => {
   const db = admin.database();
-  const ref = db.ref(sanitizePath(`/testProduct/${id}`));
+  const ref = db.ref(sanitizePath(`products/${id}`));
 
   try {
     await ref.set(data);
@@ -52,7 +52,7 @@ export const addNewProduct = async (data: ProductModel, id: number) => {
 export const getAllProduct = async () => {
   try {
     const db = admin.database();
-    const ordersRef = db.ref(sanitizePath('/testProduct/'));
+    const ordersRef = db.ref(sanitizePath('products/'));
 
     const query = ordersRef.orderByKey();
     const snapshot = await query.once('value');

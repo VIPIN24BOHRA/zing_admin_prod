@@ -426,3 +426,12 @@ export async function unallocatePidgeRiderOrder(id: string) {
   const result = await res.json();
   console.log(result);
 }
+
+export const generateId = (limit: number) => {
+  const digits = '0123456789';
+  let code = '';
+  for (let i = 0; i < limit; i++) {
+    code += digits[Math.floor(Math.random() * 10)];
+  }
+  return code;
+};
