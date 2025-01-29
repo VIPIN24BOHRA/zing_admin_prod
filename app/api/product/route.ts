@@ -77,7 +77,7 @@ function validateProduct(product: ProductModel): string | null {
   if (!product.quantity) return 'Product quantity is required';
   if (!product.imageUrl) return 'Product image URL is required';
   if (!product.largeImageUrl) return 'Product large image URL is required';
-  if (!product.productId)
-    return 'Product ID is required';
+  if (!product.productId || typeof product.productId !== 'number')
+    return 'Product ID is required and must be a number';
   return null;
 }
