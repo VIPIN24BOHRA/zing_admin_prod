@@ -172,7 +172,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
           categories: selectedCategories,
           imageUrl,
           largeImageUrl,
-          productId: Number(formData.productId)
+          productId:formData.productId
         },
         id: totalProducts || id
       };
