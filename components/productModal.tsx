@@ -52,7 +52,7 @@ const ProductModal: React.FC<ProductModalProps> = ({
     if (!formData.productId) {
       setFormData((prevData) => ({
         ...prevData,
-        productId: `#PI_${generateId(6)}`
+        productId: generateId(6)
       }));
     }
   }, []);
