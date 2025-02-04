@@ -146,7 +146,10 @@ export const convertToCSV = (data: any) => {
             (order.address.landmark ? order.address.landmark + ' , ' : '') +
             order.address.title,
 
-          paymentMethod: order.transactionDetails ? 'PAID' : 'CASH'
+          paymentMethod:
+            order.transactionDetails || order.transactionDetail
+              ? 'PAID'
+              : 'CASH'
         };
       });
     })
