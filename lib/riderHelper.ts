@@ -230,3 +230,35 @@ export async function getTestPaymentStatus(order_id: string) {
     throw Error('erro while createPaymentSession');
   }
 }
+
+export async function getETA(origin: any, destination: any) {
+  const API_KEY = process.env.GOOGLE_MAPS_API_KEY;
+  if (!API_KEY) return null;
+  const url = `https://maps.googleapis.com/maps/api/distancematrix/json?origins=${origin.lat},${origin.lng}&destinations=${destination.lat},${destination.lng}&key=${API_KEY}`;
+
+  try {
+    const response = await axios.get(url);
+    const data = response.data;
+
+    if (data.status === 'OK') {
+      const element = data.rows[0].elements[0];
+
+      if (element.status === 'OK') {
+        return {
+          distance: element.distance.text,
+          eta: element.duration.value + 180, // in sec
+          eta_text: Math.floor((element.duration.value + 180) / 60) + ' min'
+        };
+      } else {
+        console.error('Error:', element.status);
+        return null;
+      }
+    } else {
+      console.error('API Error:', data.status);
+      return null;
+    }
+  } catch (error) {
+    console.error('Request Error:', error);
+    return null;
+  }
+}
