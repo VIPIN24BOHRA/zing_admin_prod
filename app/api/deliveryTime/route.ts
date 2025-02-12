@@ -4,7 +4,9 @@ import { createTestPaymentSession, getETA } from '@/lib/riderHelper';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
-  return NextResponse.json(`delivery time is up and running`);
+  return NextResponse.json(
+    `delivery time is up and running ${process.env.GOOGLE_MAPS_API_KEY?.substring(0, 3)}`
+  );
 }
 
 export async function POST(req: NextRequest) {
@@ -28,6 +30,7 @@ export async function POST(req: NextRequest) {
     }
 
     const response = await getETA(origin, destination);
+    console.log(response);
 
     return NextResponse.json({
       success: response ? true : false,
