@@ -28,6 +28,7 @@ export async function POST(req: NextRequest) {
         error: 'required fields are missing'
       });
     }
+    console.log(origin, destination);
 
     const response = await getETA(origin, destination);
     console.log(response);
