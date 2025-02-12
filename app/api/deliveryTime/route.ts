@@ -28,7 +28,6 @@ export async function POST(req: NextRequest) {
     }
 
     const response = await getETA(origin, destination);
-    if(response) 
 
     return NextResponse.json({
       success: response ? true : false,
