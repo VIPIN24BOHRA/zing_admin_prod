@@ -64,7 +64,7 @@ export const getAllProduct = async () => {
   }
 };
 
-export const getAllCategories =async() =>{
+export const getAllCategories = async () => {
   try {
     const db = admin.database();
     const ordersRef = db.ref(sanitizePath('/configuration/categories/'));
@@ -76,7 +76,7 @@ export const getAllCategories =async() =>{
     console.error('Error fetching products:', error);
     throw new Error('Failed to fetch products');
   }
-}
+};
 
 export const createUserForOTPSMS = async (data: any) => {
   if (!data || !data.phoneNumber || !data.OTP) return;
@@ -358,5 +358,20 @@ export const savePaymentDetailsTEST = async (paymentDetails: any) => {
       .set(paymentDetails);
   } catch (error) {
     console.error('Error fetching pending order:', error);
+  }
+};
+
+export const getCouponsCount = async (uid: string, code: string) => {
+  if (!uid || !code) return null;
+  try {
+    const db = admin.database();
+    const snapshot = await db.ref(`appliedCupons/${uid}/${code}`).once('value');
+    if (snapshot.exists()) {
+      return snapshot.val();
+    }
+    return 0;
+  } catch (err) {
+    console.log(err);
+    return 0;
   }
 };

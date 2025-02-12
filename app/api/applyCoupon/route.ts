@@ -1,7 +1,9 @@
 /* eslint-disable import/extensions */
 
 import { createTestPaymentSession, getETA } from '@/lib/riderHelper';
+import { getCouponsCount } from 'modules/firebase/database';
 import { NextRequest, NextResponse } from 'next/server';
+import { isValid } from 'react-datepicker/dist/date_utils';
 
 export async function GET(req: NextRequest) {
   return NextResponse.json(`delivery time is up and running`);
@@ -18,10 +20,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, error: 'invalid data' });
     }
 
-    console.log(cart, coupon,uid);
+    console.log(cart, coupon, uid);
+
+    const usedCount = await getCouponsCount(uid, coupon.code);
+    console.log(usedCount);
 
     return NextResponse.json({
-      success: true
+      success: true,
+      isValid: usedCount != null && usedCount < coupon.maxCount ? true : false
     });
   } catch (e) {
     // eslint-disable-next-line no-console
