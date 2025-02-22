@@ -30,7 +30,10 @@ export async function POST(req: NextRequest) {
         const item = cart[i].item;
         if (item.categories && item.categories.length) {
           for (let j = 0; j < item.categories.length; j++) {
-            if (item.categories[j]?.toLowerCase() == 'happy hours') {
+            if (
+              item.categories[j]?.toLowerCase() == 'happy hours' ||
+              item.categories[j]?.toLowerCase()?.includes('happy hours')
+            ) {
               happyHoursAvailable = true;
               break;
             }
