@@ -138,6 +138,7 @@ export const convertToCSV = (data: any) => {
           phoneNumber: order.uid,
           totalPrice: order.totalPrice,
           discount: order.discount,
+          tax: order?.tax ?? 0,
           cart: item.item.title,
           quantity: item.quantity,
           address:

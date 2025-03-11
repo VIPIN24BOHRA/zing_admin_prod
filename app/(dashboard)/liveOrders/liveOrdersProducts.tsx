@@ -21,14 +21,16 @@ export function LiverOrderProduct({
   );
   const [deliveredAt, setDeliveredAt] = useState(product.deliveredAt ?? 0);
 
-  const totalPrice =
-    product.totalPrice -
-    (product?.discount ?? 0) +
-    (product.deliveryFee
-      ? product.deliveryFee
-      : product.totalPrice < 99
-        ? 20
-        : 0);
+  const discount = product?.discount ?? 0;
+  const deliveryFee = product.deliveryFee
+    ? product.deliveryFee
+    : product.totalPrice < 99
+      ? 20
+      : 0;
+  const tax = product?.tax ?? 0;
+
+  const totalPrice = product.totalPrice + deliveryFee + tax - discount;
+
   const deliveryBoyName = product?.deliveryBoy?.name
     ? product?.deliveryBoy?.name
     : '';

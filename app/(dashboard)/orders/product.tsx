@@ -4,15 +4,15 @@ import { OrderDetailsModal } from '@/components/orderDetailsModal';
 
 export function Product({ product }: { product: any }) {
   const [showModal, setShowModal] = useState(false);
+  const discount = product?.discount ?? 0;
+  const deliveryFee = product.deliveryFee
+    ? product.deliveryFee
+    : product.totalPrice < 99
+      ? 20
+      : 0;
+  const tax = product?.tax ?? 0;
 
-  const totalPrice =
-    product.totalPrice -
-    (product?.discount ?? 0) +
-    (product.deliveryFee
-      ? product.deliveryFee
-      : product.totalPrice < 99
-        ? 20
-        : 0);
+  const totalPrice = product.totalPrice + deliveryFee + tax - discount;
 
   return (
     <>
