@@ -92,6 +92,7 @@ export default function OrderHistoryPage({
         throw new Error('Network response was not ok');
       }
       const result = await response.json();
+      console.log(result);
       const csvData = convertToCSV(result.data);
       downloadCSV(csvData);
     } catch (error) {

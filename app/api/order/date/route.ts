@@ -1,4 +1,7 @@
-import { getOrdersFromDates } from 'modules/firebase/database';
+import {
+  getOrdersFromDates,
+  getRatingsFromOrderIds
+} from 'modules/firebase/database';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function GET(req: NextRequest) {
@@ -11,8 +14,8 @@ export async function GET(req: NextRequest) {
       { error: 'Failed to fetch orders' },
       { status: 500 }
     );
-  startDate = Number(startDate)
-  endDate = Number(endDate)
+  startDate = Number(startDate);
+  endDate = Number(endDate);
 
   console.log(
     new Date(startDate).toLocaleString(),
@@ -22,15 +25,21 @@ export async function GET(req: NextRequest) {
   );
 
   try {
-    const orders = await getOrdersFromDates(startDate, endDate);
+    let orders = await getOrdersFromDates(startDate, endDate);
+    const orderKeys = Object.keys(orders ?? {});
+    let ratings = await getRatingsFromOrderIds(
+      orderKeys[0],
+      orderKeys[orderKeys.length - 1]
+    );
 
-    const formattedOrders = orders
-      ? Object.entries(orders).map(([id, value]) => ({ id, ...value }))
-      : [];
-    return NextResponse.json({
-      data: formattedOrders,
-      total: formattedOrders.length
-    });
+    if (!ratings) ratings = {};
+    orders = orderKeys.map((key) => ({
+      key,
+      ...orders[key],
+      rating: ratings[key] ? Object.values(ratings[key])[0] : {}
+    }));
+
+    return NextResponse.json({ data: orders, total: orders.length });
   } catch (error) {
     console.log(error);
     return NextResponse.json(

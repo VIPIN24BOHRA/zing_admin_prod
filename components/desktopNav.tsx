@@ -16,6 +16,7 @@ import {
   Settings,
   ShoppingCart,
   Star,
+  BarChart,
   Users2
 } from 'lucide-react';
 import Link from 'next/link';
@@ -72,6 +73,9 @@ export default function DesktopNav() {
         </NavItem>
         <NavItem href="/rating" label="Order ratings">
           <Star className="h-5 w-5" />
+        </NavItem>
+        <NavItem href="/analytics" label="Rating Analysis">
+          <BarChart className="h-5 w-5" />
         </NavItem>
 
         {showLogout && (

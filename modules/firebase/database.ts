@@ -167,15 +167,9 @@ export const getOrdersFromDates = async (
 
     const snapshot = await query.once('value');
     if (snapshot.exists()) {
-      const data = snapshot.val();
-      return Object.entries(data).map(([id, value]) => {
-        if (typeof value === 'object' && value !== null) {
-          return { ...value };
-        }
-        return { id, value };
-      });
+      return snapshot.val();
     }
-    return null;
+    return {};
   } catch (error) {
     console.error('Error fetching ratings:', error);
     throw new Error('Failed to fetch ratings');
