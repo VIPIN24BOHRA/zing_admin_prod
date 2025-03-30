@@ -131,7 +131,7 @@ export const convertToCSV = (data: any) => {
               'sec '
             : '',
           deliveryFee: order.deliveryFee,
-          deliverBoy: order.product?.deliveryBoy?.name ?? '-',
+          deliverBoy: order?.deliveryBoy?.name ?? '-',
           orderNo: order.orderNo,
           status: order.status,
           totalQuantity: order.cartItems.length,
