@@ -147,18 +147,6 @@ export default function ProductsPage({
               })
               ?.filter((v) => v != null) ?? [];
           Orders.sort((a, b) => b.createdAt - a.createdAt);
-          // now find the first order having order no.
-
-          let orderNo = 0;
-          for (let i = Orders.length - 1; i >= 0; i--) {
-            if (Orders[i].orderNo && Orders[i].orderNo < 10000)
-              orderNo = Orders[i].orderNo;
-            else {
-              orderNo++;
-              Orders[i].orderNo = orderNo;
-            }
-          }
-          console.log(orderNo);
           setProduct(Orders);
         } else {
           console.log('no value exists');
@@ -183,26 +171,18 @@ export default function ProductsPage({
           const key = snapshot.key;
           console.log('New Order Added:', newOrder, key);
 
-          if (
-            newOrder?.cartItems?.length == 1 &&
-            newOrder.cartItems[0]?.item?.title == 'Rasmalai'
-          ) {
-            // do not read the data;
-          } else {
-            setProduct((prevProducts) => [
-              {
-                ...newOrder,
-                key,
-                orderNo: prevProducts[0].orderNo + 1
-              },
-              ...prevProducts
-            ]);
-            setShowSnackBar(true);
+          setProduct((prevProducts) => [
+            {
+              ...newOrder,
+              key
+            },
+            ...prevProducts
+          ]);
+          setShowSnackBar(true);
 
-            setTimeout(() => {
-              setShowSnackBar(false);
-            }, 4000);
-          }
+          setTimeout(() => {
+            setShowSnackBar(false);
+          }, 4000);
 
           // You can handle the new order here, e.g., update state, display notification, etc.
         } else {
