@@ -11,8 +11,10 @@ export function Product({ product }: { product: any }) {
       ? 20
       : 0;
   const tax = product?.tax ?? 0;
+  const smallCartFee = product?.smallCartFee ?? 0;
 
-  const totalPrice = product.totalPrice + deliveryFee + tax - discount;
+  const totalPrice =
+    product.totalPrice + deliveryFee + tax + smallCartFee - discount;
 
   return (
     <>

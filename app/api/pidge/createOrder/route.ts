@@ -77,12 +77,14 @@ export async function POST(req: NextRequest) {
               ? 0
               : order.totalPrice +
                 order.deliveryFee +
-                (order.tax ? order.tax : 0) -
+                (order.tax ? order.tax : 0) +
+                (order.smallCartFee ? order.smallCartFee : 0) -
                 order.discount,
           bill_amount:
             order.totalPrice +
             order.deliveryFee +
-            (order.tax ? order.tax : 0) -
+            (order.tax ? order.tax : 0) +
+            (order.smallCartFee ? order.smallCartFee : 0) -
             order.discount,
           products: order.cartItems.map((items: any) => ({
             quantity: items.quantity,

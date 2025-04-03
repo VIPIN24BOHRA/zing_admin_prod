@@ -49,9 +49,18 @@ export async function POST(req: NextRequest) {
       delivery_instructions: order.key,
       outlet_id: '5356eb5f-82d7-447e-a4b0-58b4e245af08',
       external_outlet_id: '',
-      total: order.totalPrice + order.deliveryFee + order.tax - order.discount,
+      total:
+        order.totalPrice +
+        order.deliveryFee +
+        order.tax +
+        order.smallCartFee -
+        order.discount,
       sub_total:
-        order.totalPrice + order.deliveryFee + order.tax - order.discount,
+        order.totalPrice +
+        order.deliveryFee +
+        order.tax +
+        order.smallCartFee -
+        order.discount,
       prep_time: 4,
       payment_type: order.transactionDetails ? 'PAID' : 'COD'
     };
