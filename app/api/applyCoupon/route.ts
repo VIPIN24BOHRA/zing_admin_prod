@@ -20,36 +20,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ success: false, error: 'invalid data' });
     }
 
-    console.log(coupon, uid);
-    let happyHoursAvailable = false;
-
-    if (cart && cart.length) {
-      // check if cart contains any happy hours products
-
-      for (let i = 0; i < cart.length; i++) {
-        const item = cart[i].item;
-        if (item.categories && item.categories.length) {
-          for (let j = 0; j < item.categories.length; j++) {
-            if (
-              item.categories[j]?.toLowerCase() == 'happy hours' ||
-              item.categories[j]?.toLowerCase()?.includes('happy hours')
-            ) {
-              happyHoursAvailable = true;
-              break;
-            }
-          }
-        }
-        if (happyHoursAvailable) break;
-      }
-    }
-
-    if (happyHoursAvailable)
-      return NextResponse.json({
-        success: true,
-        isValid: false,
-        reason: 'hapypy hours included'
-      });
-
     const usedCount = await getCouponsCount(uid, coupon.code);
 
     return NextResponse.json({
