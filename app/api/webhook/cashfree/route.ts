@@ -17,7 +17,16 @@ export async function POST(req: NextRequest) {
 
     if (response && response.type == 'PAYMENT_SUCCESS_WEBHOOK') {
       const { order, payment } = response.data;
-      console.log(order, payment);
+
+
+      const paymentTime = new Date(payment.payment_time ?? 0).getTime();
+    
+      if (Date.now() - paymentTime > 60 * 60 * 1000) {
+        console.log("late event")
+        return NextResponse.json({
+          success: true
+        });
+      }
 
       const pendingOrder = await getPendingOrder(order.order_id);
 
@@ -27,7 +36,6 @@ export async function POST(req: NextRequest) {
         status:
           payment.payment_status == 'SUCCESS' ? 'PAID' : payment.payment_status
       };
-      console.log(pendingOrder, transactionDetail);
 
       // create order.
       await createOrder(pendingOrder, transactionDetail);
