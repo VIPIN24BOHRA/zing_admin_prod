@@ -247,7 +247,7 @@ export async function getETA(origin: any, destination: any) {
         return {
           distance: element.distance.text,
           eta: element.duration.value + 180, // in sec
-          eta_text: Math.floor((element.duration.value + 180) / 60) + ' min'
+          eta_text: Math.floor((element.duration.value + 480) / 60) + ' min'
         };
       } else {
         console.error('Error:', element.status);
