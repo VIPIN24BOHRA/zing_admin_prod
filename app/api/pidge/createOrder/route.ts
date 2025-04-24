@@ -67,7 +67,7 @@ export async function POST(req: NextRequest) {
               longitude: order.address.lng
             },
             name: order.name || order.uid,
-            mobile: order.uid
+            mobile: order.uid?.replace("+91","")
           },
 
           source_order_id: order.key,
