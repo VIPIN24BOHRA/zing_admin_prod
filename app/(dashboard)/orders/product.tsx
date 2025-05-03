@@ -41,13 +41,21 @@ export function Product({ product }: { product: any }) {
         </TableCell>
         <TableCell className="font-medium text-center p-1">
           {product.cartItems.map((c: any, idx: number) => (
-            <p
-              key={c?.item?.title + idx}
-              className="flex flex-row text-[13px] justify-between font-bold"
-            >
-              <span> {c?.item?.title} :- </span>
-              <span>{c?.quantity}</span>
-            </p>
+            <>
+              <p
+                key={c?.item?.title + idx}
+                className="flex flex-row text-[13px] justify-between font-bold"
+              >
+                <span>
+                  {c?.item?.title}
+                  <span className="text-xs font-normal">
+                    {' '}{c.item?.variant?.map((v: any) => v.title)?.join(' , ')}{' '}
+                  </span>
+                  :-  
+                </span>
+                <span>{c?.quantity}</span>
+              </p>
+            </>
           ))}
         </TableCell>
 

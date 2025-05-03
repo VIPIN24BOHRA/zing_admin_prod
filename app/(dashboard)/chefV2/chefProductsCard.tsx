@@ -151,6 +151,9 @@ export function ChefProductCard({ product }: { product: any }) {
                   {cartItem.item.title} - {cartItem.quantity}
                 </span>
               </p>
+              <p className="text-sm font-normal ml-6">
+                {cartItem.item?.variant?.map((v: any) => v.title)?.join(' , ')}
+              </p>
             </div>
           ))}
         </div>

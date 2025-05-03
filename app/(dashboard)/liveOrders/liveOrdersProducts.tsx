@@ -28,9 +28,10 @@ export function LiverOrderProduct({
       ? 20
       : 0;
   const tax = product?.tax ?? 0;
-  const smallCartFee=product?.smallCartFee ?? 0;
+  const smallCartFee = product?.smallCartFee ?? 0;
 
-  const totalPrice = product.totalPrice + deliveryFee + tax + smallCartFee- discount;
+  const totalPrice =
+    product.totalPrice + deliveryFee + tax + smallCartFee - discount;
 
   const deliveryBoyName = product?.deliveryBoy?.name
     ? product?.deliveryBoy?.name
@@ -86,7 +87,15 @@ export function LiverOrderProduct({
               key={c?.item?.title + idx}
               className="flex flex-row text-[13px] justify-between font-bold"
             >
-              <span> {c?.item?.title} :- </span>
+              <span>
+                {' '}
+                {c?.item?.title}
+                <span className="text-xs font-normal">
+                  {' '}
+                  {c.item?.variant?.map((v: any) => v.title)?.join(' , ')}{' '}
+                </span>{' '}
+                :-{' '}
+              </span>
               <span>{c?.quantity}</span>
             </p>
           ))}
