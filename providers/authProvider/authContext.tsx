@@ -83,7 +83,7 @@ const verifyUser = async (token: string) => {
       return true;
     } else {
       console.log('Access denied. Only @domain.com emails are allowed.');
-      return true;
+      return false;
     }
   } catch (error) {
     console.error('Error during sign-in:', error);
